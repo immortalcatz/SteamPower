@@ -23,7 +23,9 @@ public float damage;
 public int reloadTime;
 public float accuracy;
 public float knockback;
-    public ItemFirearm(int par1, float par2, int par3, float par4, float par5)
+public boolean shotgun;
+
+    public ItemFirearm(int par1, float par2, int par3, float par4, float par5, boolean par6)
     {
         super(par1);
         this.maxStackSize = 1;
@@ -32,6 +34,7 @@ public float knockback;
         this.reloadTime = par3;
         this.accuracy = par4;
         this.knockback = par5;
+        this.shotgun = par6;
     }
 
     public String getTextureFile()

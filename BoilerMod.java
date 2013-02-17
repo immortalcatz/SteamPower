@@ -38,8 +38,8 @@ public class BoilerMod
 //furnace
     public static Block yourFurnaceIdle;
     public static Block yourFurnaceActive;
-    public static Item musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
-    public static Item pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
+    public static Item musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
+    public static Item pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
     public static Item musketBall = (new ItemBoiler(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
     public static Item itemMech = (new ItemMech(7009)).setIconCoord(4, 0).setItemName("itemMech");
     public static Item musketCartridge = (new ItemBoiler(7007)).setIconCoord(5, 0).setItemName("musketCartridge").setCreativeTab(CreativeTabs.tabCombat);
@@ -62,6 +62,11 @@ public class BoilerMod
     public static Item copperLegs;
     public static Item copperBoots;
 
+    public static Item brassHelmet;
+    public static Item brassTorso;
+    public static Item brassLegs;
+    public static Item brassBoots;
+    
     @SidedProxy(clientSide = "boiler.ClientProxy", serverSide = "boiler.CommonProxy")
     public static CommonProxy proxy;
 
@@ -82,6 +87,14 @@ public class BoilerMod
         copperTorso = (new ItemBoilerArmor(7012, materialCopper, 4, 1, false, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperTorso").setIconCoord(0, 2).setCreativeTab(CreativeTabs.tabCombat));
         copperLegs = (new ItemBoilerArmor(7013,materialCopper, 4, 2, true, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 3).setCreativeTab(CreativeTabs.tabCombat));
         copperBoots = (new ItemBoilerArmor(7014, materialCopper, 4, 3, false, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 4).setCreativeTab(CreativeTabs.tabCombat));
+        
+       // IRON(15, new int[]{2, 6, 5, 2}, 9),
+        EnumArmorMaterial materialBrass = EnumHelper.addArmorMaterial("spBrass", 20, new int[]{2, 5, 4, 1}, 9);
+    	brassHelmet = (new ItemBoilerArmor(7015, materialBrass, 4, 0, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassHelmet").setIconCoord(1, 1).setCreativeTab(CreativeTabs.tabCombat));
+        brassTorso = (new ItemBoilerArmor(7016, materialBrass, 4, 1, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassTorso").setIconCoord(1, 2).setCreativeTab(CreativeTabs.tabCombat));
+        brassLegs = (new ItemBoilerArmor(7017,materialBrass, 4, 2, true, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
+        brassBoots = (new ItemBoilerArmor(7018, materialBrass, 4, 3, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
+        
     	EntityRegistry.registerModEntity(boiler.EntityMusketBall.class, "MusketBall", 0, BoilerMod.instance, 100, 1, true);
     	EntityRegistry.registerModEntity(boiler.EntityMech.class, "Mech", 1, BoilerMod.instance, 100, 5, true);
         GameRegistry.registerWorldGenerator(new WorldGenBoiler());
@@ -134,6 +147,10 @@ public class BoilerMod
         LanguageRegistry.addName(copperLegs, "Copper Leggings");
         LanguageRegistry.addName(copperBoots, "Copper Boots");
         
+        LanguageRegistry.addName(brassHelmet, "Brass Helmet");
+        LanguageRegistry.addName(brassTorso, "Brass Chestplate");
+        LanguageRegistry.addName(brassLegs, "Brass Leggings");
+        LanguageRegistry.addName(brassBoots, "Brass Boots");
         
         OreDictionary.registerOre("ingotCopper", new ItemStack(ingotCopper));
         OreDictionary.registerOre("ingotBrass", new ItemStack(ingotBrass));
