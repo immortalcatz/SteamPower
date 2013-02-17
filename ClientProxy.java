@@ -1,11 +1,7 @@
 package boiler;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import net.minecraft.client.renderer.entity.RenderArrow;
-import net.minecraft.client.renderer.entity.RenderSnowball;
-import net.minecraft.client.renderer.entity.RenderBoat;
-import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 public class ClientProxy extends CommonProxy
 {
     @Override
@@ -16,4 +12,5 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityMusketBall.class, new RenderBoiler(4));
         RenderingRegistry.registerEntityRenderingHandler(EntityMech.class, new RenderMech());
     }
+
 }

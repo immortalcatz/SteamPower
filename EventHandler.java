@@ -6,6 +6,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public class EventHandler {
 	@ForgeSubscribe
 	public void handleBreakSpeed(PlayerEvent.BreakSpeed event) {
-		event.newSpeed = event.originalSpeed * 10.0F;
+		//event.newSpeed = event.originalSpeed * 10.0F;
 	}
 }
