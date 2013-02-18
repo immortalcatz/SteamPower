@@ -90,7 +90,7 @@ public class SteamCraft {
 	public static Item brassBoots;
 	
 	// Says where the client and server 'proxy' code is loaded.
-	@SidedProxy(clientSide = "dimitriye98.steamcraft.client.ClientProxy", serverSide = "dimitriye98.steamcraft.client.CommonProxy")
+	@SidedProxy(clientSide = "dimitriye98.steamcraft.client.ClientProxy", serverSide = "dimitriye98.steamcraft.common.CommonProxy")
 	public static CommonProxy proxy;
 	
 	private GuiHandler guiHandler = new GuiHandler();
