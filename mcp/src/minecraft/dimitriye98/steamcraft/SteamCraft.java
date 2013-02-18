@@ -95,17 +95,17 @@ public class SteamCraft
     public void load(FMLInitializationEvent event)
     {
     	EnumArmorMaterial materialCopper = EnumHelper.addArmorMaterial("spCopper", 12, new int[]{2, 5, 4, 1}, 9);
-    	copperHelmet = (new ItemBoilerArmor(7011, materialCopper, 4, 0, false, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperHelmet").setIconCoord(0, 1).setCreativeTab(CreativeTabs.tabCombat));
-        copperTorso = (new ItemBoilerArmor(7012, materialCopper, 4, 1, false, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperTorso").setIconCoord(0, 2).setCreativeTab(CreativeTabs.tabCombat));
-        copperLegs = (new ItemBoilerArmor(7013,materialCopper, 4, 2, true, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 3).setCreativeTab(CreativeTabs.tabCombat));
-        copperBoots = (new ItemBoilerArmor(7014, materialCopper, 4, 3, false, "/boiler/armor/copper_1.png", "/boiler/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 4).setCreativeTab(CreativeTabs.tabCombat));
+    	copperHelmet = (new ItemBoilerArmor(7011, materialCopper, 4, 0, false, "/steamcraft/resources/armor/copper_1.png", "/steamcraft/resources/armor/copper_2.png").setItemName("copperHelmet").setIconCoord(0, 1).setCreativeTab(CreativeTabs.tabCombat));
+        copperTorso = (new ItemBoilerArmor(7012, materialCopper, 4, 1, false, "/steamcraft/resources/armor/copper_1.png", "/steamcraft/resources/armor/copper_2.png").setItemName("copperTorso").setIconCoord(0, 2).setCreativeTab(CreativeTabs.tabCombat));
+        copperLegs = (new ItemBoilerArmor(7013,materialCopper, 4, 2, true, "/steamcraft/resources/armor/copper_1.png", "/steamcraft/resources/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 3).setCreativeTab(CreativeTabs.tabCombat));
+        copperBoots = (new ItemBoilerArmor(7014, materialCopper, 4, 3, false, "/steamcraft/resources/armor/copper_1.png", "/steamcraft/resources/armor/copper_2.png").setItemName("copperLegs").setIconCoord(0, 4).setCreativeTab(CreativeTabs.tabCombat));
         
        // IRON(15, new int[]{2, 6, 5, 2}, 9),
         EnumArmorMaterial materialBrass = EnumHelper.addArmorMaterial("spBrass", 20, new int[]{2, 5, 4, 1}, 9);
-    	brassHelmet = (new ItemBoilerArmor(7015, materialBrass, 4, 0, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassHelmet").setIconCoord(1, 1).setCreativeTab(CreativeTabs.tabCombat));
-        brassTorso = (new ItemBoilerArmor(7016, materialBrass, 4, 1, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassTorso").setIconCoord(1, 2).setCreativeTab(CreativeTabs.tabCombat));
-        brassLegs = (new ItemBoilerArmor(7017,materialBrass, 4, 2, true, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
-        brassBoots = (new ItemBoilerArmor(7018, materialBrass, 4, 3, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
+    	brassHelmet = (new ItemBoilerArmor(7015, materialBrass, 4, 0, false, "/steamcraft/resources/armor/brass_1.png", "/steamcraft/resources/armor/brass_2.png").setItemName("brassHelmet").setIconCoord(1, 1).setCreativeTab(CreativeTabs.tabCombat));
+        brassTorso = (new ItemBoilerArmor(7016, materialBrass, 4, 1, false, "/steamcraft/resources/armor/brass_1.png", "/steamcraft/resources/armor/brass_2.png").setItemName("brassTorso").setIconCoord(1, 2).setCreativeTab(CreativeTabs.tabCombat));
+        brassLegs = (new ItemBoilerArmor(7017,materialBrass, 4, 2, true, "/steamcraft/resources/armor/brass_1.png", "/steamcraft/resources/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
+        brassBoots = (new ItemBoilerArmor(7018, materialBrass, 4, 3, false, "/steamcraft/resources/armor/brass_1.png", "/steamcraft/resources/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
         
     	EntityRegistry.registerModEntity(dimitriye98.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
     	EntityRegistry.registerModEntity(dimitriye98.steamcraft.entity.EntityMech.class, "Mech", 1, SteamCraft.instance, 100, 5, true);
