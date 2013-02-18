@@ -122,16 +122,16 @@ public boolean shotgun;
                 //minecraft.entityRenderer.
             }
             nbt.setBoolean("loaded", false);
-            if (par2World.isRemote)
+            if (par2World.isRemote && !par3EntityPlayer.capabilities.isCreativeMode)
             {
-            float thiskb = this.knockback;
-            boolean crouching = par3EntityPlayer.isSneaking();
-            if (crouching){
-            	thiskb = thiskb/2;
-            }
-            par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
-            par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
-            par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
+	            float thiskb = this.knockback;
+	            boolean crouching = par3EntityPlayer.isSneaking();
+	            if (crouching){
+	            	thiskb = thiskb/2;
+	            }
+	            par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
+	            par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
+	            par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
             }
             
        
