@@ -12,6 +12,6 @@ public class ItemBoiler extends Item
 
     public String getTextureFile()
     {
-        return "/boiler/items.png";
+        return "/steamcraft/resources/items.png";
     }
 }

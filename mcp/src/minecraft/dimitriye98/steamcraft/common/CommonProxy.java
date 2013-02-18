@@ -10,8 +10,8 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class CommonProxy
 {
-    public static String ITEMS_PNG = "/boiler/items.png";
-    public static String BLOCK_PNG = "/boiler/blocks.png";
+    public static String ITEMS_PNG = "/steamcraft/resources/items.png";
+    public static String BLOCK_PNG = "/steamcraft/resources/blocks.png";
 
     // Client stuff
     public void registerRenderers()

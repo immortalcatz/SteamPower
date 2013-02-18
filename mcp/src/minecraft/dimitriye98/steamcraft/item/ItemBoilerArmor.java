@@ -36,7 +36,7 @@ public class ItemBoilerArmor extends ItemArmor implements IArmorTextureProvider{
 	
     public String getTextureFile()
     {
-        return "/boiler/items.png";
+        return "/steamcraft/resources/items.png";
     }
 
 }
