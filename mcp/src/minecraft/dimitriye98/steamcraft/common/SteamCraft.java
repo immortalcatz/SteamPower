@@ -114,7 +114,7 @@ public class SteamCraft {
 		blockForgeMain = new BlockForgeMain(159, 4, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("blockForgeMain").setRequiresSelfNotify();
 		copperOre = new BlockSteamcraftOre(152, 0).setHardness(2.75F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("copperOre").setCreativeTab(CreativeTabs.tabBlock);
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
-		steam = new BlockSteam(160).setBlockName("blockSteam");
+		steam = new BlockSteam(165).setBlockName("blockSteam");
 
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
@@ -132,7 +132,7 @@ public class SteamCraft {
 			//Tools
 		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
 		pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
-		blunderbuss = (new ItemFirearm(7019, 20.0F, 84,3.5F, 15.0F, true)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
+		blunderbuss = (new ItemFirearm(7019, 6.0F, 95,3.5F, 7.5F, true)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
 		toolWrench = (new ItemWrench(7010)).setIconCoord(6, 0).setItemName("toolWrench").setCreativeTab(CreativeTabs.tabTools);
 		
 			//Armor

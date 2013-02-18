@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import dimitriye98.steamcraft.common.SteamCraft;
 
 @SideOnly(Side.CLIENT)
 public class RenderBoiler extends Render
@@ -38,7 +39,7 @@ public class RenderBoiler extends Render
         GL11.glTranslatef((float)par2, (float)par4, (float)par6);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glScalef(0.5F, 0.5F, 0.5F);
-        this.loadTexture("/boiler/items.png");
+        this.loadTexture(SteamCraft.ITEMS_PNG);
         Tessellator var10 = Tessellator.instance;
 
         if (this.itemIconIndex == 154)

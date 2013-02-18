@@ -111,12 +111,15 @@ public boolean shotgun;
             {
                 
                 if (shotgun) {
-                	for (int i = 1; i < 7; i++) {
+                	for (int i = 1; i < 21; i++) {
                 		EntityMusketBall var12 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) -var7, damage);
                 		par2World.spawnEntityInWorld(var12);
                 	}
                 }
+                else
+                {
                 par2World.spawnEntityInWorld(var8);
+                }
                 //par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch + 100.0F;
                 //Minecraft minecraft = Minecraft.getMinecraft();
                 //minecraft.entityRenderer.
