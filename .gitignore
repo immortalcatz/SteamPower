@@ -1,1 +1,13 @@
 .DS_Store
+/*
+!/README.md
+!/mcmod.info
+!/build.xml
+
+!mcp
+
+mcp/*
+!mcp/src
+
+mcp/src/minecraft/*
+!mcp/src/minecraft/dimitriye98
