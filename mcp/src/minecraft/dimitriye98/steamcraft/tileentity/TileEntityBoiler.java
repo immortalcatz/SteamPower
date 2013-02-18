@@ -343,10 +343,10 @@ public class TileEntityBoiler extends TileEntity implements IInventory, ISidedIn
                 return 200;
             }
 
-            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
-            {
-                return 200;
-            }
+//            if (var2 instanceof ItemSword && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
+//            {
+//                return 200;
+//            }
 
             if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD"))
             {

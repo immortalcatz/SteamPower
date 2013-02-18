@@ -1,23 +1,14 @@
 package dimitriye98.steamcraft.block;
 
-import java.util.List;
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import dimitriye98.steamcraft.SteamCraft;
 import dimitriye98.steamcraft.common.CommonProxy;
 import dimitriye98.steamcraft.tileentity.TileEntityForge;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 
 public class BlockForge extends Block
 {
@@ -577,97 +568,97 @@ public class BlockForge extends Block
         int meta = (metadat % 4);
         TileEntityForge var12 = (TileEntityForge) par1World.getBlockTileEntity(par2 + 1, par3, par4);
 
-        if (var12 != null)
-        {
-            if (var12.isBurning())
-            {
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-            }
-            else
-            {
-                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-            }
-        }
-        else
-        {
-            var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3 - 1, par4);
-
-            if (var12 != null)
-            {
-                if (var12.isBurning())
-                {
-                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-                }
-                else
-                {
-                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-                }
-            }
-            else
-            {
-                var12 = (TileEntityForge) par1World.getBlockTileEntity(par2 + 1, par3 - 1, par4);
-
-                if (var12 != null)
-                {
-                    if (var12.isBurning())
-                    {
-                        par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-                    }
-                    else
-                    {
-                        par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-                    }
-                }
-                else
-                {
-                    var12 = (TileEntityForge) par1World.getBlockTileEntity(par2 - 1, par3, par4);
-
-                    if (var12 != null)
-                    {
-                        if (var12.isBurning())
-                        {
-                            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-                        }
-                        else
-                        {
-                            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-                        }
-                    }
-                    else
-                    {
-                        var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3, par4 + 1);
-
-                        if (var12 != null)
-                        {
-                            if (var12.isBurning())
-                            {
-                                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-                            }
-                            else
-                            {
-                                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-                            }
-                        }
-                        else
-                        {
-                            var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3 - 1, par4 + 1);
-
-                            if (var12 != null)
-                            {
-                                if (var12.isBurning())
-                                {
-                                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
-                                }
-                                else
-                                {
-                                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        if (var12 != null)
+//        {
+//            if (var12.isBurning())
+//            {
+//                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//            }
+//            else
+//            {
+//                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//            }
+//        }
+//        else
+//        {
+//            var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3 - 1, par4);
+//
+//            if (var12 != null)
+//            {
+//                if (var12.isBurning())
+//                {
+//                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//                }
+//                else
+//                {
+//                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//                }
+//            }
+//            else
+//            {
+//                var12 = (TileEntityForge) par1World.getBlockTileEntity(par2 + 1, par3 - 1, par4);
+//
+//                if (var12 != null)
+//                {
+//                    if (var12.isBurning())
+//                    {
+//                        par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//                    }
+//                    else
+//                    {
+//                        par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//                    }
+//                }
+//                else
+//                {
+//                    var12 = (TileEntityForge) par1World.getBlockTileEntity(par2 - 1, par3, par4);
+//
+//                    if (var12 != null)
+//                    {
+//                        if (var12.isBurning())
+//                        {
+//                            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//                        }
+//                        else
+//                        {
+//                            par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//                        }
+//                    }
+//                    else
+//                    {
+//                        var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3, par4 + 1);
+//
+//                        if (var12 != null)
+//                        {
+//                            if (var12.isBurning())
+//                            {
+//                                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//                            }
+//                            else
+//                            {
+//                                par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//                            }
+//                        }
+//                        else
+//                        {
+//                            var12 = (TileEntityForge) par1World.getBlockTileEntity(par2, par3 - 1, par4 + 1);
+//
+//                            if (var12 != null)
+//                            {
+//                                if (var12.isBurning())
+//                                {
+//                                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForgeOn.blockID, metadat);
+//                                }
+//                                else
+//                                {
+//                                    par1World.setBlockAndMetadataWithNotify(par2, par3, par4, SteamCraft.blockForge.blockID, metadat);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         if (this.active)
         {

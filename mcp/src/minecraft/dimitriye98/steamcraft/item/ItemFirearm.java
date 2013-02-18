@@ -1,23 +1,19 @@
 package dimitriye98.steamcraft.item;
 
-import dimitriye98.steamcraft.SteamCraft;
-import dimitriye98.steamcraft.entity.EntityMusketBall;
-import net.minecraft.client.Minecraft;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
+import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.entity.EntityMusketBall;
 
 public class ItemFirearm extends Item
 {
@@ -41,7 +37,7 @@ public boolean shotgun;
 
     public String getTextureFile()
     {
-        return "/boiler/items.png";
+        return "/dimitriye98/steamcraft/resources/items.png";
     }
 
     /**
@@ -78,6 +74,7 @@ public boolean shotgun;
 
             EntityMusketBall var8 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) -var7, damage);
 
+
             if (var7 == 1.0F)
             {
             }
@@ -111,6 +108,13 @@ public boolean shotgun;
 
             if (!par2World.isRemote)
             {
+                
+                if (shotgun) {
+                	for (int i = 1; i < 7; i++) {
+                		EntityMusketBall var12 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) -var7, damage);
+                		par2World.spawnEntityInWorld(var12);
+                	}
+                }
                 par2World.spawnEntityInWorld(var8);
                 //par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch + 100.0F;
                 //Minecraft minecraft = Minecraft.getMinecraft();
@@ -119,9 +123,14 @@ public boolean shotgun;
             nbt.setBoolean("loaded", false);
             if (par2World.isRemote)
             {
-            par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (knockback * 3F);
-            par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (knockback * (4F/50F)));
-            par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (knockback * (4F/50F)));
+            float thiskb = this.knockback;
+            boolean crouching = par3EntityPlayer.isSneaking();
+            if (crouching){
+            	thiskb = thiskb/2;
+            }
+            par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
+            par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
+            par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
             }
             
        
@@ -235,15 +244,16 @@ public boolean shotgun;
             return event.result;
         }
 
-        if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
-        {
+       
             par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
-        }
+
     	}
     	else
     	{
-    		par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
-
+    	if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
+    	     {
+    			 par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
+    	     }
     	}
 
         return par1ItemStack;

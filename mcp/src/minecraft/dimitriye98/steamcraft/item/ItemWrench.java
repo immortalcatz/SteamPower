@@ -1,6 +1,6 @@
 package dimitriye98.steamcraft.item;
 
-public class ItemWrench extends ItemBoiler{
+public class ItemWrench extends ItemSteamcraft{
 
 	public ItemWrench(int i) {
 		super(i);
