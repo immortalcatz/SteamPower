@@ -132,7 +132,7 @@ public class SteamCraft {
 			//Tools
 		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
 		pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
-		blunderbuss = (new ItemFirearm(7019, 6.0F, 95,3.5F, 7.5F, true)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
+		blunderbuss = (new ItemFirearm(7019, 25.0F, 95,3.5F, 7.5F, true)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
 		toolWrench = (new ItemWrench(7010)).setIconCoord(6, 0).setItemName("toolWrench").setCreativeTab(CreativeTabs.tabTools);
 		
 			//Armor
