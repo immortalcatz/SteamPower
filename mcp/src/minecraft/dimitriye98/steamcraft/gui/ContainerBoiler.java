@@ -7,14 +7,14 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.tileentity.TileEntityFurnace;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dimitriye98.steamcraft.recipes.ForgeRecipes;
 import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 
-public class ContainerBoiler extends Container implements ILiquidTank
+public class ContainerBoiler extends Container
 {
     private TileEntityBoiler furnace;
     private int lastCookTime = 0;
@@ -189,34 +189,4 @@ public class ContainerBoiler extends Container implements ILiquidTank
 
         return var3;
     }
-
-	@Override
-	public LiquidStack getLiquid() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getCapacity() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int fill(LiquidStack resource, boolean doFill) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public LiquidStack drain(int maxDrain, boolean doDrain) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getTankPressure() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 }
