@@ -122,10 +122,11 @@ public class SteamCraft {
 		ingotZinc = (new ItemSteamcraft(7001)).setIconCoord(1, 0).setItemName("ingotZinc").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotBrass = (new ItemSteamcraft(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotCopper = (new ItemSteamcraft(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
+		
 		stock = (new ItemSteamcraft(7003).setIconIndex(9).setItemName("gunStock"));
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
-		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(11).setItemName("blunderbussBarrel"));
-		flintlock = (new ItemSteamcraft(7021).setIconIndex(12).setItemName("flintlock"));
+		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(12).setItemName("blunderbussBarrel"));
+		flintlock = (new ItemSteamcraft(7021).setIconIndex(11).setItemName("flintlock"));
 
 			//Tools
 		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
