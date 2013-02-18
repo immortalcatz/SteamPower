@@ -116,7 +116,9 @@ public class SteamCraft
         yourFurnaceActive = new BlockBoiler(151, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("extruder").setRequiresSelfNotify();
 //RegFurnace
         GameRegistry.registerBlock(yourFurnaceIdle, "yourFurnaceIdle");
+        MinecraftForge.setBlockHarvestLevel(yourFurnaceIdle, "pickaxe", 0);
         GameRegistry.registerBlock(yourFurnaceActive, "yourFurnaceActive");
+        MinecraftForge.setBlockHarvestLevel(yourFurnaceActive, "pickaxe", 0);
         LanguageRegistry.addName(yourFurnaceIdle, "YourFurnace Idle");
         GameRegistry.registerBlock(copperOre, "copperOre");
         LanguageRegistry.addName(copperOre, "Copper Ore");

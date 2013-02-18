@@ -228,7 +228,6 @@ public class BlockBoiler extends BlockContainer
 
             if (var7 != null)
             {
-            	par1World.setBlockAndMetadataWithNotify(par2, par3, par4, Block.waterMoving.blockID, 5);
                 for (int var8 = 0; var8 < var7.getSizeInventory(); ++var8)
                 {
                     ItemStack var9 = var7.getStackInSlot(var8);
