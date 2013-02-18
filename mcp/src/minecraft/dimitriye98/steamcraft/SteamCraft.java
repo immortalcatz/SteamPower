@@ -116,13 +116,12 @@ public class SteamCraft {
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
 		
 		//Initialize Items
-		musketBall = (new ItemBoiler(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
+		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
 		itemMech = (new ItemMech(7009)).setIconCoord(4, 0).setItemName("itemMech");
-		musketCartridge = (new ItemBoiler(7007)).setIconCoord(5, 0).setItemName("musketCartridge").setCreativeTab(CreativeTabs.tabCombat);
-		ingotZinc = (new ItemBoiler(7001)).setIconCoord(1, 0).setItemName("ingotZinc").setCreativeTab(CreativeTabs.tabMaterials);
-		ingotBrass = (new ItemBoiler(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
-		ingotCopper = (new ItemBoiler(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
-		
+		musketCartridge = (new ItemSteamcraft(7007)).setIconCoord(5, 0).setItemName("musketCartridge").setCreativeTab(CreativeTabs.tabCombat);
+		ingotZinc = (new ItemSteamcraft(7001)).setIconCoord(1, 0).setItemName("ingotZinc").setCreativeTab(CreativeTabs.tabMaterials);
+		ingotBrass = (new ItemSteamcraft(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
+		ingotCopper = (new ItemSteamcraft(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
 		stock = (new ItemSteamcraft(7003).setIconIndex(9).setItemName("gunStock"));
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
 		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(11).setItemName("blunderbussBarrel"));
@@ -215,6 +214,10 @@ public class SteamCraft {
 		LanguageRegistry.addName(itemMech, "Mech");
 		LanguageRegistry.addName(musketCartridge, "Musket Cartridge");
 		LanguageRegistry.addName(toolWrench, "Brass Wrench");
+		LanguageRegistry.addName(stock, "Gun Stock");
+		LanguageRegistry.addName(musketBarrel, "Musket Barrel");
+		LanguageRegistry.addName(blunderbussBarrel, "Blunderbuss Barrel");
+		LanguageRegistry.addName(flintlock, "Flintlock");
 		
 		LanguageRegistry.addName(copperHelmet, "Copper Helmet");
 		LanguageRegistry.addName(copperTorso, "Copper Chestplate");

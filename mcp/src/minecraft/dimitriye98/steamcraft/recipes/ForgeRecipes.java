@@ -9,21 +9,21 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class BoilerRecipes
+public class ForgeRecipes
 {
-    private static final BoilerRecipes smeltingBase = new BoilerRecipes();
+    private static final ForgeRecipes smeltingBase = new ForgeRecipes();
 
     private Map smeltingList = new HashMap();
     private Map experienceList = new HashMap();
     private HashMap<List<Integer>, ItemStack> metaSmeltingList = new HashMap<List<Integer>, ItemStack>();
     private HashMap<List<Integer>, Float> metaExperience = new HashMap<List<Integer>, Float>();
 
-    public static final BoilerRecipes smelting()
+    public static final ForgeRecipes smelting()
     {
         return smeltingBase;
     }
 
-    private BoilerRecipes()
+    private ForgeRecipes()
     {
         this.addSmelting(Block.oreIron.blockID, new ItemStack(Item.ingotIron), 0.7F);
         this.addSmelting(Block.oreGold.blockID, new ItemStack(Item.ingotGold), 1.0F);
