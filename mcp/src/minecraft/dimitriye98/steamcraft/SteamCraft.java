@@ -49,8 +49,6 @@ public class SteamCraft
     public static SteamCraft instance;
 
     private GuiHandler guiHandler = new GuiHandler();
-    
-    
 
 //furnace
     public static Block yourFurnaceIdle;
@@ -86,9 +84,6 @@ public class SteamCraft
     
     @SidedProxy(clientSide = "dimitriye98.steamcraft.client.ClientProxy", serverSide = "dimitriye98.steamcraft.client.CommonProxy")
     public static CommonProxy proxy;
-
-    
-    
     
     @cpw.mods.fml.common.Mod.PreInit
     public void PreInit(FMLPreInitializationEvent event)
