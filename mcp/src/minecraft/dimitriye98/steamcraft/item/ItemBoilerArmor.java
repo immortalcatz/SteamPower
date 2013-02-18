@@ -1,5 +1,7 @@
 package dimitriye98.steamcraft.item;
 
+import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.client.ClientProxy;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -36,7 +38,7 @@ public class ItemBoilerArmor extends ItemArmor implements IArmorTextureProvider{
 	
     public String getTextureFile()
     {
-        return "/steamcraft/resources/items.png";
+        return SteamCraft.ITEMS_PNG;
     }
 
 }

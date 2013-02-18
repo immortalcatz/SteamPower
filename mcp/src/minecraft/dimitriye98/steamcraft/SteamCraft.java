@@ -44,6 +44,7 @@ public class SteamCraft {
 	//Texture Files
 	public static String textureLocation = "/dimitriye98/steamcraft/resources/";
 	public static String ITEMS_PNG = textureLocation+"items.png";
+	public static String BLOCKS_PNG =  textureLocation+"blocks.png";
 	public static String armorLocation = textureLocation+"armor/";
 	
 	//Blocks

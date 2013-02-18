@@ -436,7 +436,7 @@ public class BlockForgePiece extends Block
     @Override
     public String getTextureFile()
     {
-        return CommonProxy.BLOCK_PNG;
+        return SteamCraft.BLOCKS_PNG;
     }
 
     public void onBlockUpdate()

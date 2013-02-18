@@ -479,6 +479,6 @@ public class BlockForgeMain extends BlockContainer
     @Override
     public String getTextureFile()
     {
-        return CommonProxy.BLOCK_PNG;
+        return SteamCraft.BLOCKS_PNG;
     }
 }

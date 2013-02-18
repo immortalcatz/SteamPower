@@ -558,7 +558,7 @@ public class BlockForge extends Block
     @Override
     public String getTextureFile()
     {
-        return CommonProxy.BLOCK_PNG;
+        return SteamCraft.BLOCKS_PNG;
     }
 
     public void updateTick(World par1World, int par2, int par3, int par4, Random par5Random)
