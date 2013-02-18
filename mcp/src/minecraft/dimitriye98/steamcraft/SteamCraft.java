@@ -67,6 +67,10 @@ public class SteamCraft {
 	public static Item ingotZinc;
 	public static Item ingotBrass;
 	public static Item ingotCopper;
+	public static Item stock;
+	public static Item musketBarrel;
+	public static Item blunderbussBarrel;
+	public static Item flintlock;
 	
 		//Tools
 	public static Item musket;
@@ -119,6 +123,11 @@ public class SteamCraft {
 		ingotBrass = (new ItemBoiler(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotCopper = (new ItemBoiler(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
 		
+		stock = (new ItemSteamcraft(7003).setIconIndex(9).setItemName("gunStock"));
+		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
+		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(11).setItemName("blunderbussBarrel"));
+		flintlock = (new ItemSteamcraft(7021).setIconIndex(12).setItemName("flintlock"));
+
 			//Tools
 		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
 		pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
