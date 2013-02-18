@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import net.minecraft.item.Item;
 import net.minecraft.src.*;

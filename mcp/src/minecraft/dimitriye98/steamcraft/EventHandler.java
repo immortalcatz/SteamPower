@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerEvent;

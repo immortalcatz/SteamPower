@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

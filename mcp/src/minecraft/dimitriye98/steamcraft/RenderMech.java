@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBoat;

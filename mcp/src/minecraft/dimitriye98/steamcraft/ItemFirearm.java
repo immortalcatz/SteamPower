@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;

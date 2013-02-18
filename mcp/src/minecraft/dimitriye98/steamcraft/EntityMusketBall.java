@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import java.util.List;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 public class ItemWrench extends ItemBoiler{
 

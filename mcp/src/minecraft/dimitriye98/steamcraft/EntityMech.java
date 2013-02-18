@@ -1,4 +1,4 @@
-package boiler;
+package dimitriye98.steamcraft;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
