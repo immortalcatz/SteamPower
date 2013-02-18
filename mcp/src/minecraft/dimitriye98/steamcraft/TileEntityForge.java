@@ -358,7 +358,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
                 return 300;
             }
 
-            if (var2 instanceof ItemSword && ((ItemSword) var2).func_77825_f().equals("WOOD"))
+            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
             {
                 return 300;
             }

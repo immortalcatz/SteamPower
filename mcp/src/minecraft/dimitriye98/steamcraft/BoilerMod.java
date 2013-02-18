@@ -95,8 +95,8 @@ public class BoilerMod
         brassLegs = (new ItemBoilerArmor(7017,materialBrass, 4, 2, true, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
         brassBoots = (new ItemBoilerArmor(7018, materialBrass, 4, 3, false, "/boiler/armor/brass_1.png", "/boiler/armor/brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
         
-    	EntityRegistry.registerModEntity(boiler.EntityMusketBall.class, "MusketBall", 0, BoilerMod.instance, 100, 1, true);
-    	EntityRegistry.registerModEntity(boiler.EntityMech.class, "Mech", 1, BoilerMod.instance, 100, 5, true);
+    	EntityRegistry.registerModEntity(dimitriye98.steamcraft.EntityMusketBall.class, "MusketBall", 0, BoilerMod.instance, 100, 1, true);
+    	EntityRegistry.registerModEntity(dimitriye98.steamcraft.EntityMech.class, "Mech", 1, BoilerMod.instance, 100, 5, true);
         GameRegistry.registerWorldGenerator(new WorldGenBoiler());
 //Furnaces
         yourFurnaceIdle = new BlockBoiler(150, false).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("extruder").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabMisc);

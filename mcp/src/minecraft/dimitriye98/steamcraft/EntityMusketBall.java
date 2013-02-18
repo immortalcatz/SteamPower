@@ -303,7 +303,7 @@ public class EntityMusketBall extends Entity implements IProjectile
 
                             if (this.shootingEntity != null)
                             {
-                                EnchantmentThorns.func_92044_a(this.shootingEntity, var24, this.rand);
+                                EnchantmentThorns.func_92096_a(this.shootingEntity, var24, this.rand);
                             }
 
                             if (this.shootingEntity != null && var4.entityHit != this.shootingEntity && var4.entityHit instanceof EntityPlayer && this.shootingEntity instanceof EntityPlayerMP)
