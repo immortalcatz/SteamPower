@@ -201,6 +201,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(ingotBrass, "Brass Ingot");
 		LanguageRegistry.addName(musket, "Flintlock Musket");
 		LanguageRegistry.addName(pistol, "Flintlock Pistol");
+		LanguageRegistry.addName(blunderbuss, "Blunderbuss");
 		LanguageRegistry.addName(musketBall, "Musket Ball");
 		LanguageRegistry.addName(itemMech, "Mech");
 		LanguageRegistry.addName(musketCartridge, "Musket Cartridge");
