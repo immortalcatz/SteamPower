@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import cpw.mods.fml.common.IWorldGenerator;
-import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.common.SteamCraft;
 
 public class WorldGenBoiler implements IWorldGenerator   //Implements IWorldGenerator
 {

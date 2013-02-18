@@ -5,8 +5,8 @@ import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.SteamCraft;
 import dimitriye98.steamcraft.common.CommonProxy;
+import dimitriye98.steamcraft.common.SteamCraft;
 import dimitriye98.steamcraft.tileentity.TileEntityForge;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;

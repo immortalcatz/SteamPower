@@ -19,8 +19,8 @@ import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.SteamCraft;
 import dimitriye98.steamcraft.block.BlockForgeMain;
+import dimitriye98.steamcraft.common.SteamCraft;
 
 public class TileEntityForge extends TileEntity implements IInventory, ISidedInventory
 {

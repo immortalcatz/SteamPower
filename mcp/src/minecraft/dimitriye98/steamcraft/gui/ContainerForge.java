@@ -10,7 +10,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.common.SteamCraft;
 import dimitriye98.steamcraft.tileentity.TileEntityForge;
 
 public class ContainerForge extends Container

@@ -2,7 +2,7 @@ package dimitriye98.steamcraft.item;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.common.SteamCraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;

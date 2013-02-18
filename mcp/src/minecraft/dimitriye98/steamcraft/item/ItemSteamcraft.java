@@ -1,6 +1,6 @@
 package dimitriye98.steamcraft.item;
 
-import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.common.SteamCraft;
 import net.minecraft.item.Item;
 import net.minecraft.src.*;
 

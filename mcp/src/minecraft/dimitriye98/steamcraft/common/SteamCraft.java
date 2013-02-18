@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft;
+package dimitriye98.steamcraft.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,7 +25,6 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-import dimitriye98.steamcraft.common.CommonProxy;
 import dimitriye98.steamcraft.gui.GuiHandler;
 import dimitriye98.steamcraft.block.*;
 import dimitriye98.steamcraft.item.*;
@@ -59,6 +58,7 @@ public class SteamCraft {
 	public static Block blockForge;
 	public static Block blockForgeOn;
 	public static Block blockForgeMain;
+	public static Block steam;
 	
 	//Items
 	public static Item musketBall;
@@ -114,7 +114,8 @@ public class SteamCraft {
 		blockForgeMain = new BlockForgeMain(159, 4, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("blockForgeMain").setRequiresSelfNotify();
 		copperOre = new BlockSteamcraftOre(152, 0).setHardness(2.75F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("copperOre").setCreativeTab(CreativeTabs.tabBlock);
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
-		
+		steam = new BlockSteam(160).setBlockName("blockSteam");
+
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
 		itemMech = (new ItemMech(7009)).setIconCoord(4, 0).setItemName("itemMech");

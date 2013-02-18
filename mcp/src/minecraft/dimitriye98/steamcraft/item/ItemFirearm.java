@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
-import dimitriye98.steamcraft.SteamCraft;
 import dimitriye98.steamcraft.client.ClientProxy;
+import dimitriye98.steamcraft.common.SteamCraft;
 import dimitriye98.steamcraft.entity.EntityMusketBall;
 
 public class ItemFirearm extends Item

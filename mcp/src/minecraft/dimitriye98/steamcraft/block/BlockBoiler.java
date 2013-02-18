@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.SteamCraft;
+import dimitriye98.steamcraft.common.SteamCraft;
 import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 
 public class BlockBoiler extends BlockContainer
