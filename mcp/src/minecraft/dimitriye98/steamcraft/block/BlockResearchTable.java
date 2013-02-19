@@ -35,7 +35,7 @@ public class BlockResearchTable extends BlockContainer
 
     public int idDropped(int par1, Random par2Random, int par3)
     {
-        return SteamCraft.yourFurnaceIdle.blockID;
+        return SteamCraft.researchTable.blockID;
     }
 
     public void onBlockAdded(World par1World, int par2, int par3, int par4)
