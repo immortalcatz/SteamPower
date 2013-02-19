@@ -147,8 +147,7 @@ public class BlockBoiler extends BlockContainer {
 		}
 	}
 
-	public static void updateFurnaceBlockState(boolean par0, World par1World,
-			int par2, int par3, int par4) {
+	public static void updateFurnaceBlockState(boolean par0, World par1World, int par2, int par3, int par4) {
 		int var5 = par1World.getBlockMetadata(par2, par3, par4);
 		TileEntity var6 = par1World.getBlockTileEntity(par2, par3, par4);
 		keepBoilerInventory = true;

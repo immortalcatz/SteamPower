@@ -1,7 +1,6 @@
 package dimitriye98.steamcraft.tileentity;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockFurnace;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -22,6 +21,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import cpw.mods.fml.common.registry.GameRegistry;
+import dimitriye98.steamcraft.block.BlockBoiler;
 
 public class TileEntityBoiler extends TileEntity implements ITankContainer, IInventory, ISidedInventory {
 
@@ -241,7 +241,7 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
             if (var1 != this.boilerBurnTime > 0)
             {
                 var2 = true;
-                BlockFurnace.updateFurnaceBlockState(this.boilerBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                BlockBoiler.updateFurnaceBlockState(this.boilerBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
             }
         }
 
