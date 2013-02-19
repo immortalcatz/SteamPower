@@ -40,7 +40,7 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
 	
 	@Override
 	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
-		return 0;
+		return waterTank.fill(resource, doFill);
 	}
 
 	@Override
@@ -192,7 +192,16 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
         
         if (this.boilerItemStacks[1] != null) {
         	LiquidStack water = LiquidContainerRegistry.getLiquidForFilledItem(this.boilerItemStacks[1]);
-        	if (water.isLiquidEqual(LiquidRegistry.)));
+        	if (water.isLiquidEqual(new LiquidStack(Item.bucketWater, 1000))) {
+        		if (fill(ForgeDirection.UNKNOWN, water, false) == water.amount) {
+        			fill(ForgeDirection.UNKNOWN, water, true);
+        			this.boilerItemStacks[1].stackSize--;
+                    if (this.boilerItemStacks[1].stackSize == 0)
+                    {
+                        this.boilerItemStacks[1] = this.boilerItemStacks[1].getItem().getContainerItemStack(boilerItemStacks[1]);
+                    }
+        		}
+        	}
         }
 
         if (this.boilerBurnTime > 0)
@@ -204,19 +213,19 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
         {
             if (this.boilerBurnTime == 0 && this.canBoil())
             {
-                this.currentItemBurnTime = this.boilerBurnTime = getItemBurnTime(this.boilerItemStacks[1]);
+                this.currentItemBurnTime = this.boilerBurnTime = getItemBurnTime(this.boilerItemStacks[0]);
 
                 if (this.boilerBurnTime > 0)
                 {
                     var2 = true;
 
-                    if (this.boilerItemStacks[1] != null)
+                    if (this.boilerItemStacks[0] != null)
                     {
-                        --this.boilerItemStacks[1].stackSize;
+                        --this.boilerItemStacks[0].stackSize;
 
-                        if (this.boilerItemStacks[1].stackSize == 0)
+                        if (this.boilerItemStacks[0].stackSize == 0)
                         {
-                            this.boilerItemStacks[1] = this.boilerItemStacks[1].getItem().getContainerItemStack(boilerItemStacks[1]);
+                            this.boilerItemStacks[0] = this.boilerItemStacks[0].getItem().getContainerItemStack(boilerItemStacks[0]);
                         }
                     }
                 }
