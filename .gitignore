@@ -13,4 +13,5 @@ mcp/*
 mcp/src/minecraft/*
 !mcp/src/minecraft/dimitriye98
 !mcp/src/minecraft/buildcraft
-!mcp/src/minecraft/buildcraft_resources
+!mcp/src/minecraft/gfx
+!mcp/src/minecraft/lang
