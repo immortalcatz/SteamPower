@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -21,11 +20,11 @@ import dimitriye98.steamcraft.common.SteamCraft;
 import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 
 public class BlockBoiler extends BlockContainer {
-	private Random furnaceRand = new Random();
+	private Random boilerRand = new Random();
 
 	private final boolean isActive;
 
-	private static boolean keepFurnaceInventory = false;
+	private static boolean keepBoilerInventory = false;
 
 	public BlockBoiler(int par1, boolean par2) {
 		super(par1, Material.rock);
@@ -134,17 +133,14 @@ public class BlockBoiler extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World par1World, int par2, int par3,
-			int par4, EntityPlayer par5EntityPlayer, int par6, float par7,
-			float par8, float par9) {
+	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9) {
 		if (par1World.isRemote) {
 			return true;
 		} else {
-			TileEntityFurnace var10 = (TileEntityFurnace) par1World
-					.getBlockTileEntity(par2, par3, par4);
+			TileEntityBoiler var10 = (TileEntityBoiler) par1World.getBlockTileEntity(par2, par3, par4);
 
 			if (var10 != null) {
-				par5EntityPlayer.displayGUIFurnace(var10);
+				par5EntityPlayer.openGui(SteamCraft.instance, 1, par1World, par2, par3, par4);
 			}
 
 			return true;
@@ -155,7 +151,7 @@ public class BlockBoiler extends BlockContainer {
 			int par2, int par3, int par4) {
 		int var5 = par1World.getBlockMetadata(par2, par3, par4);
 		TileEntity var6 = par1World.getBlockTileEntity(par2, par3, par4);
-		keepFurnaceInventory = true;
+		keepBoilerInventory = true;
 
 		if (par0) {
 			par1World.setBlockWithNotify(par2, par3, par4,
@@ -165,7 +161,7 @@ public class BlockBoiler extends BlockContainer {
 					SteamCraft.yourFurnaceIdle.blockID);
 		}
 
-		keepFurnaceInventory = false;
+		keepBoilerInventory = false;
 		par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
 
 		if (var6 != null) {
@@ -182,8 +178,7 @@ public class BlockBoiler extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
 			EntityLiving par5EntityLiving) {
-		int var6 = MathHelper
-				.floor_double(par5EntityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+		int var6 = MathHelper.floor_double(par5EntityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
 		if (var6 == 0) {
 			par1World.setBlockMetadataWithNotify(par2, par3, par4, 2);
@@ -203,47 +198,37 @@ public class BlockBoiler extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World par1World, int par2, int par3, int par4,
-			int par5, int par6) {
-		if (!keepFurnaceInventory) {
-			TileEntityBoiler var7 = (TileEntityBoiler) par1World
-					.getBlockTileEntity(par2, par3, par4);
+	public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6) {
+		if (!keepBoilerInventory) {
+			TileEntityBoiler var7 = (TileEntityBoiler) par1World.getBlockTileEntity(par2, par3, par4);
 
 			if (var7 != null) {
 				for (int var8 = 0; var8 < var7.getSizeInventory(); ++var8) {
 					ItemStack var9 = var7.getStackInSlot(var8);
 
 					if (var9 != null) {
-						float var10 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
-						float var11 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
-						float var12 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
+						float var10 = this.boilerRand.nextFloat() * 0.8F + 0.1F;
+						float var11 = this.boilerRand.nextFloat() * 0.8F + 0.1F;
+						float var12 = this.boilerRand.nextFloat() * 0.8F + 0.1F;
 
 						while (var9.stackSize > 0) {
-							int var13 = this.furnaceRand.nextInt(21) + 10;
+							int var13 = this.boilerRand.nextInt(21) + 10;
 
 							if (var13 > var9.stackSize) {
 								var13 = var9.stackSize;
 							}
 
 							var9.stackSize -= var13;
-							EntityItem var14 = new EntityItem(par1World, par2
-									+ var10, par3 + var11, par4 + var12,
-									new ItemStack(var9.itemID, var13,
-											var9.getItemDamage()));
+							EntityItem var14 = new EntityItem(par1World, par2 + var10, par3 + var11, par4 + var12, new ItemStack(var9.itemID, var13, var9.getItemDamage()));
 
 							if (var9.hasTagCompound()) {
-								var14.getEntityItem().setTagCompound(
-										(NBTTagCompound) var9.getTagCompound()
-												.copy());
+								var14.getEntityItem().setTagCompound((NBTTagCompound) var9.getTagCompound().copy());
 							}
 
 							float var15 = 0.05F;
-							var14.motionX = (float) this.furnaceRand
-									.nextGaussian() * var15;
-							var14.motionY = (float) this.furnaceRand
-									.nextGaussian() * var15 + 0.2F;
-							var14.motionZ = (float) this.furnaceRand
-									.nextGaussian() * var15;
+							var14.motionX = (float) this.boilerRand.nextGaussian() * var15;
+							var14.motionY = (float) this.boilerRand.nextGaussian() * var15 + 0.2F;
+							var14.motionZ = (float) this.boilerRand.nextGaussian() * var15;
 							par1World.spawnEntityInWorld(var14);
 						}
 					}
