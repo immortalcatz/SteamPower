@@ -1,5 +1,7 @@
 package dimitriye98.steamcraft.item;
 
+import java.util.ArrayList;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,6 +9,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -236,6 +239,11 @@ public boolean shotgun;
     		NBTTagCompound nbt = par1ItemStack.getTagCompound();
     		nbt.setBoolean("loaded", false);
     		nbt.setBoolean("done", false);
+    		NBTTagCompound tinkers = new NBTTagCompound();
+    		tinkers.setBoolean("piercing", false);
+    		tinkers.setBoolean("incendiary", false);
+    		tinkers.setBoolean("explosive", false);
+    		nbt.setCompoundTag("tinkers", tinkers);
     	}
     	NBTTagCompound nbt = par1ItemStack.getTagCompound();
     	if ( nbt.getBoolean("loaded")){

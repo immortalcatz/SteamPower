@@ -1,6 +1,5 @@
 package dimitriye98.steamcraft.gui;
 
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.StatCollector;
@@ -9,11 +8,11 @@ import org.lwjgl.opengl.GL11;
 
 import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 
-public class GuiBoiler extends GuiContainer
+public class GuiResearchTable extends GuiContainer
 {
     private TileEntityBoiler furnaceInventory;
 
-    public GuiBoiler(InventoryPlayer par1InventoryPlayer, TileEntityBoiler par2TileEntityBoiler)
+    public GuiResearchTable(InventoryPlayer par1InventoryPlayer, TileEntityBoiler par2TileEntityBoiler)
     {
         super(new ContainerBoiler(par1InventoryPlayer, par2TileEntityBoiler));
         this.furnaceInventory = par2TileEntityBoiler;
@@ -25,7 +24,6 @@ public class GuiBoiler extends GuiContainer
         this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
         this.fontRenderer.drawString(Integer.toString(furnaceInventory.steam), 90, 12, 4210752);
         this.fontRenderer.drawString(Integer.toString(furnaceInventory.waterLoaded), 90, 18, 4210752);
-       
     }
 
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
@@ -38,9 +36,6 @@ public class GuiBoiler extends GuiContainer
         this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
         int var7;
         int var8;
-        
-        controlList.clear();
-        controlList.add(new GuiButton(1, var5, var6,100,20, "Hello Wrold"));
 
         if (this.furnaceInventory.isBurning())
         {

@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 import dimitriye98.steamcraft.tileentity.TileEntityForge;
+import dimitriye98.steamcraft.tileentity.TileEntityResearchTable;
 
 public class GuiHandler implements IGuiHandler
 {
@@ -21,6 +22,8 @@ public class GuiHandler implements IGuiHandler
                 return new ContainerForge(player.inventory, (TileEntityForge) tile_entity);
             case 1:
                 return new ContainerBoiler(player.inventory, (TileEntityBoiler) tile_entity);
+            case 2:
+                return new ContainerResearchTable(player.inventory, (TileEntityResearchTable) tile_entity);
         }
 
         return null;
@@ -38,6 +41,8 @@ public class GuiHandler implements IGuiHandler
                 return new GuiForge(player.inventory, (TileEntityForge) tile_entity);
             case 1:
                 return new GuiBoiler(player.inventory, (TileEntityBoiler) tile_entity);
+            case 2:
+                return new GuiResearchTable(player.inventory, (TileEntityResearchTable) tile_entity);
         }
 
         return null;

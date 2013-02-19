@@ -59,6 +59,7 @@ public class SteamCraft {
 	public static Block blockForgeOn;
 	public static Block blockForgeMain;
 	public static Block steam;
+	public static Block researchTable;
 	
 	//Items
 	public static Item musketBall;
@@ -104,7 +105,9 @@ public class SteamCraft {
 	public void load(FMLInitializationEvent event) {
 		//Initialize Blocks
 		yourFurnaceIdle = new BlockBoiler(150, false).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("extruder").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabMisc);
+		
 		yourFurnaceActive = new BlockBoiler(151, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("extruder").setRequiresSelfNotify();
+		researchTable = new BlockResearchTable(169).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
 		blockCopper = new BlockSteamcraftStorage(154, 16).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockCopper").setCreativeTab(CreativeTabs.tabBlock);
 		blockZinc = new BlockSteamcraftStorage(156, 17).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockZinc").setCreativeTab(CreativeTabs.tabBlock);
 		blockBrass = new BlockSteamcraftStorage(155, 18).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockZinc").setCreativeTab(CreativeTabs.tabBlock);
@@ -160,6 +163,9 @@ public class SteamCraft {
 		GameRegistry.registerBlock(yourFurnaceActive, "yourFurnaceActive"); //Active Boiler
 		MinecraftForge.setBlockHarvestLevel(yourFurnaceActive, "pickaxe", 0);
 		
+		GameRegistry.registerBlock(researchTable, "researchTable"); //Inactive Boiler
+		MinecraftForge.setBlockHarvestLevel(researchTable, "axe", 0);
+		
 		GameRegistry.registerBlock(copperOre, "copperOre"); //Copper Ore
 		MinecraftForge.setBlockHarvestLevel(copperOre, "pickaxe", 1);
 		
@@ -204,6 +210,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(blockForge, "blockForge");
 		LanguageRegistry.addName(blockForgeOn, "blockForgeOn");
 		LanguageRegistry.addName(blockForgeMain, "blockForgeMain");
+		LanguageRegistry.addName(researchTable, "Allmighty Table of Research");
 		
 				//Items
 		LanguageRegistry.addName(ingotCopper, "Copper Ingot");
