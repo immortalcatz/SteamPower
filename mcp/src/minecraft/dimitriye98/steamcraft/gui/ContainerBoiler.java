@@ -7,8 +7,8 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.item.crafting.boilerRecipes;
+import net.minecraft.tileentity.TileEntityboiler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dimitriye98.steamcraft.recipes.ForgeRecipes;
@@ -16,14 +16,14 @@ import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
 
 public class ContainerBoiler extends Container
 {
-    private TileEntityBoiler furnace;
+    private TileEntityBoiler boiler;
     private int lastCookTime = 0;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
 
     public ContainerBoiler(InventoryPlayer par1InventoryPlayer, TileEntityBoiler par2TileEntityBoiler)
     {
-        this.furnace = par2TileEntityBoiler;
+        this.boiler = par2TileEntityBoiler;
         this.addSlotToContainer(new Slot(par2TileEntityBoiler, 0, 55, 17));
         this.addSlotToContainer(new Slot(par2TileEntityBoiler, 1, 55, 53));
         this.addSlotToContainer(new SlotWater(par1InventoryPlayer.player, par2TileEntityBoiler, 2, 105, 53));
@@ -46,9 +46,8 @@ public class ContainerBoiler extends Container
     public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
-        par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
-        par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
-        par1ICrafting.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
+        par1ICrafting.sendProgressBarUpdate(this, 0, this.boiler.boilerBurnTime);
+        par1ICrafting.sendProgressBarUpdate(this, 1, this.boiler.currentItemBurnTime);
     }
 
     public void detectAndSendChanges()
@@ -59,25 +58,25 @@ public class ContainerBoiler extends Container
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
 
-            if (this.lastCookTime != this.furnace.furnaceCookTime)
+            if (this.lastCookTime != this.boiler.boilerCookTime)
             {
-                var2.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
+                var2.sendProgressBarUpdate(this, 0, this.boiler.boilerCookTime);
             }
 
-            if (this.lastBurnTime != this.furnace.furnaceBurnTime)
+            if (this.lastBurnTime != this.boiler.boilerBurnTime)
             {
-                var2.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
+                var2.sendProgressBarUpdate(this, 1, this.boiler.boilerBurnTime);
             }
 
-            if (this.lastItemBurnTime != this.furnace.currentItemBurnTime)
+            if (this.lastItemBurnTime != this.boiler.currentItemBurnTime)
             {
-                var2.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
+                var2.sendProgressBarUpdate(this, 2, this.boiler.currentItemBurnTime);
             }
         }
 
-        this.lastCookTime = this.furnace.furnaceCookTime;
-        this.lastBurnTime = this.furnace.furnaceBurnTime;
-        this.lastItemBurnTime = this.furnace.currentItemBurnTime;
+        this.lastCookTime = this.boiler.boilerCookTime;
+        this.lastBurnTime = this.boiler.boilerBurnTime;
+        this.lastItemBurnTime = this.boiler.currentItemBurnTime;
     }
 
     @SideOnly(Side.CLIENT)
@@ -85,23 +84,23 @@ public class ContainerBoiler extends Container
     {
         if (par1 == 0)
         {
-            this.furnace.furnaceCookTime = par2;
+            this.boiler.boilerCookTime = par2;
         }
 
         if (par1 == 1)
         {
-            this.furnace.furnaceBurnTime = par2;
+            this.boiler.boilerBurnTime = par2;
         }
 
         if (par1 == 2)
         {
-            this.furnace.currentItemBurnTime = par2;
+            this.boiler.currentItemBurnTime = par2;
         }
     }
 
     public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {
-        return this.furnace.isUseableByPlayer(par1EntityPlayer);
+        return this.boiler.isUseableByPlayer(par1EntityPlayer);
     }
 
     public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
@@ -142,14 +141,14 @@ public class ContainerBoiler extends Container
                 else if (var5.itemID == Item.bucketWater.itemID)
                 {
                 	
-                		if(furnace.waterLoaded < 30) {
+                		if(boiler.waterLoaded < 30) {
                             if (!this.mergeItemStack(new ItemStack(Item.bucketEmpty, 1), 2, 3, true))
                             {
                                 return null;
                             }
                 			else
                 			{
-                			furnace.waterLoaded++;
+                			boiler.waterLoaded++;
                 			var5.stackSize--;
                 			
                 			}
