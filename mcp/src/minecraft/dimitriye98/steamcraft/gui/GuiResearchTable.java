@@ -18,7 +18,8 @@ public class GuiResearchTable extends GuiContainer
         this.furnaceInventory = par2TileEntityBoiler;
     }
 
-    protected void drawGuiContainerForegroundLayer(int par1, int par2)
+    @Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
         this.fontRenderer.drawString(StatCollector.translateToLocal("Boiler"), 60, 6, 4210752);
         this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
@@ -26,7 +27,8 @@ public class GuiResearchTable extends GuiContainer
         this.fontRenderer.drawString(Integer.toString(furnaceInventory.waterLoaded), 90, 18, 4210752);
     }
 
-    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
+    @Override
+	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
         int var4 = this.mc.renderEngine.getTexture("/dimitriye98/steamcraft/resources/gui/boiler.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
