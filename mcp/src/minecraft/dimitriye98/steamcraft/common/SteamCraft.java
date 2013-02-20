@@ -271,7 +271,7 @@ public class SteamCraft {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbussBarrel, 1), "III", "III", 'I', "ingotBrass"));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.flintlock, 1), "F  ", "I  ", "III", 'I', Item.ingotIron, 'F', Item.flintAndSteel));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", "  S", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", " P ", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'P', "plankWood"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.pistol, 1), " BF", "  P", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'P', "plankWood"));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbuss, 1), "B  ", " BF", "  S", 'B', SteamCraft.blunderbussBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
 	}
 	
