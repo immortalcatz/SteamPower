@@ -102,44 +102,35 @@ public class ContainerBoiler extends Container
             ItemStack item = slot.getStack();
             itemOutput = item.copy();
 
-            if (slotIndex == 2)
+            if (slotIndex != 0 && slotIndex != 1)
             {
-                if (!this.mergeItemStack(item, 3, 39, true))
-                {
-                    return null;
-                }
-
-                slot.onSlotChange(item, itemOutput);
-            }
-            else if (slotIndex != 1 && slotIndex != 0)
-            {
-                if (FurnaceRecipes.smelting().getSmeltingResult(item) != null)
+                if (TileEntityBoiler.isItemWaterContainer(item))
                 {
                     if (!this.mergeItemStack(item, 0, 1, false))
                     {
                         return null;
                     }
                 }
-                else if (TileEntityFurnace.isItemFuel(item))
+                else if (TileEntityBoiler.isItemFuel(item))
                 {
                     if (!this.mergeItemStack(item, 1, 2, false))
                     {
                         return null;
                     }
                 }
-                else if (slotIndex >= 3 && slotIndex < 30)
+                else if (slotIndex >= 2 && slotIndex < 29)
                 {
-                    if (!this.mergeItemStack(item, 30, 39, false))
+                    if (!this.mergeItemStack(item, 29, 38, false))
                     {
                         return null;
                     }
                 }
-                else if (slotIndex >= 30 && slotIndex < 39 && !this.mergeItemStack(item, 3, 30, false))
+                else if (slotIndex >= 29 && slotIndex < 38 && !this.mergeItemStack(item, 2, 29, false))
                 {
                     return null;
                 }
             }
-            else if (!this.mergeItemStack(item, 3, 39, false))
+            else if (!this.mergeItemStack(item, 2, 38, false))
             {
                 return null;
             }
