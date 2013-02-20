@@ -18,7 +18,7 @@ public class ContainerBoiler extends Container
 	private TileEntityBoiler boiler;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
-	
+
     public ContainerBoiler(InventoryPlayer playerInventory, TileEntityBoiler boilerEntity)
     {
         this.boiler = boilerEntity;
@@ -38,7 +38,7 @@ public class ContainerBoiler extends Container
             this.addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 142));
         }
     }
-    
+
     @Override
     public void addCraftingToCrafters(ICrafting crafter)
     {
@@ -46,7 +46,7 @@ public class ContainerBoiler extends Container
         crafter.sendProgressBarUpdate(this, 0, this.boiler.boilerBurnTime);
         crafter.sendProgressBarUpdate(this, 1, this.boiler.currentItemBurnTime);
     }
-    
+
     @Override
     public void detectAndSendChanges()
     {
@@ -70,27 +70,27 @@ public class ContainerBoiler extends Container
         this.lastBurnTime = this.boiler.boilerBurnTime;
         this.lastItemBurnTime = this.boiler.currentItemBurnTime;
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int key, int value)
     {
-        if (key == 1)
+        if (key == 0)
         {
             this.boiler.boilerBurnTime = value;
         }
 
-        if (key == 2)
+        if (key == 1)
         {
             this.boiler.currentItemBurnTime = value;
         }
     }
-    
+
 	@Override
 	public boolean canInteractWith(EntityPlayer yoursTruly) {
         return this.boiler.isUseableByPlayer(yoursTruly);
 	}
-	
+
 	@Override
     public ItemStack transferStackInSlot(EntityPlayer yoursTruly, int slotIndex)
     {
