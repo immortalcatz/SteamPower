@@ -40,7 +40,7 @@ public class GuiBoiler extends GuiContainer {
 
 		if (this.boilerEntity.isBurning()) {
 			var7 = this.boilerEntity.getBurnTimeRemainingScaled(12);
-			this.drawTexturedModalRect(var5 + 35, var6 + 25 + 12/* - var7*/, 176, 12/* - var7*/, 14, var7 + 2);
+            this.drawTexturedModalRect(var5 + 35, var6 + 25 + 12 - var7, 176, 12 - var7, 14, var7 + 2);
 		}
 
 		//displayGauge(var5, var6, 19, 152, boilerEntity.getScaledWater(58), Block.waterStill.blockID, 0);
