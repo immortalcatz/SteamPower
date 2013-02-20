@@ -18,6 +18,7 @@ public class ContainerBoiler extends Container
 	private TileEntityBoiler boiler;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
+	private int lastWaterVolume = 0;
 
     public ContainerBoiler(InventoryPlayer playerInventory, TileEntityBoiler boilerEntity)
     {
@@ -45,6 +46,7 @@ public class ContainerBoiler extends Container
         super.addCraftingToCrafters(crafter);
         crafter.sendProgressBarUpdate(this, 0, this.boiler.boilerBurnTime);
         crafter.sendProgressBarUpdate(this, 1, this.boiler.currentItemBurnTime);
+        crafter.sendProgressBarUpdate(this, 3, this.boiler.getWater());
     }
 
     @Override
@@ -65,10 +67,15 @@ public class ContainerBoiler extends Container
             {
                 currentCrafter.sendProgressBarUpdate(this, 1, this.boiler.currentItemBurnTime);
             }
+
+            if (this.lastWaterVolume  != this.boiler.getWater()) {
+            	currentCrafter.sendProgressBarUpdate(this, 2, this.boiler.getWater());
+            }
         }
 
         this.lastBurnTime = this.boiler.boilerBurnTime;
         this.lastItemBurnTime = this.boiler.currentItemBurnTime;
+        this.lastWaterVolume = this.boiler.getWater();
     }
 
     @Override
@@ -83,6 +90,10 @@ public class ContainerBoiler extends Container
         if (key == 1)
         {
             this.boiler.currentItemBurnTime = value;
+        }
+
+        if (key == 2) {
+        	this.boiler.setWaterForGUI(value);
         }
     }
 
@@ -104,14 +115,14 @@ public class ContainerBoiler extends Container
 
             if (slotIndex != 0 && slotIndex != 1)
             {
-                if (TileEntityBoiler.isItemWaterContainer(item))
+                if (TileEntityBoiler.isItemFuel(item))
                 {
                     if (!this.mergeItemStack(item, 0, 1, false))
                     {
                         return null;
                     }
                 }
-                else if (TileEntityBoiler.isItemFuel(item))
+                else if (TileEntityBoiler.isItemWaterContainer(item))
                 {
                     if (!this.mergeItemStack(item, 1, 2, false))
                     {

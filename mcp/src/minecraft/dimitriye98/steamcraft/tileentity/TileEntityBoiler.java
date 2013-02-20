@@ -21,6 +21,8 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.liquids.LiquidTank;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import dimitriye98.steamcraft.block.BlockBoiler;
 
 public class TileEntityBoiler extends TileEntity implements ITankContainer, IInventory, ISidedInventory {
@@ -84,7 +86,7 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
     }
 
     public int getScaledWater(int max) {
-    	return (waterTank.getLiquid() != null) ? (max*(waterTank.getLiquid().amount/waterTank.getCapacity())) : 0;
+    	return (waterTank.getLiquid() != null) ? (int)(max*((float)waterTank.getLiquid().amount/(float)waterTank.getCapacity())) : 0;
     }
 
     @Override
@@ -150,6 +152,7 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
 
         this.boilerBurnTime = data.getShort("BurnTime");
         this.currentItemBurnTime = data.getShort("ItemBurnTime");
+        this.waterTank.setLiquid(new LiquidStack(tankType.itemID, data.getShort("WaterAmount")));
     }
 
     @Override
@@ -158,6 +161,7 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
         super.writeToNBT(data);
         data.setShort("BurnTime", (short)this.boilerBurnTime);
         data.setShort("ItemBurnTime", (short)this.currentItemBurnTime);
+        data.setShort("WaterAmount", (short)this.waterTank.getLiquid().amount);
         NBTTagList inventoryTag = new NBTTagList();
 
         for (int slot = 0; slot < this.boilerItemStacks.length; ++slot)
@@ -191,6 +195,17 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
 
     public int getWater() {
     	return (this.waterTank.getLiquid() != null) ? (this.waterTank.getLiquid().amount) : 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setWaterForGUI(int newWater) {
+    	LiquidStack temp = tankType.copy();
+    	temp.amount = newWater;
+    	this.waterTank.setLiquid(temp);
+    }
+
+    public int getWaterID() {
+    	return this.tankType.itemID;
     }
 
     @Override
