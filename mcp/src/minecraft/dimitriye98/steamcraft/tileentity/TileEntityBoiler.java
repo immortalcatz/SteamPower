@@ -12,167 +12,68 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.liquids.LiquidTank;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dimitriye98.steamcraft.block.BlockBoiler;
 
-public class TileEntityBoiler extends TileEntity implements IInventory, ISidedInventory
-{
-    private ItemStack[] furnaceItemStacks = new ItemStack[3];
+public class TileEntityBoiler extends TileEntity implements ITankContainer, IInventory, ISidedInventory {
 
-    public int furnaceBurnTime = 0;
-    
-    public int waterLoaded = 0;
-    
-    public int steam = 0;
-    
-    public int maxSteam = 250;
+	private LiquidTank waterTank;
+	private static int maxWater = LiquidContainerRegistry.BUCKET_VOLUME * 10;
+	private static LiquidStack tankType = new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME);
 
+	private ItemStack[] boilerItemStacks = new ItemStack[2];
+
+    public int boilerBurnTime = 0;
     public int currentItemBurnTime = 0;
 
-    public int furnaceCookTime = 0;
-    
-    public Player player;
+	public TileEntityBoiler() {
+		waterTank = new LiquidTank(maxWater);
+	}
 
-    public int getSizeInventory()
+	@Override
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+		return waterTank.fill(resource, doFill);
+	}
+
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		return 0;
+	}
+
+	@Override
+	public LiquidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+		return null;
+	}
+
+	@Override
+	public LiquidStack drain(int tankIndex, int maxDrain, boolean doDrain) {
+		return null;
+	}
+
+	@Override
+	public ILiquidTank[] getTanks(ForgeDirection direction) {
+		return new ILiquidTank[] {waterTank};
+	}
+
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		return waterTank;
+	}
+
+    public boolean isBurning()
     {
-        return this.furnaceItemStacks.length;
+        return this.boilerBurnTime > 0;
     }
-
-    public ItemStack getStackInSlot(int par1)
-    {
-        return this.furnaceItemStacks[par1];
-    }
-
-    public ItemStack decrStackSize(int par1, int par2)
-    {
-        if (this.furnaceItemStacks[par1] != null)
-        {
-            ItemStack var3;
-
-            if (this.furnaceItemStacks[par1].stackSize <= par2)
-            {
-                var3 = this.furnaceItemStacks[par1];
-                this.furnaceItemStacks[par1] = null;
-                return var3;
-            }
-            else
-            {
-                var3 = this.furnaceItemStacks[par1].splitStack(par2);
-
-                if (this.furnaceItemStacks[par1].stackSize == 0)
-                {
-                    this.furnaceItemStacks[par1] = null;
-                }
-
-                return var3;
-            }
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    public ItemStack getStackInSlotOnClosing(int par1)
-    {
-        if (this.furnaceItemStacks[par1] != null)
-        {
-            ItemStack var2 = this.furnaceItemStacks[par1];
-            this.furnaceItemStacks[par1] = null;
-            return var2;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
-    {
-        this.furnaceItemStacks[par1] = par2ItemStack;
-
-        if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
-        {
-            par2ItemStack.stackSize = this.getInventoryStackLimit();
-        }
-    }
-
-    public String getInvName()
-    {
-        return "container.boiler";
-    }
-
-    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
-    {
-        super.readFromNBT(par1NBTTagCompound);
-        NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
-        this.furnaceItemStacks = new ItemStack[this.getSizeInventory()];
-
-        for (int var3 = 0; var3 < var2.tagCount(); ++var3)
-        {
-            NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
-            byte var5 = var4.getByte("Slot");
-
-            if (var5 >= 0 && var5 < this.furnaceItemStacks.length)
-            {
-                this.furnaceItemStacks[var5] = ItemStack.loadItemStackFromNBT(var4);
-            }
-        }
-
-        this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
-        this.waterLoaded = par1NBTTagCompound.getShort("Water");
-        this.steam = par1NBTTagCompound.getShort("Steam");
-        this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
-        this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
-    }
-
-    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
-    {
-        super.writeToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setShort("BurnTime", (short)this.furnaceBurnTime);
-        par1NBTTagCompound.setShort("Water", (short)this.waterLoaded);
-        par1NBTTagCompound.setShort("Steam", (short)this.steam);
-        par1NBTTagCompound.setShort("CookTime", (short)this.furnaceCookTime);
-        NBTTagList var2 = new NBTTagList();
-
-        for (int var3 = 0; var3 < this.furnaceItemStacks.length; ++var3)
-        {
-            if (this.furnaceItemStacks[var3] != null)
-            {
-                NBTTagCompound var4 = new NBTTagCompound();
-                var4.setByte("Slot", (byte)var3);
-                this.furnaceItemStacks[var3].writeToNBT(var4);
-                var2.appendTag(var4);
-            }
-        }
-
-        par1NBTTagCompound.setTag("Items", var2);
-    }
-
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
-
-    @SideOnly(Side.CLIENT)
-
-    public int getCookProgressScaled(int par1)
-    {
-        return this.furnaceCookTime * par1 / 200;
-    }
-
-    @SideOnly(Side.CLIENT)
 
     public int getBurnTimeRemainingScaled(int par1)
     {
@@ -181,125 +82,190 @@ public class TileEntityBoiler extends TileEntity implements IInventory, ISidedIn
             this.currentItemBurnTime = 200;
         }
 
-        return this.furnaceBurnTime * par1 / this.currentItemBurnTime;
+        return this.boilerBurnTime * par1 / this.currentItemBurnTime;
     }
-    
+
+    public int getScaledWater(int max) {
+    	return (waterTank.getLiquid() != null) ? (int)(max*((float)waterTank.getLiquid().amount/(float)waterTank.getCapacity())) : 0;
+    }
+
+    @Override
+	public int getSizeInventory()
+    {
+        return this.boilerItemStacks.length;
+    }
+
+    @Override
+	public ItemStack decrStackSize(int par1, int par2)
+    {
+        if (this.boilerItemStacks[par1] != null)
+        {
+            ItemStack var3;
+
+            if (this.boilerItemStacks[par1].stackSize <= par2)
+            {
+                var3 = this.boilerItemStacks[par1];
+                this.boilerItemStacks[par1] = null;
+                return var3;
+            }
+            else
+            {
+                var3 = this.boilerItemStacks[par1].splitStack(par2);
+
+                if (this.boilerItemStacks[par1].stackSize == 0)
+                {
+                    this.boilerItemStacks[par1] = null;
+                }
+
+                return var3;
+            }
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+	public ItemStack getStackInSlot(int par1)
+    {
+        return this.boilerItemStacks[par1];
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data)
+    {
+        super.readFromNBT(data);
+        NBTTagList inventory = data.getTagList("Items");
+        this.boilerItemStacks = new ItemStack[this.getSizeInventory()];
+
+        for (int index = 0; index < inventory.tagCount(); ++index)
+        {
+            NBTTagCompound item = (NBTTagCompound)inventory.tagAt(index);
+            byte slot = item.getByte("Slot");
+
+            if (slot >= 0 && slot < this.boilerItemStacks.length)
+            {
+                this.boilerItemStacks[slot] = ItemStack.loadItemStackFromNBT(item);
+            }
+        }
+
+        this.boilerBurnTime = data.getShort("BurnTime");
+        this.currentItemBurnTime = data.getShort("ItemBurnTime");
+        this.waterTank.setLiquid(new LiquidStack(tankType.itemID, data.getShort("WaterAmount")));
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound data)
+    {
+        super.writeToNBT(data);
+        data.setShort("BurnTime", (short)this.boilerBurnTime);
+        data.setShort("ItemBurnTime", (short)this.currentItemBurnTime);
+        data.setShort("WaterAmount", (short)this.waterTank.getLiquid().amount);
+        NBTTagList inventoryTag = new NBTTagList();
+
+        for (int slot = 0; slot < this.boilerItemStacks.length; ++slot)
+        {
+            if (this.boilerItemStacks[slot] != null)
+            {
+                NBTTagCompound item = new NBTTagCompound();
+                item.setByte("Slot", (byte)slot);
+                this.boilerItemStacks[slot].writeToNBT(item);
+                inventoryTag.appendTag(item);
+            }
+        }
+
+        data.setTag("Items", inventoryTag);
+    }
+
+    @Override
+	public void openChest() {}
+
+    @Override
+	public void closeChest() {}
+
+    public static boolean isItemFuel(ItemStack par0ItemStack)
+    {
+        return getItemBurnTime(par0ItemStack) > 0;
+    }
+
+    public static boolean isItemWaterContainer(ItemStack container) {
+    	return (LiquidContainerRegistry.getLiquidForFilledItem(container) != null) ? (LiquidContainerRegistry.getLiquidForFilledItem(container).isLiquidEqual(tankType)) : false;
+    }
+
+    public int getWater() {
+    	return (this.waterTank.getLiquid() != null) ? (this.waterTank.getLiquid().amount) : 0;
+    }
+
     @SideOnly(Side.CLIENT)
-
-    public int getWater()
-    {
-        return (int) (this.waterLoaded / 0.93333333333);
-    }
-    
-    public int getSteam()
-    {
-        return (int) (this.steam / 8.33333333333);
+    public void setWaterForGUI(int newWater) {
+    	LiquidStack temp = tankType.copy();
+    	temp.amount = newWater;
+    	this.waterTank.setLiquid(temp);
     }
 
-    public boolean isBurning()
-    {
-        return this.furnaceBurnTime > 0;
+    public int getWaterID() {
+    	return this.tankType.itemID;
     }
-    
-	@Override
-	public Packet getDescriptionPacket()
-    {
-    	NBTTagCompound compound = new NBTTagCompound();
-        this.writeToNBT(compound);
-        return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, compound);
-    }
-	
-	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt)
-	{
-		NBTTagCompound compundTag = pkt.customParam1;
-		this.waterLoaded = compundTag.getShort("Water");
-		this.steam = compundTag.getShort("Steam");
-				
-	}
-	
-	public void packetMe(EntityPlayer par5EntityPlayer)
-	{
-		PacketDispatcher.sendPacketToPlayer(this.getDescriptionPacket(), (Player)par5EntityPlayer);
-	}
 
+    @Override
     public void updateEntity()
     {
-        boolean var1 = this.furnaceBurnTime > 0;
+        boolean var1 = this.boilerBurnTime > 0;
         boolean var2 = false;
 
-        if (this.furnaceBurnTime > 0)
-        {
-            --this.furnaceBurnTime;
+        if (this.boilerItemStacks[1] != null) {
+        	if (isItemWaterContainer(this.boilerItemStacks[1])) {
+        		LiquidStack water = LiquidContainerRegistry.getLiquidForFilledItem(this.boilerItemStacks[1]);
+        		if (fill(ForgeDirection.UNKNOWN, water, false) == water.amount) {
+        			fill(ForgeDirection.UNKNOWN, water, true);
+        			this.boilerItemStacks[1].stackSize--;
+                    if (this.boilerItemStacks[1].stackSize == 0)
+                    {
+                        this.boilerItemStacks[1] = this.boilerItemStacks[1].getItem().getContainerItemStack(boilerItemStacks[1]);
+                    }
+        		}
+        	}
         }
-        
-    	if (!(this.furnaceItemStacks[2] == null)) {
-    	if ((this.furnaceItemStacks[2].itemID == Item.bucketWater.itemID) && (this.waterLoaded < 31)) {
-    		this.waterLoaded = this.waterLoaded + 1;
-    		System.out.println(this.waterLoaded);
-    		if (!this.worldObj.isRemote)
-            {
-            ((WorldServer)worldObj).getPlayerManager().getOrCreateChunkWatcher(this.xCoord>>4, this.zCoord>>4, false).sendToAllPlayersWatchingChunk(this.getDescriptionPacket());
-            }
-    		this.furnaceItemStacks[2] = new ItemStack(Item.bucketEmpty);
-    		
-    		
-    	} 
-    	}
-    	
-    	 if (this.isBurning() && this.waterLoaded > 0)
-         {
-             ++this.furnaceCookTime;
 
-             if (this.furnaceCookTime == 200)
-             {
-                 this.furnaceCookTime = 0;
-                 --this.waterLoaded;
-                 this.steam = this.steam + 10;
-                 System.out.println(this.waterLoaded);
-                 if (!this.worldObj.isRemote){
-                 ((WorldServer)worldObj).getPlayerManager().getOrCreateChunkWatcher(this.xCoord>>4, this.zCoord>>4, false).sendToAllPlayersWatchingChunk(this.getDescriptionPacket());
-                 }
-                 var2 = true;
-             }
-         }
-         else
-         {
-             this.furnaceCookTime = 0;
-         }
-    	 
+        if (this.boilerBurnTime > 0)
+        {
+            --this.boilerBurnTime;
+        }
+
         if (!this.worldObj.isRemote)
         {
-        	
-
-        	
-            if (this.furnaceBurnTime == 0 && this.waterLoaded > 0 && this.steam < this.maxSteam)
+            if (this.boilerBurnTime == 0 && this.canBoil())
             {
-                this.currentItemBurnTime = this.furnaceBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+                this.currentItemBurnTime = this.boilerBurnTime = getItemBurnTime(this.boilerItemStacks[0]);
 
-                if (this.furnaceBurnTime > 0)
+                if (this.boilerBurnTime > 0)
                 {
                     var2 = true;
 
-                    if (this.furnaceItemStacks[1] != null)
+                    if (this.boilerItemStacks[0] != null)
                     {
-                        --this.furnaceItemStacks[1].stackSize;
+                        --this.boilerItemStacks[0].stackSize;
 
-                        if (this.furnaceItemStacks[1].stackSize == 0)
+                        if (this.boilerItemStacks[0].stackSize == 0)
                         {
-                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+                            this.boilerItemStacks[0] = this.boilerItemStacks[0].getItem().getContainerItemStack(boilerItemStacks[0]);
                         }
                     }
                 }
             }
 
-           
-
-            if (var1 != this.furnaceBurnTime > 0)
+            if (var1 != this.boilerBurnTime > 0)
             {
                 var2 = true;
-                BlockBoiler.updateFurnaceBlockState(this.furnaceBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                BlockBoiler.updateFurnaceBlockState(this.boilerBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
             }
+        }
+
+        if (this.isBurning() && this.canBoil())
+        {
+            var2 = true;
+            this.waterTank.getLiquid().amount--;
         }
 
         if (var2)
@@ -308,9 +274,10 @@ public class TileEntityBoiler extends TileEntity implements IInventory, ISidedIn
         }
     }
 
-  
-
-    
+    private boolean canBoil()
+    {
+    	return (waterTank.getLiquid() != null) ? (waterTank.getLiquid().amount != 0) : false;
+    }
 
     public static int getItemBurnTime(ItemStack par0ItemStack)
     {
@@ -338,83 +305,83 @@ public class TileEntityBoiler extends TileEntity implements IInventory, ISidedIn
                 }
             }
 
-            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
-            {
-                return 200;
-            }
-
-//            if (var2 instanceof ItemSword && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
-//            {
-//                return 200;
-//            }
-
-            if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD"))
-            {
-                return 200;
-            }
-
-            if (var1 == Item.stick.itemID)
-            {
-                return 100;
-            }
-
-            if (var1 == Item.coal.itemID)
-            {
-                return 1600;
-            }
-
-            if (var1 == Item.bucketLava.itemID)
-            {
-                return 20000;
-            }
-
-            if (var1 == Block.sapling.blockID)
-            {
-                return 100;
-            }
-
-            if (var1 == Item.blazeRod.itemID)
-            {
-                return 2400;
-            }
-
+            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD")) {
+				return 200;
+			}
+            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD")) {
+				return 200;
+			}
+            if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD")) {
+				return 200;
+			}
+            if (var1 == Item.stick.itemID) {
+				return 100;
+			}
+            if (var1 == Item.coal.itemID) {
+				return 1600;
+			}
+            if (var1 == Item.bucketLava.itemID) {
+				return 20000;
+			}
+            if (var1 == Block.sapling.blockID) {
+				return 100;
+			}
+            if (var1 == Item.blazeRod.itemID) {
+				return 2400;
+			}
             return GameRegistry.getFuelValue(par0ItemStack);
         }
     }
 
-    public static boolean isItemFuel(ItemStack par0ItemStack)
+	@Override
+	public int getStartInventorySide(ForgeDirection side) {
+        if (side == ForgeDirection.DOWN || side == ForgeDirection.UP) {
+			return 0;
+		}
+        return 1;
+	}
+
+	@Override
+	public int getSizeInventorySide(ForgeDirection side) {
+		return 1;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (this.boilerItemStacks[slot] != null) {
+			ItemStack temp = this.boilerItemStacks[slot];
+			this.boilerItemStacks[slot] = null;
+			return temp;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
-        return getItemBurnTime(par0ItemStack) > 0;
+        this.boilerItemStacks[par1] = par2ItemStack;
+
+        if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
+        {
+            par2ItemStack.stackSize = this.getInventoryStackLimit();
+        }
     }
 
+	@Override
+	public String getInvName() {
+		return "container.boiler";
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
+
+	@Override
     public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
-        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
+        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
     }
 
-    public void openChest() {}
-
-    public void closeChest() {}
-
-    @Override
-    public int getStartInventorySide(ForgeDirection side)
-    {
-        if (side == ForgeDirection.DOWN)
-        {
-            return 1;
-        }
-
-        if (side == ForgeDirection.UP)
-        {
-            return 0;
-        }
-
-        return 2;
-    }
-
-    @Override
-    public int getSizeInventorySide(ForgeDirection side)
-    {
-        return 1;
-    }
 }

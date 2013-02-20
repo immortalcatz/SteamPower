@@ -32,17 +32,20 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
     public int furnaceCookTime = 0;
 
-    public int getSizeInventory()
+    @Override
+	public int getSizeInventory()
     {
         return this.furnaceItemStacks.length;
     }
 
-    public ItemStack getStackInSlot(int par1)
+    @Override
+	public ItemStack getStackInSlot(int par1)
     {
         return this.furnaceItemStacks[par1];
     }
 
-    public ItemStack decrStackSize(int par1, int par2)
+    @Override
+	public ItemStack decrStackSize(int par1, int par2)
     {
         if (this.furnaceItemStacks[par1] != null)
         {
@@ -72,7 +75,8 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         }
     }
 
-    public ItemStack getStackInSlotOnClosing(int par1)
+    @Override
+	public ItemStack getStackInSlotOnClosing(int par1)
     {
         if (this.furnaceItemStacks[par1] != null)
         {
@@ -86,7 +90,8 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         }
     }
 
-    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
+    @Override
+	public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.furnaceItemStacks[par1] = par2ItemStack;
 
@@ -96,12 +101,14 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         }
     }
 
-    public String getInvName()
+    @Override
+	public String getInvName()
     {
         return "container.Forge";
     }
 
-    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    @Override
+	public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
@@ -120,13 +127,15 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
         this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
         this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
-        this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+        this.currentItemBurnTime = par1NBTTagCompound.getShort("ItemBurnTime");
     }
 
-    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    @Override
+	public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setShort("BurnTime", (short)this.furnaceBurnTime);
+        par1NBTTagCompound.setShort("ItemBurnTime", (short)this.currentItemBurnTime);
         par1NBTTagCompound.setShort("CookTime", (short)this.furnaceCookTime);
         NBTTagList var2 = new NBTTagList();
 
@@ -144,7 +153,8 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         par1NBTTagCompound.setTag("Items", var2);
     }
 
-    public int getInventoryStackLimit()
+    @Override
+	public int getInventoryStackLimit()
     {
         return 64;
     }
@@ -173,7 +183,8 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         return this.furnaceBurnTime > 0;
     }
 
-    public void updateEntity()
+    @Override
+	public void updateEntity()
     {
         boolean var1 = this.furnaceBurnTime > 0;
         boolean var2 = false;
@@ -404,14 +415,17 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         return getItemBurnTime(par0ItemStack) > 0;
     }
 
-    public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
+    @Override
+	public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
-        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq((double)this.xCoord + 0.5D, (double)this.yCoord + 0.5D, (double)this.zCoord + 0.5D) <= 64.0D;
+        return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
     }
 
-    public void openChest() {}
+    @Override
+	public void openChest() {}
 
-    public void closeChest() {}
+    @Override
+	public void closeChest() {}
 
     @Override
     public int getStartInventorySide(ForgeDirection side)
