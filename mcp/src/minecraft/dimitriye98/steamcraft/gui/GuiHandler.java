@@ -17,7 +17,6 @@ public class GuiHandler implements IGuiHandler
 
         switch (id)
         {
-//case 0: return new ContainerBoiler(player.inventory, (TileEntityBoiler) tile_entity);
             case 0:
                 return new ContainerForge(player.inventory, (TileEntityForge) tile_entity);
             case 1:
@@ -36,7 +35,6 @@ public class GuiHandler implements IGuiHandler
 
         switch (id)
         {
-//case 0: return new GuiBoiler(player.inventory, (TileEntityBoiler) tile_entity);
             case 0:
                 return new GuiForge(player.inventory, (TileEntityForge) tile_entity);
             case 1:
