@@ -43,7 +43,8 @@ public class ContainerResearchTable extends Container
         }
     }
 
-    public void addCraftingToCrafters(ICrafting par1ICrafting)
+    @Override
+	public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
         par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
@@ -51,7 +52,8 @@ public class ContainerResearchTable extends Container
         par1ICrafting.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
     }
 
-    public void detectAndSendChanges()
+    @Override
+	public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
 
@@ -80,7 +82,8 @@ public class ContainerResearchTable extends Container
         this.lastItemBurnTime = this.furnace.currentItemBurnTime;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2)
     {
         if (par1 == 0)
@@ -99,12 +102,14 @@ public class ContainerResearchTable extends Container
         }
     }
 
-    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+    @Override
+	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {
         return this.furnace.isUseableByPlayer(par1EntityPlayer);
     }
 
-    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
+    @Override
+	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
         ItemStack var3 = null;
         Slot var4 = (Slot)this.inventorySlots.get(par2);
