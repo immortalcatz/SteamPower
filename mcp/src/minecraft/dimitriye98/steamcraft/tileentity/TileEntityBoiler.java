@@ -185,6 +185,10 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
         return getItemBurnTime(par0ItemStack) > 0;
     }
 
+    public static boolean isItemWaterContainer(ItemStack container) {
+    	return (LiquidContainerRegistry.getLiquidForFilledItem(container) != null) ? (LiquidContainerRegistry.getLiquidForFilledItem(container).isLiquidEqual(tankType)) : false;
+    }
+
     public int getWater() {
     	return (this.waterTank.getLiquid() != null) ? (this.waterTank.getLiquid().amount) : 0;
     }
@@ -196,18 +200,16 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
         boolean var2 = false;
 
         if (this.boilerItemStacks[1] != null) {
-        	LiquidStack water = LiquidContainerRegistry.getLiquidForFilledItem(this.boilerItemStacks[1]);
-        	if (water != null) {
-	        	if (water.isLiquidEqual(tankType)) {
-	        		if (fill(ForgeDirection.UNKNOWN, water, false) == water.amount) {
-	        			fill(ForgeDirection.UNKNOWN, water, true);
-	        			this.boilerItemStacks[1].stackSize--;
-	                    if (this.boilerItemStacks[1].stackSize == 0)
-	                    {
-	                        this.boilerItemStacks[1] = this.boilerItemStacks[1].getItem().getContainerItemStack(boilerItemStacks[1]);
-	                    }
-	        		}
-	        	}
+        	if (isItemWaterContainer(this.boilerItemStacks[1])) {
+        		LiquidStack water = LiquidContainerRegistry.getLiquidForFilledItem(this.boilerItemStacks[1]);
+        		if (fill(ForgeDirection.UNKNOWN, water, false) == water.amount) {
+        			fill(ForgeDirection.UNKNOWN, water, true);
+        			this.boilerItemStacks[1].stackSize--;
+                    if (this.boilerItemStacks[1].stackSize == 0)
+                    {
+                        this.boilerItemStacks[1] = this.boilerItemStacks[1].getItem().getContainerItemStack(boilerItemStacks[1]);
+                    }
+        		}
         	}
         }
 
