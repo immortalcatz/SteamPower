@@ -28,9 +28,9 @@ public class BlockBoiler extends BlockContainer {
 	private static boolean keepBoilerInventory = false;
 
 	public BlockBoiler(int par1, boolean par2) {
-		super(par1, Material.rock);
+		super(par1, Material.iron);
 		this.isActive = par2;
-		this.blockIndexInTexture = 45;
+		this.blockIndexInTexture = 24;
 	}
 
 	@Override
@@ -44,8 +44,7 @@ public class BlockBoiler extends BlockContainer {
 		this.setDefaultDirection(par1World, par2, par3, par4);
 	}
 
-	private void setDefaultDirection(World par1World, int par2, int par3,
-			int par4) {
+	private void setDefaultDirection(World par1World, int par2, int par3, int par4) {
 		if (!par1World.isRemote) {
 			int var5 = par1World.getBlockId(par2, par3, par4 - 1);
 			int var6 = par1World.getBlockId(par2, par3, par4 + 1);
@@ -75,16 +74,12 @@ public class BlockBoiler extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
-		if (par5 == 1) {
-			return this.blockIndexInTexture + 17;
-		} else if (par5 == 0) {
-			return this.blockIndexInTexture + 17;
+	public int getBlockTexture(IBlockAccess blockAccess, int x, int y, int z, int side) {
+		if (side == 0 || side == 1) {
+			return 18;
 		} else {
-			int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
-			return par5 != var6 ? this.blockIndexInTexture
-					: (this.isActive ? this.blockIndexInTexture + 16
-							: this.blockIndexInTexture - 1);
+			int front = blockAccess.getBlockMetadata(x, y, z);
+			return side != front ? 18 : (!this.isActive ? this.blockIndexInTexture : this.blockIndexInTexture + 1);
 		}
 	}
 
@@ -125,11 +120,8 @@ public class BlockBoiler extends BlockContainer {
 	}
 
 	@Override
-	public int getBlockTextureFromSide(int par1) {
-		return par1 == 1 ? this.blockIndexInTexture + 17
-				: (par1 == 0 ? this.blockIndexInTexture + 17
-						: (par1 == 3 ? this.blockIndexInTexture - 1
-								: this.blockIndexInTexture));
+	public int getBlockTextureFromSide(int side) {
+		return (side == 1 || side == 0) ? 18 : (side == 3 ? this.blockIndexInTexture : 18);
 	}
 
 	@Override
@@ -237,4 +229,10 @@ public class BlockBoiler extends BlockContainer {
 
 		super.breakBlock(par1World, par2, par3, par4, par5, par6);
 	}
+
+    @Override
+    public String getTextureFile()
+    {
+        return SteamCraft.BLOCKS_PNG;
+    }
 }
