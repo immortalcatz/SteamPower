@@ -31,6 +31,10 @@ public class TileEntityBoiler extends TileEntity implements ITankContainer, IInv
 	private static int maxWater = LiquidContainerRegistry.BUCKET_VOLUME * 10;
 	private static LiquidStack tankType = new LiquidStack(Block.waterStill, LiquidContainerRegistry.BUCKET_VOLUME);
 
+	public static LiquidStack getTankType() {
+		return tankType;
+	}
+
 	private ItemStack[] boilerItemStacks = new ItemStack[2];
 
     public int boilerBurnTime = 0;

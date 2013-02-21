@@ -2,6 +2,7 @@ package steamcraft.steamcraft.gui;
 
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -38,6 +39,8 @@ public class GuiHandler implements IGuiHandler
                 return new GuiForge(player.inventory, (TileEntityForge) tile_entity);
             case 1:
                 return new GuiBoiler(player.inventory, (TileEntityBoiler) tile_entity);
+            case 2:
+            	return new GuiResearchTable(player.inventory, (TileEntityResearchTable) tile_entity);
         }
 
         return null;

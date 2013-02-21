@@ -60,6 +60,7 @@ public class SteamCraft {
 	public static Block blockForgeOn;
 	public static Block blockForgeMain;
 	public static Block steam;
+	public static Block researchTable;
 
 	//Items
 	public static Item musketBall;
@@ -72,6 +73,7 @@ public class SteamCraft {
 	public static Item musketBarrel;
 	public static Item blunderbussBarrel;
 	public static Item flintlock;
+	public static Item researchNotes;
 
 		//Tools
 	public static Item musket;
@@ -116,6 +118,7 @@ public class SteamCraft {
 		copperOre = new BlockSteamcraftOre(152, 0).setHardness(2.75F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("copperOre").setCreativeTab(CreativeTabs.tabBlock);
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
 		steam = new BlockSteam(165).setBlockName("blockSteam");
+		researchTable = new BlockResearchTable(166).setHardness(2.5F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable");
 
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
@@ -129,6 +132,8 @@ public class SteamCraft {
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
 		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(12).setItemName("blunderbussBarrel"));
 		flintlock = (new ItemSteamcraft(7021).setIconIndex(11).setItemName("flintlock"));
+
+		researchNotes = new ItemResearchNotes(7022).setIconIndex(14).setItemName("researchNotes");
 
 			//Tools
 		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
@@ -188,6 +193,8 @@ public class SteamCraft {
 		GameRegistry.registerBlock(blockForgeMain, "blockForgeMain"); //Forge Container Piece
 		MinecraftForge.setBlockHarvestLevel(blockForgeMain, "pickaxe", 0);
 
+		GameRegistry.registerBlock(researchTable, "researchTable"); //Research Table
+
 				//Tile Entities
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "tileEntityBoiler");
 		GameRegistry.registerTileEntity(TileEntityForge.class, "tileEntityForge");
@@ -206,6 +213,8 @@ public class SteamCraft {
 		LanguageRegistry.addName(blockForge, "blockForge");
 		LanguageRegistry.addName(blockForgeOn, "blockForgeOn");
 		LanguageRegistry.addName(blockForgeMain, "blockForgeMain");
+		LanguageRegistry.addName(researchTable, "Research Table");
+		LanguageRegistry.addName(researchNotes, "Research Notes");
 
 				//Items
 		LanguageRegistry.addName(ingotCopper, "Copper Ingot");

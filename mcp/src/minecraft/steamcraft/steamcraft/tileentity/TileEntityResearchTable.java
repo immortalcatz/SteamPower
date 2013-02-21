@@ -172,7 +172,7 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
 	            	if(this.furnaceItemStacks[2].itemID == Item.paper.itemID && this.furnaceItemStacks[1] == null) {
 	            		System.out.println("Done!");
 	            		this.furnaceItemStacks[2].stackSize--;
-	            		ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
+	            		ItemStack stack = new ItemStack(SteamCraft.researchNotes, 1);
 	            		this.furnaceItemStacks[1] = stack;
 	            	}
 	            	else
@@ -180,7 +180,7 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
 	            		if (this.furnaceItemStacks[2].itemID == Item.paper.itemID && this.furnaceItemStacks[1].stackSize == 0) {
 	            			System.out.println("Done!");
 	            			this.furnaceItemStacks[2].stackSize--;
-	            			ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
+	            			ItemStack stack = new ItemStack(SteamCraft.researchNotes, 1);
 	            			this.furnaceItemStacks[1] = stack;
 	            		}
 	            	}

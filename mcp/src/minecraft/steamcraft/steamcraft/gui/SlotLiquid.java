@@ -8,22 +8,25 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.liquids.LiquidContainerRegistry;
+import net.minecraftforge.liquids.LiquidStack;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class SlotWater extends Slot
+public class SlotLiquid extends Slot
 {
-    private EntityPlayer thePlayer;
-    private int field_75228_b;
+    private LiquidStack liquid;
 
-    public SlotWater(EntityPlayer par1EntityPlayer, IInventory par2IInventory, int par3, int par4, int par5)
+    public SlotLiquid(IInventory inventory, int slotIndex, int displayX, int displayY, LiquidStack liquid)
     {
-        super(par2IInventory, par3, par4, par5);
-        this.thePlayer = par1EntityPlayer;
+        super(inventory, slotIndex, displayX, displayY);
+        this.liquid = liquid;
     }
 
-    public boolean isItemValid(ItemStack par1ItemStack)
+    @Override
+	public boolean isItemValid(ItemStack par1ItemStack)
     {
-        if (par1ItemStack.itemID == Item.bucketWater.itemID){
+        if (LiquidContainerRegistry.containsLiquid(par1ItemStack, liquid)){
         	return true;
         }
         else
@@ -32,6 +35,6 @@ public class SlotWater extends Slot
         }
     }
 
-  
-    
+
+
 }
