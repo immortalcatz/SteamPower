@@ -1,12 +1,12 @@
-package dimitriye98.steamcraft.gui;
+package steamcraft.steamcraft.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
-import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
-import dimitriye98.steamcraft.tileentity.TileEntityForge;
-import dimitriye98.steamcraft.tileentity.TileEntityResearchTable;
+import steamcraft.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class GuiHandler implements IGuiHandler
 {

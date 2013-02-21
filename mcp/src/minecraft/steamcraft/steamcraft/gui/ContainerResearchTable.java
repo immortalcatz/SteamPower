@@ -5,6 +5,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import cpw.mods.fml.relauncher.Side;
@@ -15,18 +16,17 @@ import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class ContainerResearchTable extends Container
 {
-    private TileEntityResearchTable furnace;
-    private int lastCookTime = 0;
-    private int lastBurnTime = 0;
-    private int lastItemBurnTime = 0;
+    private final TileEntityResearchTable furnace;
+    private final int lastCookTime = 0;
+    private final int lastBurnTime = 0;
+    private final int lastItemBurnTime = 0;
 
     public ContainerResearchTable(InventoryPlayer par1InventoryPlayer, TileEntityResearchTable par2TileEntityResearchTable)
     {
         this.furnace = par2TileEntityResearchTable;
-        this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 0, 56, 17));
-        this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 3, 28, 17));
-        this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 1, 56, 53));
-        this.addSlotToContainer(new SlotResearchTable(par1InventoryPlayer.player, par2TileEntityResearchTable, 2, 116, 35));
+        this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 0, 32, 26));
+        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 2, 74, 55, Item.paper.itemID));
+        this.addSlotToContainer(new SlotResearchTable(par1InventoryPlayer.player, par2TileEntityResearchTable, 1, 125, 26));
         int var3;
 
         for (var3 = 0; var3 < 3; ++var3)
@@ -47,9 +47,7 @@ public class ContainerResearchTable extends Container
 	public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
-        par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
-        par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
-        par1ICrafting.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
+
     }
 
     @Override
@@ -61,46 +59,11 @@ public class ContainerResearchTable extends Container
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
 
-            if (this.lastCookTime != this.furnace.furnaceCookTime)
-            {
-                var2.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
-            }
 
-            if (this.lastBurnTime != this.furnace.furnaceBurnTime)
-            {
-                var2.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
-            }
-
-            if (this.lastItemBurnTime != this.furnace.currentItemBurnTime)
-            {
-                var2.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
-            }
-        }
-
-        this.lastCookTime = this.furnace.furnaceCookTime;
-        this.lastBurnTime = this.furnace.furnaceBurnTime;
-        this.lastItemBurnTime = this.furnace.currentItemBurnTime;
-    }
-
-    @Override
-	@SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
-        if (par1 == 0)
-        {
-            this.furnace.furnaceCookTime = par2;
-        }
-
-        if (par1 == 1)
-        {
-            this.furnace.furnaceBurnTime = par2;
-        }
-
-        if (par1 == 2)
-        {
-            this.furnace.currentItemBurnTime = par2;
         }
     }
+
+
 
     @Override
 	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
@@ -128,29 +91,23 @@ public class ContainerResearchTable extends Container
 
                 var4.onSlotChange(var5, var3);
             }
-            else if (par2 != 1 && par2 != 0 && par2 != 3)
+            else if (par2 != 2 && par2 != 0)
             {
-                if (FurnaceRecipes.smelting().getSmeltingResult(var5) != null || var5.itemID == SteamCraft.ingotCopper.itemID)
-                {
-                    if (!this.mergeItemStack(var5, 0, 1, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (var5.itemID == SteamCraft.ingotZinc.itemID)
+                if (var5.itemID == Item.paper.itemID)
                 {
                     if (!this.mergeItemStack(var5, 1, 2, false))
                     {
                         return null;
                     }
                 }
-                else if (TileEntityForge.isItemFuel(var5))
+                else
                 {
-                    if (!this.mergeItemStack(var5, 2, 3, false))
-                    {
-                        return null;
-                    }
+                	 if (!this.mergeItemStack(var5,0 , 1, false))
+                     {
+                         return null;
+                     }
                 }
+
             }
             else if (!this.mergeItemStack(var5, 4, 39, false))
             {

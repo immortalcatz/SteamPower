@@ -22,7 +22,7 @@ import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class BlockResearchTable extends BlockContainer
 {
-    private Random furnaceRand = new Random();
+    private final Random furnaceRand = new Random();
 
 
     private static boolean keepFurnaceInventory = false;
@@ -33,12 +33,31 @@ public class BlockResearchTable extends BlockContainer
         this.blockIndexInTexture = 45;
     }
 
-    public int idDropped(int par1, Random par2Random, int par3)
+    @Override
+	public int idDropped(int par1, Random par2Random, int par3)
     {
         return SteamCraft.researchTable.blockID;
     }
 
-    public void onBlockAdded(World par1World, int par2, int par3, int par4)
+    @Override
+	public int getRenderType(){
+        return -1;
+    }
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+    	return false;
+    }
+
+	@Override
+	public boolean renderAsNormalBlock()
+	{
+	return false;
+	}
+
+    @Override
+	public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
         this.setDefaultDirection(par1World, par2, par3, par4);
@@ -78,11 +97,12 @@ public class BlockResearchTable extends BlockContainer
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
 
     public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {
-    	//todo 
+    	//todo
         if (par5 == 1)
         {
             return this.blockIndexInTexture + 17;
@@ -98,19 +118,22 @@ public class BlockResearchTable extends BlockContainer
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
 
     public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random)
     {
-       
+
     }
 
-    public int getBlockTextureFromSide(int par1)
+    @Override
+	public int getBlockTextureFromSide(int par1)
     {
         return par1 == 1 ? this.blockIndexInTexture + 17 : (par1 == 0 ? this.blockIndexInTexture + 17 : (par1 == 3 ? this.blockIndexInTexture - 1 : this.blockIndexInTexture));
     }
 
-    public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
+    @Override
+	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
         if (par1World.isRemote)
         {
@@ -122,7 +145,7 @@ public class BlockResearchTable extends BlockContainer
 
             if (var10 != null)
             {
-            	
+
                 par5EntityPlayer.openGui(SteamCraft.instance, 2, par1World, par2, par3, par4);
             }
 
@@ -159,14 +182,16 @@ public class BlockResearchTable extends BlockContainer
         }
     }
 
-    public TileEntity createNewTileEntity(World par1World)
+    @Override
+	public TileEntity createNewTileEntity(World par1World)
     {
         return new TileEntityResearchTable();
     }
 
-    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    @Override
+	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
-        int var6 = MathHelper.floor_double((double)(par5EntityLiving.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int var6 = MathHelper.floor_double(par5EntityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
         if (var6 == 0)
         {
@@ -189,7 +214,8 @@ public class BlockResearchTable extends BlockContainer
         }
     }
 
-    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+    @Override
+	public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
         if (!keepFurnaceInventory)
         {
@@ -217,7 +243,7 @@ public class BlockResearchTable extends BlockContainer
                             }
 
                             var9.stackSize -= var13;
-                            EntityItem var14 = new EntityItem(par1World, (double)((float)par2 + var10), (double)((float)par3 + var11), (double)((float)par4 + var12), new ItemStack(var9.itemID, var13, var9.getItemDamage()));
+                            EntityItem var14 = new EntityItem(par1World, par2 + var10, par3 + var11, par4 + var12, new ItemStack(var9.itemID, var13, var9.getItemDamage()));
 
                             if (var9.hasTagCompound())
                             {
@@ -225,9 +251,9 @@ public class BlockResearchTable extends BlockContainer
                             }
 
                             float var15 = 0.05F;
-                            var14.motionX = (double)((float)this.furnaceRand.nextGaussian() * var15);
-                            var14.motionY = (double)((float)this.furnaceRand.nextGaussian() * var15 + 0.2F);
-                            var14.motionZ = (double)((float)this.furnaceRand.nextGaussian() * var15);
+                            var14.motionX = (float)this.furnaceRand.nextGaussian() * var15;
+                            var14.motionY = (float)this.furnaceRand.nextGaussian() * var15 + 0.2F;
+                            var14.motionZ = (float)this.furnaceRand.nextGaussian() * var15;
                             par1World.spawnEntityInWorld(var14);
                         }
                     }

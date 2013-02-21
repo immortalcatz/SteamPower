@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft.tileentity;
+package steamcraft.steamcraft.tileentity;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -19,8 +19,8 @@ import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dimitriye98.steamcraft.block.BlockResearchTable;
-import dimitriye98.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.block.BlockResearchTable;
+import steamcraft.steamcraft.common.SteamCraft;
 
 public class TileEntityResearchTable extends TileEntity implements IInventory, ISidedInventory
 {

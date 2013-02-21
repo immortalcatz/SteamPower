@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft.gui;
+package steamcraft.steamcraft.gui;
 
 <<<<<<< HEAD
 import net.minecraft.client.gui.GuiButton;
@@ -13,8 +13,8 @@ import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
 
-import dimitriye98.steamcraft.common.SteamCraft;
-import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 
 <<<<<<< HEAD
 public class GuiBoiler extends GuiContainer

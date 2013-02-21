@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft.gui;
+package steamcraft.steamcraft.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -6,7 +6,7 @@ import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
-import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 
 public class GuiResearchTable extends GuiContainer
 {

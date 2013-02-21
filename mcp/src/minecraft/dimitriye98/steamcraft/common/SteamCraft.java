@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft.common;
+package steamcraft.steamcraft.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -25,12 +25,12 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-import dimitriye98.steamcraft.gui.GuiHandler;
-import dimitriye98.steamcraft.block.*;
-import dimitriye98.steamcraft.item.*;
-import dimitriye98.steamcraft.tileentity.TileEntityBoiler;
-import dimitriye98.steamcraft.tileentity.TileEntityForge;
-import dimitriye98.steamcraft.worldgen.WorldGenBoiler;
+import steamcraft.steamcraft.gui.GuiHandler;
+import steamcraft.steamcraft.block.*;
+import steamcraft.steamcraft.item.*;
+import steamcraft.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.worldgen.WorldGenBoiler;
 
 @Mod(modid = "SteamCraft", name = "SteamCraft", version = "0.0.1")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
@@ -92,7 +92,7 @@ public class SteamCraft {
 	public static Item brassBoots;
 	
 	// Says where the client and server 'proxy' code is loaded.
-	@SidedProxy(clientSide = "dimitriye98.steamcraft.client.ClientProxy", serverSide = "dimitriye98.steamcraft.common.CommonProxy")
+	@SidedProxy(clientSide = "steamcraft.steamcraft.client.ClientProxy", serverSide = "steamcraft.steamcraft.common.CommonProxy")
 	public static CommonProxy proxy;
 	
 	private GuiHandler guiHandler = new GuiHandler();
@@ -153,8 +153,8 @@ public class SteamCraft {
 		brassBoots = (new ItemSteamcraftArmor(7018, materialBrass, 4, 3, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
 		
 		//Registration
-		EntityRegistry.registerModEntity(dimitriye98.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
-		EntityRegistry.registerModEntity(dimitriye98.steamcraft.entity.EntityMech.class, "Mech", 1, SteamCraft.instance, 100, 5, true);
+		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
+		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMech.class, "Mech", 1, SteamCraft.instance, 100, 5, true);
 		GameRegistry.registerWorldGenerator(new WorldGenBoiler());
 		
 			//Blocks
