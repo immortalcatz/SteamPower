@@ -75,8 +75,7 @@ public class BlockBoiler extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2,
-			int par3, int par4, int par5) {
+	public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5) {
 		if (par5 == 1) {
 			return this.blockIndexInTexture + 17;
 		} else if (par5 == 0) {
