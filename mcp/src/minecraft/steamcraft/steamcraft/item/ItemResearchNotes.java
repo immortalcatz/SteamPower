@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.item;
+package dimitriye98.steamcraft.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -18,10 +18,13 @@ public class ItemResearchNotes extends ItemSteamcraft {
 	}
 	
 	@Override
+	
 	public void onCreated(ItemStack notes, World planetEarth, EntityPlayer yoursTruly) {
-		NBTTagList items = new NBTTagList();
-		notes.stackTagCompound.setTag("Contents", items);
+		//NBTTagList items = new NBTTagList();
+		//notes.stackTagCompound.setTag("Contents", items);
 	}
+	
+
 	
 	public void addItem(ItemStack notes, ItemStack researched, boolean successful) {
 		NBTTagCompound addition = new NBTTagCompound();

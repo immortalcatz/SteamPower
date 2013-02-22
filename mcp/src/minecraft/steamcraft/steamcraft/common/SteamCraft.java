@@ -46,6 +46,7 @@ public class SteamCraft {
 	public static String BLOCKS_PNG =  textureLocation+"blocks.png";
 	public static String armorLocation = textureLocation+"armor/";
 	public static String guiLocation = textureLocation+"gui/";
+	public static String modelTextureLocation = textureLocation+"";
 
 	//Blocks
 	public static Block boilerIdle;

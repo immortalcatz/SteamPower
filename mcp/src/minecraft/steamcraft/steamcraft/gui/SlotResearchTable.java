@@ -22,12 +22,14 @@ public class SlotResearchTable extends Slot
         this.thePlayer = par1EntityPlayer;
     }
 
-    public boolean isItemValid(ItemStack par1ItemStack)
+    @Override
+	public boolean isItemValid(ItemStack par1ItemStack)
     {
         return false;
     }
 
-    public ItemStack decrStackSize(int par1)
+    @Override
+	public ItemStack decrStackSize(int par1)
     {
         if (this.getHasStack())
         {
@@ -37,23 +39,26 @@ public class SlotResearchTable extends Slot
         return super.decrStackSize(par1);
     }
 
-    public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
+    @Override
+	public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
     {
         this.onCrafting(par2ItemStack);
         super.onPickupFromSlot(par1EntityPlayer, par2ItemStack);
     }
 
-    protected void onCrafting(ItemStack par1ItemStack, int par2)
+    @Override
+	protected void onCrafting(ItemStack par1ItemStack, int par2)
     {
         this.field_75228_b += par2;
         this.onCrafting(par1ItemStack);
     }
 
-    protected void onCrafting(ItemStack par1ItemStack)
+    @Override
+	protected void onCrafting(ItemStack par1ItemStack)
     {
         par1ItemStack.onCrafting(this.thePlayer.worldObj, this.thePlayer, this.field_75228_b);
 
 
-       
+
     }
 }

@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.block;
+package dimitriye98.steamcraft.block;
 
 import java.util.Random;
 
@@ -17,8 +17,8 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import steamcraft.steamcraft.common.SteamCraft;
-import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
+import dimitriye98.steamcraft.common.SteamCraft;
+import dimitriye98.steamcraft.tileentity.TileEntityResearchTable;
 
 public class BlockResearchTable extends BlockContainer
 {
@@ -157,6 +157,31 @@ public class BlockResearchTable extends BlockContainer
         }
     }
 
+    public static void updateFurnaceBlockState(boolean par0, World par1World, int par2, int par3, int par4)
+    {
+        int var5 = par1World.getBlockMetadata(par2, par3, par4);
+        TileEntity var6 = par1World.getBlockTileEntity(par2, par3, par4);
+        keepFurnaceInventory = true;
+
+        if (par0)
+        {
+            par1World.setBlockWithNotify(par2, par3, par4, SteamCraft.yourFurnaceActive.blockID);
+        }
+        else
+        {
+            par1World.setBlockWithNotify(par2, par3, par4, SteamCraft.yourFurnaceIdle.blockID);
+        }
+
+        keepFurnaceInventory = false;
+        par1World.setBlockMetadataWithNotify(par2, par3, par4, var5);
+
+        if (var6 != null)
+        {
+            var6.validate();
+            par1World.setBlockTileEntity(par2, par3, par4, var6);
+        }
+    }
+
     @Override
 	public TileEntity createNewTileEntity(World par1World)
     {
@@ -187,5 +212,55 @@ public class BlockResearchTable extends BlockContainer
         {
             par1World.setBlockMetadataWithNotify(par2, par3, par4, 4);
         }
+    }
+
+    @Override
+	public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+    {
+        if (!keepFurnaceInventory)
+        {
+            TileEntityResearchTable var7 = (TileEntityResearchTable)par1World.getBlockTileEntity(par2, par3, par4);
+
+            if (var7 != null)
+            {
+                for (int var8 = 0; var8 < var7.getSizeInventory(); ++var8)
+                {
+                    ItemStack var9 = var7.getStackInSlot(var8);
+
+                    if (var9 != null)
+                    {
+                        float var10 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
+                        float var11 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
+                        float var12 = this.furnaceRand.nextFloat() * 0.8F + 0.1F;
+
+                        while (var9.stackSize > 0)
+                        {
+                            int var13 = this.furnaceRand.nextInt(21) + 10;
+
+                            if (var13 > var9.stackSize)
+                            {
+                                var13 = var9.stackSize;
+                            }
+
+                            var9.stackSize -= var13;
+                            EntityItem var14 = new EntityItem(par1World, par2 + var10, par3 + var11, par4 + var12, new ItemStack(var9.itemID, var13, var9.getItemDamage()));
+
+                            if (var9.hasTagCompound())
+                            {
+                                var14.getEntityItem().setTagCompound((NBTTagCompound)var9.getTagCompound().copy());
+                            }
+
+                            float var15 = 0.05F;
+                            var14.motionX = (float)this.furnaceRand.nextGaussian() * var15;
+                            var14.motionY = (float)this.furnaceRand.nextGaussian() * var15 + 0.2F;
+                            var14.motionZ = (float)this.furnaceRand.nextGaussian() * var15;
+                            par1World.spawnEntityInWorld(var14);
+                        }
+                    }
+                }
+            }
+        }
+
+        super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
 }
