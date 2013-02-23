@@ -1,4 +1,4 @@
-package dimitriye98.steamcraft.packet;
+package steamcraft.steamcraft.packet;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -14,7 +14,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 // cpw.mods.fml.common.Side;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
-import dimitriye98.steamcraft.tileentity.TileEntityResearchTable;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class PacketHandler implements IPacketHandler {
 
@@ -27,35 +27,35 @@ public class PacketHandler implements IPacketHandler {
                         handleResearch(packet);
                 }
         }
-        
+
         private void handleResearch(Packet250CustomPayload packet) {
                 DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
-                
+
         		byte packetType;
         		int dimension;
         		byte packetID;
-         
+
         		try
         		{
         			packetID = inputStream.readByte();
         			dimension = inputStream.readInt();
-         
+
         			World world = DimensionManager.getWorld(dimension);
-         
+
         			if (packetID == 1)
         			{
         				int x = inputStream.readInt();
         				int y = inputStream.readInt();
         				int z = inputStream.readInt();
         				TileEntity te = world.getBlockTileEntity(x, y, z);
-        				
+
         				if (te instanceof TileEntityResearchTable)
         				{
         					((TileEntityResearchTable) te).research();
         				}
         			}
-        			
-         
+
+
         		}
         		catch (IOException e)
         		{
@@ -64,6 +64,6 @@ public class PacketHandler implements IPacketHandler {
         			return;
         		}
         	}
-        
+
 
 }

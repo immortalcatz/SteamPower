@@ -34,7 +34,4 @@ public class SlotLiquid extends Slot
         	return false;
         }
     }
-
-
-
 }

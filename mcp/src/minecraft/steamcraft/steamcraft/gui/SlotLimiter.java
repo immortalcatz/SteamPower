@@ -1,5 +1,6 @@
 package steamcraft.steamcraft.gui;
 
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -12,26 +13,32 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class SlotLimiter extends Slot
 {
-    int requiredID;
+    ItemStack[] stacks;
 
-    public SlotLimiter(IInventory par2IInventory, int par3, int par4, int par5, int itemID)
+    public SlotLimiter(IInventory par2IInventory, int par3, int par4, int par5, ItemStack[] stacks)
     {
         super(par2IInventory, par3, par4, par5);
-        this.requiredID = itemID;
+        this.stacks = stacks;
     }
 
-    @Override
-	public boolean isItemValid(ItemStack par1ItemStack)
+    public SlotLimiter(IInventory par2IInventory, int par3, int par4, int par5, ItemStack stack)
     {
-        if (par1ItemStack.itemID == this.requiredID){
-        	return true;
-        }
-        else
-        {
-        	return false;
-        }
+        this(par2IInventory, par3, par4, par5, new ItemStack[] {stack});
     }
 
+    public SlotLimiter(TileEntityResearchTable par2TileEntityResearchTable, int i, int j, int k, Item item) {
+		this(par2TileEntityResearchTable, i, j, k, new ItemStack(item));
+	}
 
+	@Override
+	public boolean isItemValid(ItemStack item)
+    {
+        for (ItemStack stack : stacks) {
+        	if (item.itemID == stack.itemID) {
+        		return true;
+        	}
+        }
+        return false;
+    }
 
 }

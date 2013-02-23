@@ -7,26 +7,20 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import steamcraft.steamcraft.common.SteamCraft;
-import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class ContainerResearchTable extends Container
 {
-    private final TileEntityResearchTable furnace;
-    private final int lastCookTime = 0;
-    private final int lastBurnTime = 0;
-    private final int lastItemBurnTime = 0;
+    private final TileEntityResearchTable entityTable;
 
     public ContainerResearchTable(InventoryPlayer par1InventoryPlayer, TileEntityResearchTable par2TileEntityResearchTable)
     {
-        this.furnace = par2TileEntityResearchTable;
+        this.entityTable = par2TileEntityResearchTable;
         this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 0, 32, 26));
-        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 2, 74, 55, Item.paper.itemID));
-        this.addSlotToContainer(new SlotResearchTable(par1InventoryPlayer.player, par2TileEntityResearchTable, 1, 125, 26));
+        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 2, 74, 55, Item.paper));
+        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 1, 125, 26, SteamCraft.researchNotes));
         int var3;
 
         for (var3 = 0; var3 < 3; ++var3)
@@ -50,25 +44,12 @@ public class ContainerResearchTable extends Container
 
     }
 
-    @Override
-	public void detectAndSendChanges()
-    {
-        super.detectAndSendChanges();
-
-        for (int var1 = 0; var1 < this.crafters.size(); ++var1)
-        {
-            ICrafting var2 = (ICrafting)this.crafters.get(var1);
-
-
-        }
-    }
-
 
 
     @Override
 	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {
-        return this.furnace.isUseableByPlayer(par1EntityPlayer);
+        return this.entityTable.isUseableByPlayer(par1EntityPlayer);
     }
 
     @Override
