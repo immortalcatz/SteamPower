@@ -1,10 +1,10 @@
 package steamcraft.steamcraft.client;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.client.render.RenderBoiler;
 import steamcraft.steamcraft.client.render.RenderMech;
 import steamcraft.steamcraft.client.render.ResearchTableRender;
 import steamcraft.steamcraft.common.CommonProxy;
-import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.entity.EntityMech;
 import steamcraft.steamcraft.entity.EntityMusketBall;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;

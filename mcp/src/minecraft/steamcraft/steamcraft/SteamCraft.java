@@ -1,6 +1,7 @@
-package steamcraft.steamcraft.common;
+package steamcraft.steamcraft;
 
 import steamcraft.steamcraft.block.*;
+import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.*;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;

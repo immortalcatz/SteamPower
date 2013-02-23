@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class BlockResearchTable extends BlockContainer

@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 import java.util.Random;

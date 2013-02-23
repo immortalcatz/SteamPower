@@ -8,7 +8,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class ContainerResearchTable extends Container

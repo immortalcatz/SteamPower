@@ -24,8 +24,8 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockResearchTable;
-import steamcraft.steamcraft.common.SteamCraft;
 
 public class TileEntityResearchTable extends TileEntity implements IInventory, ISidedInventory
 {

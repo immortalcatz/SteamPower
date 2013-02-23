@@ -9,7 +9,7 @@ import net.minecraft.potion.PotionHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockSteam;
-import steamcraft.steamcraft.common.SteamCraft;
 
 import dimitriye98.core.util.WorldUtil;
 import net.minecraft.tileentity.TileEntity;

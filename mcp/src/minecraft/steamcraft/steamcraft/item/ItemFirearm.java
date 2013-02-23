@@ -1,7 +1,7 @@
 package steamcraft.steamcraft.item;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.client.ClientProxy;
-import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.entity.EntityMusketBall;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
