@@ -13,6 +13,7 @@ mcp/*
 mcp/src/minecraft/*
 !mcp/src/minecraft/dimitriye98
 !mcp/src/minecraft/steamcraft
+!mcp/src/minecraft/thaumcraft
 !mcp/src/minecraft/buildcraft
 !mcp/src/minecraft/gfx
 !mcp/src/minecraft/lang

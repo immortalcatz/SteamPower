@@ -21,9 +21,8 @@ public class PacketHandler implements IPacketHandler {
         @Override
         public void onPacketData(INetworkManager manager,
                         Packet250CustomPayload packet, Player player) {
-        	System.out.println("Packet get (not ours?");
                 if (packet.channel.equals("SteamCraft")) {
-                	System.out.println("Packet get.");
+
                         handleResearch(packet);
                 }
         }
@@ -59,7 +58,6 @@ public class PacketHandler implements IPacketHandler {
         		}
         		catch (IOException e)
         		{
-        			System.out.println("Failed at reading server packet for TConstruct.");
         			e.printStackTrace();
         			return;
         		}

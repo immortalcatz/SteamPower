@@ -47,7 +47,7 @@ public class SteamCraft {
 	public static String BLOCKS_PNG =  textureLocation+"blocks.png";
 	public static String armorLocation = textureLocation+"armor/";
 	public static String guiLocation = textureLocation+"gui/";
-	public static String modelTextureLocation = textureLocation+"";
+	public static String modelTextureLocation = textureLocation+"model/";
 
 	//Blocks
 	public static Block boilerIdle;
@@ -98,7 +98,7 @@ public class SteamCraft {
 	@SidedProxy(clientSide = "steamcraft.steamcraft.client.ClientProxy", serverSide = "steamcraft.steamcraft.common.CommonProxy")
 	public static CommonProxy proxy;
 
-	private GuiHandler guiHandler = new GuiHandler();
+	private final GuiHandler guiHandler = new GuiHandler();
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {

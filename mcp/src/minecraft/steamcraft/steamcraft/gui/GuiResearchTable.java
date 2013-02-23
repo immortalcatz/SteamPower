@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.network.PacketDispatcher;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class GuiResearchTable extends GuiContainer
@@ -69,7 +70,7 @@ public class GuiResearchTable extends GuiContainer
     @Override
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
-        int var4 = this.mc.renderEngine.getTexture("/dimitriye98/steamcraft/resources/gui/research.png");
+        int var4 = this.mc.renderEngine.getTexture(SteamCraft.guiLocation + "research.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.renderEngine.bindTexture(var4);
         int var5 = (this.width - this.xSize) / 2;
