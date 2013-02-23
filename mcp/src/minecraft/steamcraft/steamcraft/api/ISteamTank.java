@@ -3,15 +3,29 @@ package steamcraft.steamcraft.api;
 public interface ISteamTank {
 
 	/**
-	 * Get's the current amount of steam in the tank.
-	 * @return
+	 * Gets the current amount of steam in the tank.
+	 * @return the amount of steam
 	 */
 	int getSteam();
 
+	/**
+	 * Gets the capacity of the tank.
+	 * @return the capacity
+	 */
 	int getCapacity();
 
-	int fill(int amount);
+	/**
+	 * Fills the tank with a certain amount of steam.
+	 * @param amount the amount of steam to fill
+	 * @return the leftover steam
+	 */
+	int fill(int amount, boolean virtual);
 
-	int drain(int amount);
+	/**
+	 * Drains a certain amount of steam from the tank
+	 * @param amount the amount to drain
+	 * @return the amount actually drained
+	 */
+	int drain(int amount, boolean virtual);
 
 }
