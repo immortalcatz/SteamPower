@@ -119,7 +119,7 @@ public class SteamCraft {
 		copperOre = new BlockSteamcraftOre(152, 0).setHardness(2.75F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("copperOre").setCreativeTab(CreativeTabs.tabBlock);
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
 		steam = new BlockSteam(165).setBlockName("blockSteam");
-		researchTable = new BlockResearchTable(166).setHardness(2.5F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable");
+		researchTable = new BlockResearchTable(166).setHardness(2.5F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable").setCreativeTab(CreativeTabs.tabBlock);
 
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);

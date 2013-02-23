@@ -2,11 +2,14 @@ package steamcraft.steamcraft.client;
 
 import steamcraft.steamcraft.client.render.RenderBoiler;
 import steamcraft.steamcraft.client.render.RenderMech;
+import steamcraft.steamcraft.client.render.ResearchTableRender;
 import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.entity.EntityMech;
 import steamcraft.steamcraft.entity.EntityMusketBall;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import net.minecraftforge.client.MinecraftForgeClient;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 public class ClientProxy extends CommonProxy
 {
@@ -17,6 +20,7 @@ public class ClientProxy extends CommonProxy
         MinecraftForgeClient.preloadTexture(SteamCraft.BLOCKS_PNG);
         RenderingRegistry.registerEntityRenderingHandler(EntityMusketBall.class, new RenderBoiler(4));
         RenderingRegistry.registerEntityRenderingHandler(EntityMech.class, new RenderMech());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityResearchTable.class, new ResearchTableRender());
     }
 
 }
