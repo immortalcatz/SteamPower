@@ -6,96 +6,78 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.transport.IPipe;
 
-public class ActionManager
-{
-    public static Trigger[] triggers = new Trigger[1024];
-    public static Action[] actions = new Action[1024];
+public class ActionManager {
 
-    private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
-    private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
+	public static Trigger[] triggers = new Trigger[1024];
+	public static Action[] actions = new Action[1024];
 
-    public static void registerTriggerProvider(ITriggerProvider provider)
-    {
-        if (provider != null && !triggerProviders.contains(provider))
-        {
-            triggerProviders.add(provider);
-        }
-    }
+	private static LinkedList<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
+	private static LinkedList<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
-    public static LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity entity)
-    {
-        LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
+	public static void registerTriggerProvider(ITriggerProvider provider) {
+		if (provider != null && !triggerProviders.contains(provider)) {
+			triggerProviders.add(provider);
+		}
+	}
 
-        for (ITriggerProvider provider : triggerProviders)
-        {
-            LinkedList<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
+	public static LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
-            if (toAdd != null)
-            {
-                for (ITrigger t : toAdd)
-                {
-                    if (!triggers.contains(t))
-                    {
-                        triggers.add(t);
-                    }
-                }
-            }
-        }
+		for (ITriggerProvider provider : triggerProviders) {
+			LinkedList<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
 
-        return triggers;
-    }
+			if (toAdd != null) {
+				for (ITrigger t : toAdd) {
+					if (!triggers.contains(t)) {
+						triggers.add(t);
+					}
+				}
+			}
+		}
 
-    public static void registerActionProvider(IActionProvider provider)
-    {
-        if (provider != null && !actionProviders.contains(provider))
-        {
-            actionProviders.add(provider);
-        }
-    }
+		return triggers;
+	}
 
-    public static LinkedList<IAction> getNeighborActions(Block block, TileEntity entity)
-    {
-        LinkedList<IAction> actions = new LinkedList<IAction>();
+	public static void registerActionProvider(IActionProvider provider) {
+		if (provider != null && !actionProviders.contains(provider)) {
+			actionProviders.add(provider);
+		}
+	}
 
-        for (IActionProvider provider : actionProviders)
-        {
-            LinkedList<IAction> toAdd = provider.getNeighborActions(block, entity);
+	public static LinkedList<IAction> getNeighborActions(Block block, TileEntity entity) {
+		LinkedList<IAction> actions = new LinkedList<IAction>();
 
-            if (toAdd != null)
-            {
-                for (IAction t : toAdd)
-                {
-                    if (!actions.contains(t))
-                    {
-                        actions.add(t);
-                    }
-                }
-            }
-        }
+		for (IActionProvider provider : actionProviders) {
+			LinkedList<IAction> toAdd = provider.getNeighborActions(block, entity);
 
-        return actions;
-    }
+			if (toAdd != null) {
+				for (IAction t : toAdd) {
+					if (!actions.contains(t)) {
+						actions.add(t);
+					}
+				}
+			}
+		}
 
-    public static LinkedList<ITrigger> getPipeTriggers(IPipe pipe)
-    {
-        LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
+		return actions;
+	}
 
-        for (ITriggerProvider provider : triggerProviders)
-        {
-            LinkedList<ITrigger> toAdd = provider.getPipeTriggers(pipe);
+	public static LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
+		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 
-            if (toAdd != null)
-            {
-                for (ITrigger t : toAdd)
-                {
-                    if (!triggers.contains(t))
-                    {
-                        triggers.add(t);
-                    }
-                }
-            }
-        }
+		for (ITriggerProvider provider : triggerProviders) {
+			LinkedList<ITrigger> toAdd = provider.getPipeTriggers(pipe);
 
-        return triggers;
-    }
+			if (toAdd != null) {
+				for (ITrigger t : toAdd) {
+					if (!triggers.contains(t)) {
+						triggers.add(t);
+					}
+				}
+			}
+		}
+
+		return triggers;
+	}
+
 }

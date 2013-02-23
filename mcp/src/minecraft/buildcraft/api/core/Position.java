@@ -13,156 +13,130 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public class Position
-{
-    public double x, y, z;
-    public ForgeDirection orientation;
+public class Position {
 
-    public Position(double ci, double cj, double ck)
-    {
-        x = ci;
-        y = cj;
-        z = ck;
-        orientation = ForgeDirection.UNKNOWN;
-    }
+	public double x, y, z;
+	public ForgeDirection orientation;
 
-    public Position(double ci, double cj, double ck, ForgeDirection corientation)
-    {
-        x = ci;
-        y = cj;
-        z = ck;
-        orientation = corientation;
-    }
+	public Position(double ci, double cj, double ck) {
+		x = ci;
+		y = cj;
+		z = ck;
+		orientation = ForgeDirection.UNKNOWN;
+	}
 
-    public Position(Position p)
-    {
-        x = p.x;
-        y = p.y;
-        z = p.z;
-        orientation = p.orientation;
-    }
+	public Position(double ci, double cj, double ck, ForgeDirection corientation) {
+		x = ci;
+		y = cj;
+		z = ck;
+		orientation = corientation;
+	}
 
-    public Position(NBTTagCompound nbttagcompound)
-    {
-        x = nbttagcompound.getDouble("i");
-        y = nbttagcompound.getDouble("j");
-        z = nbttagcompound.getDouble("k");
-        orientation = ForgeDirection.UNKNOWN;
-    }
+	public Position(Position p) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		orientation = p.orientation;
+	}
 
-    public Position(TileEntity tile)
-    {
-        x = tile.xCoord;
-        y = tile.yCoord;
-        z = tile.zCoord;
-    }
+	public Position(NBTTagCompound nbttagcompound) {
+		x = nbttagcompound.getDouble("i");
+		y = nbttagcompound.getDouble("j");
+		z = nbttagcompound.getDouble("k");
 
-    public void moveRight(double step)
-    {
-        switch (orientation)
-        {
-            case SOUTH:
-                x = x - step;
-                break;
+		orientation = ForgeDirection.UNKNOWN;
+	}
 
-            case NORTH:
-                x = x + step;
-                break;
+	public Position(TileEntity tile) {
+		x = tile.xCoord;
+		y = tile.yCoord;
+		z = tile.zCoord;
+	}
 
-            case EAST:
-                z = z + step;
-                break;
+	public void moveRight(double step) {
+		switch (orientation) {
+		case SOUTH:
+			x = x - step;
+			break;
+		case NORTH:
+			x = x + step;
+			break;
+		case EAST:
+			z = z + step;
+			break;
+		case WEST:
+			z = z - step;
+			break;
+		default:
+		}
+	}
 
-            case WEST:
-                z = z - step;
-                break;
+	public void moveLeft(double step) {
+		moveRight(-step);
+	}
 
-            default:
-        }
-    }
+	public void moveForwards(double step) {
+		switch (orientation) {
+		case UP:
+			y = y + step;
+			break;
+		case DOWN:
+			y = y - step;
+			break;
+		case SOUTH:
+			z = z + step;
+			break;
+		case NORTH:
+			z = z - step;
+			break;
+		case EAST:
+			x = x + step;
+			break;
+		case WEST:
+			x = x - step;
+			break;
+		default:
+		}
+	}
 
-    public void moveLeft(double step)
-    {
-        moveRight(-step);
-    }
+	public void moveBackwards(double step) {
+		moveForwards(-step);
+	}
 
-    public void moveForwards(double step)
-    {
-        switch (orientation)
-        {
-            case UP:
-                y = y + step;
-                break;
+	public void moveUp(double step) {
+		switch (orientation) {
+		case SOUTH:
+		case NORTH:
+		case EAST:
+		case WEST:
+			y = y + step;
+			break;
+		default:
+		}
 
-            case DOWN:
-                y = y - step;
-                break;
+	}
 
-            case SOUTH:
-                z = z + step;
-                break;
+	public void moveDown(double step) {
+		moveUp(-step);
+	}
 
-            case NORTH:
-                z = z - step;
-                break;
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound.setDouble("i", x);
+		nbttagcompound.setDouble("j", y);
+		nbttagcompound.setDouble("k", z);
+	}
 
-            case EAST:
-                x = x + step;
-                break;
+	@Override
+	public String toString() {
+		return "{" + x + ", " + y + ", " + z + "}";
+	}
 
-            case WEST:
-                x = x - step;
-                break;
+	public Position min(Position p) {
+		return new Position(p.x > x ? x : p.x, p.y > y ? y : p.y, p.z > z ? z : p.z);
+	}
 
-            default:
-        }
-    }
+	public Position max(Position p) {
+		return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z : p.z);
+	}
 
-    public void moveBackwards(double step)
-    {
-        moveForwards(-step);
-    }
-
-    public void moveUp(double step)
-    {
-        switch (orientation)
-        {
-            case SOUTH:
-            case NORTH:
-            case EAST:
-            case WEST:
-                y = y + step;
-                break;
-
-            default:
-        }
-    }
-
-    public void moveDown(double step)
-    {
-        moveUp(-step);
-    }
-
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        nbttagcompound.setDouble("i", x);
-        nbttagcompound.setDouble("j", y);
-        nbttagcompound.setDouble("k", z);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "{" + x + ", " + y + ", " + z + "}";
-    }
-
-    public Position min(Position p)
-    {
-        return new Position(p.x > x ? x : p.x, p.y > y ? y : p.y, p.z > z ? z : p.z);
-    }
-
-    public Position max(Position p)
-    {
-        return new Position(p.x < x ? x : p.x, p.y < y ? y : p.y, p.z < z ? z : p.z);
-    }
 }

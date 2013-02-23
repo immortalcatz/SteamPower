@@ -20,84 +20,68 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 
-public class BlockLaser extends BlockContainer
-{
-    public BlockLaser(int i)
-    {
-        super(i, Material.iron);
-        setHardness(0.5F);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+public class BlockLaser extends BlockContainer {
 
-    @Override
-    public int getRenderType()
-    {
-        return SiliconProxy.laserBlockModel;
-    }
+	public BlockLaser(int i) {
+		super(i, Material.iron);
+		setHardness(0.5F);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	}
 
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
+	@Override
+	public int getRenderType() {
+		return SiliconProxy.laserBlockModel;
+	}
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    public boolean isACube()
-    {
-        return false;
-    }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return new TileLaser();
-    }
+	public boolean isACube() {
+		return false;
+	}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return new TileLaser();
+	}
 
-    @Override
-    public int getBlockTextureFromSideAndMetadata(int i, int j)
-    {
-        if (i == ForgeDirection.values()[j].getOpposite().ordinal())
-        {
-            return 16 * 2 + 15;
-        }
-        else if (i == j)
-        {
-            return 16 * 2 + 14;
-        }
-        else
-        {
-            return 16 * 2 + 13;
-        }
-    }
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
 
-    @Override
-    public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta)
-    {
-        super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
+	@Override
+	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+		if (i == ForgeDirection.values()[j].getOpposite().ordinal())
+			return 16 * 2 + 15;
+		else if (i == j)
+			return 16 * 2 + 14;
+		else
+			return 16 * 2 + 13;
 
-        if (side <= 6)
-        {
-            meta = side;
-        }
+	}
 
-        return meta;
-    }
+	@Override
+	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
+		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    @Override
-    public void addCreativeItems(ArrayList itemList)
-    {
-        itemList.add(new ItemStack(this));
-    }
+		if (side <= 6) {
+			meta = side;
+		}
+
+		return meta;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
 }

@@ -19,134 +19,106 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipePowerWood extends Pipe implements IPowerReceptor
-{
-    private static final int MAX_OVERHEAT_TICKS = 100;
+public class PipePowerWood extends Pipe implements IPowerReceptor {
 
-    private IPowerProvider powerProvider;
+	private static final int MAX_OVERHEAT_TICKS = 100;
 
-    private int baseTexture = 7 * 16 + 6;
-    private int plainTexture = 1 * 16 + 15;
+	private IPowerProvider powerProvider;
 
-    private int overheatTicks;
+	private int baseTexture = 7 * 16 + 6;
+	private int plainTexture = 1 * 16 + 15;
 
-    public PipePowerWood(int itemID)
-    {
-        super(new PipeTransportPower(), new PipeLogicWood(), itemID);
-        powerProvider = PowerFramework.currentFramework.createPowerProvider();
-        powerProvider.configure(50, 2, 1000, 1, 1000);
-        powerProvider.configurePowerPerdition(1, 100);
-    }
+	private int overheatTicks;
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	public PipePowerWood(int itemID) {
+		super(new PipeTransportPower(), new PipeLogicWood(), itemID);
 
-    @Override
-    public int getTextureIndex(ForgeDirection direction)
-    {
-        if (direction == ForgeDirection.UNKNOWN)
-        {
-            return baseTexture;
-        }
-        else
-        {
-            int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider.configure(50, 2, 1000, 1, 1000);
+		powerProvider.configurePowerPerdition(1, 100);
+	}
 
-            if (metadata == direction.ordinal())
-            {
-                return plainTexture;
-            }
-            else
-            {
-                return baseTexture;
-            }
-        }
-    }
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
 
-    @Override
-    public void setPowerProvider(IPowerProvider provider)
-    {
-        powerProvider = provider;
-    }
+	@Override
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
+			return baseTexture;
+		else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-    @Override
-    public IPowerProvider getPowerProvider()
-    {
-        if (overheatTicks > 0)
-        {
-            return null;
-        }
+			if (metadata == direction.ordinal())
+				return plainTexture;
+			else
+				return baseTexture;
+		}
+	}
 
-        return powerProvider;
-    }
+	@Override
+	public void setPowerProvider(IPowerProvider provider) {
+		powerProvider = provider;
+	}
 
-    @Override
-    public void doWork()
-    {
-        // TODO Auto-generated method stub
-    }
+	@Override
+	public IPowerProvider getPowerProvider() {
+		if (overheatTicks > 0)
+			return null;
+		return powerProvider;
+	}
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
+	@Override
+	public void doWork() {
+		// TODO Auto-generated method stub
 
-        if (worldObj.isRemote)
-        {
-            return;
-        }
+	}
 
-        if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored())
-        {
-            overheatTicks += overheatTicks < MAX_OVERHEAT_TICKS ? 1 : 0;
-        }
-        else
-        {
-            overheatTicks -= overheatTicks > 0 ? 1 : 0;
-        }
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+		if (worldObj.isRemote)
+			return;
 
-        for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
-        {
-            if (Utils.checkPipesConnections(container, container.getTile(o)))
-            {
-                TileEntity tile = container.getTile(o);
+		if (powerProvider.getEnergyStored() == powerProvider.getMaxEnergyStored()) {
+			overheatTicks += overheatTicks < MAX_OVERHEAT_TICKS ? 1 : 0;
+		} else {
+			overheatTicks -= overheatTicks > 0 ? 1 : 0;
+		}
 
-                if (tile instanceof TileGenericPipe)
-                {
-                    if (((TileGenericPipe) tile).pipe == null)
-                    {
-                        continue; // Null pointer protection
-                    }
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			if (Utils.checkPipesConnections(container, container.getTile(o))) {
+				TileEntity tile = container.getTile(o);
 
-                    PipeTransportPower trans = (PipeTransportPower)((TileGenericPipe) tile).pipe.transport;
-                    float energyToRemove;
+				if (tile instanceof TileGenericPipe) {
+					if (((TileGenericPipe) tile).pipe == null) {
+						continue; // Null pointer protection
+					}
 
-                    if (powerProvider.getEnergyStored() > 40)
-                    {
-                        energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
-                    }
-                    else if (powerProvider.getEnergyStored() > 10)
-                    {
-                        energyToRemove = powerProvider.getEnergyStored() / 10;
-                    }
-                    else
-                    {
-                        energyToRemove = 1;
-                    }
+					PipeTransportPower trans = (PipeTransportPower) ((TileGenericPipe) tile).pipe.transport;
 
-                    float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
-                    trans.receiveEnergy(o.getOpposite(), energyUsed);
-                }
-            }
-        }
-    }
+					float energyToRemove;
 
-    @Override
-    public int powerRequest()
-    {
-        return getPowerProvider().getMaxEnergyReceived();
-    }
+					if (powerProvider.getEnergyStored() > 40) {
+						energyToRemove = powerProvider.getEnergyStored() / 40 + 4;
+					} else if (powerProvider.getEnergyStored() > 10) {
+						energyToRemove = powerProvider.getEnergyStored() / 10;
+					} else {
+						energyToRemove = 1;
+					}
+
+					float energyUsed = powerProvider.useEnergy(1, energyToRemove, true);
+
+					trans.receiveEnergy(o.getOpposite(), energyUsed);
+				}
+			}
+		}
+	}
+
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().getMaxEnergyReceived();
+	}
+
 }

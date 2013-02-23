@@ -18,104 +18,85 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class BlockAssemblyTable extends BlockContainer
-{
-    public BlockAssemblyTable(int i)
-    {
-        super(i, Material.iron);
-        setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
-        setHardness(0.5F);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+public class BlockAssemblyTable extends BlockContainer {
 
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
+	public BlockAssemblyTable(int i) {
+		super(i, Material.iron);
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
+		setHardness(0.5F);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 
-    public boolean isACube()
-    {
-        return false;
-    }
+	}
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
-    {
-        // Drop through if the player is sneaking
-        if (entityplayer.isSneaking())
-        {
-            return false;
-        }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-        if (!CoreProxy.proxy.isRenderWorld(world))
-        {
-            int meta = world.getBlockMetadata(i, j, k);
-            entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
-        }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
-        return true;
-    }
+	public boolean isACube() {
+		return false;
+	}
 
-    @Override
-    public void breakBlock(World world, int x, int y, int z, int par5, int par6)
-    {
-        Utils.preDestroyBlock(world, x, y, z);
-        super.breakBlock(world, x, y, z, par5, par6);
-    }
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		// Drop through if the player is sneaking
+		if (entityplayer.isSneaking())
+			return false;
 
-    @Override
-    public int getBlockTextureFromSideAndMetadata(int i, int j)
-    {
-        if (i == 1)
-        {
-            return j == 0 ? 16 * 6 + 12 : 16 * 3 + 15;
-        }
-        else if (i == 0)
-        {
-            return 16 * 2 + 15;
-        }
-        else
-        {
-            return j == 0 ? 16 * 6 + 11 : 16 * 3 + 14;
-        }
-    }
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
+			int meta = world.getBlockMetadata(i, j, k);
+			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
+		}
+		return true;
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int metadata)
-    {
-        return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
-    }
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return null;
-    }
+	@Override
+	public int getBlockTextureFromSideAndMetadata(int i, int j) {
+		if (i == 1) {
+			return j == 0 ? 16 * 6 + 12 : 16 * 3 + 15;
+		} else if (i == 0) {
+			return 16 * 2 + 15;
+		} else {
+			return j == 0 ? 16 * 6 + 11 : 16 * 3 + 14;
+		}
+	}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	@Override
+	public TileEntity createNewTileEntity(World world, int metadata) {
+		return metadata == 0 ? new TileAssemblyTable() : new TileAssemblyAdvancedWorkbench();
+	}
 
-    @Override
-    public int damageDropped(int par1)
-    {
-        return par1;
-    }
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return null;
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-        par3List.add(new ItemStack(this, 1, 0));
-        par3List.add(new ItemStack(this, 1, 1));
-    }
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int damageDropped(int par1) {
+		return par1;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+		par3List.add(new ItemStack(this, 1, 0));
+		par3List.add(new ItemStack(this, 1, 1));
+	}
 }

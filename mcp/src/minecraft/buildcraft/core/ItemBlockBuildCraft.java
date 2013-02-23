@@ -4,25 +4,23 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.utils.StringUtil;
 
-public class ItemBlockBuildCraft extends ItemBlock
-{
-    protected String name;
+public class ItemBlockBuildCraft extends ItemBlock {
 
-    public ItemBlockBuildCraft(int id, String name)
-    {
-        super(id);
-        this.name = name;
-    }
+	protected String name;
 
-    @Override
-    public int getMetadata(int i)
-    {
-        return i;
-    }
+	public ItemBlockBuildCraft(int id, String name) {
+		super(id);
+		this.name = name;
+	}
 
-    @Override
-    public String getItemDisplayName(ItemStack itemstack)
-    {
-        return StringUtil.localize(getItemNameIS(itemstack));
-    }
+	@Override
+	public int getMetadata(int i) {
+		return i;
+	}
+
+	@Override
+	public String getItemDisplayName(ItemStack itemstack) {
+		return StringUtil.localize(getItemNameIS(itemstack));
+	}
+
 }

@@ -19,177 +19,125 @@ import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 
-public class TriggerLiquidContainer extends Trigger
-{
-    public enum State
-    {
-        Empty, Contains, Space, Full
-    };
+public class TriggerLiquidContainer extends Trigger {
 
-    public State state;
+	public enum State {
+		Empty, Contains, Space, Full
+	};
 
-    public TriggerLiquidContainer(int id, State state)
-    {
-        super(id);
-        this.state = state;
-    }
+	public State state;
 
-    @Override
-    public int getIndexInTexture()
-    {
-        switch (state)
-        {
-            case Empty:
-                return 2 * 16 + 0;
+	public TriggerLiquidContainer(int id, State state) {
+		super(id);
+		this.state = state;
+	}
 
-            case Contains:
-                return 2 * 16 + 1;
+	@Override
+	public int getIndexInTexture() {
+		switch (state) {
+		case Empty:
+			return 2 * 16 + 0;
+		case Contains:
+			return 2 * 16 + 1;
+		case Space:
+			return 2 * 16 + 2;
+		default:
+			return 2 * 16 + 3;
+		}
+	}
 
-            case Space:
-                return 2 * 16 + 2;
+	@Override
+	public boolean hasParameter() {
+		if (state == State.Contains || state == State.Space)
+			return true;
+		else
+			return false;
+	}
 
-            default:
-                return 2 * 16 + 3;
-        }
-    }
+	@Override
+	public String getDescription() {
+		switch (state) {
+		case Empty:
+			return "Tank Empty";
+		case Contains:
+			return "Liquid in Tank";
+		case Space:
+			return "Space for Liquid";
+		default:
+			return "Tank Full";
+		}
+	}
 
-    @Override
-    public boolean hasParameter()
-    {
-        if (state == State.Contains || state == State.Space)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+	@Override
+	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
+		if (tile instanceof ITankContainer) {
+			ITankContainer container = (ITankContainer) tile;
 
-    @Override
-    public String getDescription()
-    {
-        switch (state)
-        {
-            case Empty:
-                return "Tank Empty";
+			LiquidStack searchedLiquid = null;
 
-            case Contains:
-                return "Liquid in Tank";
+			if (parameter != null && parameter.getItem() != null) {
+				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+			}
 
-            case Space:
-                return "Space for Liquid";
+			if (searchedLiquid != null) {
+				searchedLiquid.amount = 1;
+			}
 
-            default:
-                return "Tank Full";
-        }
-    }
+			ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
 
-    @Override
-    public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter)
-    {
-        if (tile instanceof ITankContainer)
-        {
-            ITankContainer container = (ITankContainer) tile;
-            LiquidStack searchedLiquid = null;
+			if (liquids == null || liquids.length == 0)
+				return false;
 
-            if (parameter != null && parameter.getItem() != null)
-            {
-                searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
-            }
+			switch (state) {
+			case Empty:
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						LiquidStack drained = c.drain(1, false);
+						if (drained != null && searchedLiquid.isLiquidEqual(drained))
+							return false;
+					} else if (c.getLiquid() != null && c.getLiquid().amount > 0)
+						return false;
+				}
 
-            if (searchedLiquid != null)
-            {
-                searchedLiquid.amount = 1;
-            }
+				return true;
+			case Contains:
+				for (ILiquidTank c : liquids) {
+					if (c.getLiquid() != null && c.getLiquid().amount != 0) {
+						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
+							return true;
+					}
+				}
 
-            ILiquidTank[] liquids = container.getTanks(ForgeDirection.UNKNOWN);
+				return false;
 
-            if (liquids == null || liquids.length == 0)
-            {
-                return false;
-            }
+			case Space:
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						if (c.fill(searchedLiquid, false) > 0)
+							return true;
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
+						return true;
+				}
 
-            switch (state)
-            {
-                case Empty:
-                    for (ILiquidTank c : liquids)
-                    {
-                        if (searchedLiquid != null)
-                        {
-                            LiquidStack drained = c.drain(1, false);
+				return false;
+			case Full:
+				for (ILiquidTank c : liquids) {
+					if (searchedLiquid != null) {
+						if (c.fill(searchedLiquid, false) > 0)
+							return false;
+					} else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
+						return false;
+				}
 
-                            if (drained != null && searchedLiquid.isLiquidEqual(drained))
-                            {
-                                return false;
-                            }
-                        }
-                        else if (c.getLiquid() != null && c.getLiquid().amount > 0)
-                        {
-                            return false;
-                        }
-                    }
+				return true;
+			}
+		}
 
-                    return true;
+		return false;
+	}
 
-                case Contains:
-                    for (ILiquidTank c : liquids)
-                    {
-                        if (c.getLiquid() != null && c.getLiquid().amount != 0)
-                        {
-                            if (searchedLiquid == null || searchedLiquid.isLiquidEqual(c.getLiquid()))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-
-                    return false;
-
-                case Space:
-                    for (ILiquidTank c : liquids)
-                    {
-                        if (searchedLiquid != null)
-                        {
-                            if (c.fill(searchedLiquid, false) > 0)
-                            {
-                                return true;
-                            }
-                        }
-                        else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-
-                case Full:
-                    for (ILiquidTank c : liquids)
-                    {
-                        if (searchedLiquid != null)
-                        {
-                            if (c.fill(searchedLiquid, false) > 0)
-                            {
-                                return false;
-                            }
-                        }
-                        else if (c.getLiquid() == null || c.getLiquid().amount < c.getCapacity())
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_TRIGGERS;
-    }
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_TRIGGERS;
+	}
 }

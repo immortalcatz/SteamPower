@@ -14,30 +14,27 @@ import java.io.File;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
-public class BuildCraftConfiguration extends Configuration
-{
-    public BuildCraftConfiguration(File file)
-    {
-        super(file);
-    }
+public class BuildCraftConfiguration extends Configuration {
 
-    @Override
-    public void save()
-    {
-        Property versionProp = null;
+	public BuildCraftConfiguration(File file) {
+		super(file);
+	}
 
-        if (!categories.get(CATEGORY_GENERAL).containsKey("version"))
-        {
-            versionProp = new Property();
-            versionProp.setName("version");
-            categories.get(CATEGORY_GENERAL).put("version", versionProp);
-        }
-        else
-        {
-            versionProp = categories.get(CATEGORY_GENERAL).get("version");
-        }
+	@Override
+	public void save() {
+		Property versionProp = null;
 
-        versionProp.value = Version.VERSION;
-        super.save();
-    }
+		if (!categories.get(CATEGORY_GENERAL).containsKey("version")) {
+			versionProp = new Property();
+			versionProp.setName("version");
+			categories.get(CATEGORY_GENERAL).put("version", versionProp);
+		} else {
+			versionProp = categories.get(CATEGORY_GENERAL).get("version");
+		}
+
+		versionProp.value = Version.VERSION;
+
+		super.save();
+	}
+
 }

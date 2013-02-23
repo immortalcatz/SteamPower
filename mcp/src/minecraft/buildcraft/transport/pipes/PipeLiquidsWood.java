@@ -25,152 +25,128 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
-public class PipeLiquidsWood extends Pipe implements IPowerReceptor
-{
-    public @TileNetworkData
-    int liquidToExtract;
+public class PipeLiquidsWood extends Pipe implements IPowerReceptor {
 
-    private IPowerProvider powerProvider;
-    protected int baseTexture = 7 * 16 + 0;
-    protected int plainTexture = 1 * 16 + 15;
+	public @TileNetworkData
+	int liquidToExtract;
 
-    long lastMining = 0;
-    boolean lastPower = false;
+	private IPowerProvider powerProvider;
+	protected int baseTexture = 7 * 16 + 0;
+	protected int plainTexture = 1 * 16 + 15;
 
-    public PipeLiquidsWood(int itemID)
-    {
-        this(new PipeLogicWood(), itemID);
-    }
+	long lastMining = 0;
+	boolean lastPower = false;
 
-    protected PipeLiquidsWood(PipeLogic logic, int itemID)
-    {
-        super(new PipeTransportLiquids(), logic, itemID);
-        powerProvider = PowerFramework.currentFramework.createPowerProvider();
-        powerProvider.configure(50, 1, 100, 1, 250);
-        powerProvider.configurePowerPerdition(1, 1);
-    }
+	public PipeLiquidsWood(int itemID) {
+		this(new PipeLogicWood(), itemID);
+	}
+	
+	protected PipeLiquidsWood(PipeLogic logic, int itemID) {
+		super(new PipeTransportLiquids(), logic, itemID);
 
-    /**
-     * Extracts a random piece of item outside of a nearby chest.
-     */
-    @Override
-    public void doWork()
-    {
-        if (powerProvider.getEnergyStored() <= 0)
-        {
-            return;
-        }
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider.configure(50, 1, 100, 1, 250);
+		powerProvider.configurePowerPerdition(1, 1);
+	}
 
-        World w = worldObj;
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	/**
+	 * Extracts a random piece of item outside of a nearby chest.
+	 */
+	@Override
+	public void doWork() {
+		if (powerProvider.getEnergyStored() <= 0)
+			return;
 
-        if (meta > 5)
-        {
-            return;
-        }
+		World w = worldObj;
 
-        Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
-        pos.moveForwards(1);
-        TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-        if (tile instanceof ITankContainer)
-        {
-            if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
-            {
-                return;
-            }
+		if (meta > 5)
+			return;
 
-            if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME)
-            {
-                liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
-            }
-        }
-    }
+		Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+		pos.moveForwards(1);
+		TileEntity tile = w.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-    @Override
-    public void setPowerProvider(IPowerProvider provider)
-    {
-        powerProvider = provider;
-    }
+		if (tile instanceof ITankContainer) {
+			if (!PipeManager.canExtractLiquids(this, w, (int) pos.x, (int) pos.y, (int) pos.z))
+				return;
 
-    @Override
-    public IPowerProvider getPowerProvider()
-    {
-        return powerProvider;
-    }
+			if (liquidToExtract <= LiquidContainerRegistry.BUCKET_VOLUME) {
+				liquidToExtract += powerProvider.useEnergy(1, 1, true) * LiquidContainerRegistry.BUCKET_VOLUME;
+			}
+		}
+	}
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	@Override
+	public void setPowerProvider(IPowerProvider provider) {
+		powerProvider = provider;
+	}
 
-        if (liquidToExtract > 0 && meta < 6)
-        {
-            Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
-            pos.moveForwards(1);
-            TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+	@Override
+	public IPowerProvider getPowerProvider() {
+		return powerProvider;
+	}
 
-            if (tile instanceof ITankContainer)
-            {
-                ITankContainer container = (ITankContainer) tile;
-                int flowRate = ((PipeTransportLiquids) transport).flowRate;
-                LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
-                int inserted = 0;
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
 
-                if (extracted != null)
-                {
-                    inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
-                    container.drain(pos.orientation.getOpposite(), inserted, true);
-                }
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-                liquidToExtract -= inserted;
-            }
-        }
-    }
+		if (liquidToExtract > 0 && meta < 6) {
+			Position pos = new Position(xCoord, yCoord, zCoord, ForgeDirection.getOrientation(meta));
+			pos.moveForwards(1);
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+			TileEntity tile = worldObj.getBlockTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-    @Override
-    public int getTextureIndex(ForgeDirection direction)
-    {
-        if (direction == ForgeDirection.UNKNOWN)
-        {
-            return baseTexture;
-        }
-        else
-        {
-            int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			if (tile instanceof ITankContainer) {
+				ITankContainer container = (ITankContainer) tile;
 
-            if (metadata == direction.ordinal())
-            {
-                return plainTexture;
-            }
-            else
-            {
-                return baseTexture;
-            }
-        }
-    }
+				int flowRate = ((PipeTransportLiquids) transport).flowRate;
 
-    @Override
-    public int powerRequest()
-    {
-        return getPowerProvider().getMaxEnergyReceived();
-    }
+				LiquidStack extracted = container.drain(pos.orientation.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
 
-    @Override
-    public boolean canConnectRedstone()
-    {
-        if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
-        {
-            return true;
-        }
+				int inserted = 0;
+				if (extracted != null) {
+					inserted = ((PipeTransportLiquids) transport).fill(pos.orientation, extracted, true);
 
-        return super.canConnectRedstone();
-    }
+					container.drain(pos.orientation.getOpposite(), inserted, true);
+				}
+
+				liquidToExtract -= inserted;
+			}
+		}
+	}
+
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int getTextureIndex(ForgeDirection direction) {
+		if (direction == ForgeDirection.UNKNOWN)
+			return baseTexture;
+		else {
+			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+
+			if (metadata == direction.ordinal())
+				return plainTexture;
+			else
+				return baseTexture;
+		}
+	}
+
+	@Override
+	public int powerRequest() {
+		return getPowerProvider().getMaxEnergyReceived();
+	}
+
+	@Override
+	public boolean canConnectRedstone() {
+		if (PowerFramework.currentFramework instanceof RedstonePowerFramework)
+			return true;
+		return super.canConnectRedstone();
+	}
 }

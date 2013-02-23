@@ -14,25 +14,20 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogicStripes extends PipeLogic
-{
-    @Override
-    public boolean isPipeConnected(TileEntity tile)
-    {
-        Pipe pipe2 = null;
+public class PipeLogicStripes extends PipeLogic {
 
-        if (tile instanceof TileGenericPipe)
-        {
-            pipe2 = ((TileGenericPipe) tile).pipe;
-        }
+	@Override
+	public boolean isPipeConnected(TileEntity tile) {
+		Pipe pipe2 = null;
 
-        if (BuildCraftTransport.alwaysConnectPipes)
-        {
-            return super.isPipeConnected(tile);
-        }
-        else
-        {
-            return (pipe2 == null || !(pipe2.logic instanceof PipeLogicStripes) && !(pipe2.logic instanceof PipeLogicObsidian)) && super.isPipeConnected(tile);
-        }
-    }
+		if (tile instanceof TileGenericPipe) {
+			pipe2 = ((TileGenericPipe) tile).pipe;
+		}
+
+		if (BuildCraftTransport.alwaysConnectPipes)
+			return super.isPipeConnected(tile);
+		else
+			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicStripes) && !(pipe2.logic instanceof PipeLogicObsidian)) && super.isPipeConnected(tile);
+	}
+
 }

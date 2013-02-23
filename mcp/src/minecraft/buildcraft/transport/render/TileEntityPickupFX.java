@@ -67,9 +67,7 @@ public class TileEntityPickupFX extends EntityFX
         var21 -= interpPosX;
         var23 -= interpPosY;
         var25 -= interpPosZ;
-
-        if (RenderManager.instance.renderEngine != null)
-        {
+        if (RenderManager.instance.renderEngine != null) {
             RenderManager.instance.renderEntityWithPosYaw(this.entityToPickUp, (double)((float)var21), (double)((float)var23), (double)((float)var25), this.entityToPickUp.rotationYaw, par2);
         }
     }

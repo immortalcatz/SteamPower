@@ -1,6 +1,6 @@
 package steamcraft.steamcraft.gui;
 
-import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

@@ -7,99 +7,80 @@ import java.io.IOException;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipe;
 
-public class WireMatrix
-{
-    private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
-    private final ConnectionMatrix _wires[] = new ConnectionMatrix[IPipe.WireColor.values().length];
-    private int _wireTextureIndex[] = new int[IPipe.WireColor.values().length];
-    private boolean dirty = false;
+public class WireMatrix {
 
-    public WireMatrix()
-    {
-        for (int i = 0; i < IPipe.WireColor.values().length; i++)
-        {
-            _wires[i] = new ConnectionMatrix();
-        }
-    }
+	private final boolean[] _hasWire = new boolean[IPipe.WireColor.values().length];
+	private final ConnectionMatrix _wires[] = new ConnectionMatrix[IPipe.WireColor.values().length];
+	private int _wireTextureIndex[] = new int[IPipe.WireColor.values().length];
+	private boolean dirty = false;
 
-    public boolean hasWire(IPipe.WireColor color)
-    {
-        return _hasWire[color.ordinal()];
-    }
+	public WireMatrix() {
+		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
+			_wires[i] = new ConnectionMatrix();
+		}
+	}
 
-    public void setWire(IPipe.WireColor color, boolean value)
-    {
-        if (_hasWire[color.ordinal()] != value)
-        {
-            _hasWire[color.ordinal()] = value;
-            dirty = true;
-        }
-    }
+	public boolean hasWire(IPipe.WireColor color) {
+		return _hasWire[color.ordinal()];
+	}
 
-    public boolean isWireConnected(IPipe.WireColor color, ForgeDirection direction)
-    {
-        return _wires[color.ordinal()].isConnected(direction);
-    }
+	public void setWire(IPipe.WireColor color, boolean value) {
+		if (_hasWire[color.ordinal()] != value) {
+			_hasWire[color.ordinal()] = value;
+			dirty = true;
+		}
+	}
 
-    public void setWireConnected(IPipe.WireColor color, ForgeDirection direction, boolean value)
-    {
-        _wires[color.ordinal()].setConnected(direction, value);
-    }
+	public boolean isWireConnected(IPipe.WireColor color, ForgeDirection direction) {
+		return _wires[color.ordinal()].isConnected(direction);
+	}
 
-    public int getTextureIndex(IPipe.WireColor color)
-    {
-        return _wireTextureIndex[color.ordinal()];
-    }
+	public void setWireConnected(IPipe.WireColor color, ForgeDirection direction, boolean value) {
+		_wires[color.ordinal()].setConnected(direction, value);
+	}
 
-    public void setTextureIndex(IPipe.WireColor color, int value)
-    {
-        if (_wireTextureIndex[color.ordinal()] != value)
-        {
-            _wireTextureIndex[color.ordinal()] = value;
-            dirty = true;
-        }
-    }
+	public int getTextureIndex(IPipe.WireColor color) {
+		return _wireTextureIndex[color.ordinal()];
+	}
 
-    public boolean isDirty()
-    {
-        for (int i = 0; i < IPipe.WireColor.values().length; i++)
-        {
-            if (_wires[i].isDirty())
-            {
-                return true;
-            }
-        }
+	public void setTextureIndex(IPipe.WireColor color, int value) {
+		if (_wireTextureIndex[color.ordinal()] != value) {
+			_wireTextureIndex[color.ordinal()] = value;
+			dirty = true;
+		}
+	}
 
-        return dirty;
-    }
+	public boolean isDirty() {
 
-    public void clean()
-    {
-        for (int i = 0; i < IPipe.WireColor.values().length; i++)
-        {
-            _wires[i].clean();
-        }
+		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
+			if (_wires[i].isDirty())
+				return true;
+		}
 
-        dirty = false;
-    }
+		return dirty;
+	}
 
-    public void writeData(DataOutputStream data) throws IOException
-    {
-        for (int i = 0; i < IPipe.WireColor.values().length; i++)
-        {
-            data.writeBoolean(_hasWire[i]);
-            _wires[i].writeData(data);
-            data.writeInt(_wireTextureIndex[i]);
-        }
-    }
+	public void clean() {
+		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
+			_wires[i].clean();
+		}
+		dirty = false;
+	}
 
-    public void readData(DataInputStream data) throws IOException
-    {
-        for (int i = 0; i < IPipe.WireColor.values().length; i++)
-        {
-            _hasWire[i] = data.readBoolean();
-            _wires[i].readData(data);
-            _wireTextureIndex[i] = data.readInt();
-        }
-    }
+	public void writeData(DataOutputStream data) throws IOException {
+
+		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
+			data.writeBoolean(_hasWire[i]);
+			_wires[i].writeData(data);
+			data.writeInt(_wireTextureIndex[i]);
+		}
+	}
+
+	public void readData(DataInputStream data) throws IOException {
+		for (int i = 0; i < IPipe.WireColor.values().length; i++) {
+			_hasWire[i] = data.readBoolean();
+			_wires[i].readData(data);
+			_wireTextureIndex[i] = data.readInt();
+		}
+	}
 }

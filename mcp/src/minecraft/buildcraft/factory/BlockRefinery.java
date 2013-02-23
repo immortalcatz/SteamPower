@@ -31,121 +31,104 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class BlockRefinery extends BlockContainer
-{
-    public BlockRefinery(int i)
-    {
-        super(i, Material.iron);
-        setHardness(0.5F);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+public class BlockRefinery extends BlockContainer {
 
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
+	public BlockRefinery(int i) {
+		super(i, Material.iron);
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+		setHardness(0.5F);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	}
 
-    public boolean isACube()
-    {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    @Override
-    public int getRenderType()
-    {
-        return BuildCraftCore.blockByEntityModel;
-    }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return new TileRefinery();
-    }
+	public boolean isACube() {
+		return false;
+	}
 
-    @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
-    {
-        super.onBlockPlacedBy(world, i, j, k, entityliving);
-        ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
-        world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
-    }
+	@Override
+	public int getRenderType() {
+		return BuildCraftCore.blockByEntityModel;
+	}
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
-    {
-        // Drop through if the player is sneaking
-        if (entityplayer.isSneaking())
-        {
-            return false;
-        }
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return new TileRefinery();
+	}
 
-        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+	@Override
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+		super.onBlockPlacedBy(world, i, j, k, entityliving);
 
-        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k))
-        {
-            int meta = world.getBlockMetadata(i, j, k);
+		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
 
-            switch (ForgeDirection.values()[meta])
-            {
-                case WEST:
-                    world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
-                    break;
+		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+	}
 
-                case EAST:
-                    world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
-                    break;
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		// Drop through if the player is sneaking
+		if (entityplayer.isSneaking())
+			return false;
 
-                case NORTH:
-                    world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
-                    break;
+		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
 
-                case SOUTH:
-                default:
-                    world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
-                    break;
-            }
+			int meta = world.getBlockMetadata(i, j, k);
 
-            ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
-            world.markBlockForUpdate(i, j, k);
-            return true;
-        }
-        else
-        {
-            LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
+			switch (ForgeDirection.values()[meta]) {
+			case WEST:
+				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
+				break;
+			case EAST:
+				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
+				break;
+			case NORTH:
+				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
+				break;
+			case SOUTH:
+			default:
+				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
+				break;
+			}
+			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+			world.markBlockForUpdate(i, j, k);
+			return true;
+		} else {
 
-            if (liquid != null)
-            {
-                int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(ForgeDirection.UNKNOWN, liquid, true);
+			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(entityplayer.getCurrentEquippedItem());
 
-                if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode)
-                {
-                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
-                            Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
-                }
+			if (liquid != null) {
+				int qty = ((TileRefinery) world.getBlockTileEntity(i, j, k)).fill(ForgeDirection.UNKNOWN, liquid, true);
 
-                return true;
-            }
-        }
+				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,
+							Utils.consumeItem(entityplayer.inventory.getCurrentItem()));
+				}
 
-        if (!CoreProxy.proxy.isRenderWorld(world))
-        {
-            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
-        }
+				return true;
+			}
+		}
 
-        return true;
-    }
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, i, j, k);
+		}
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    @Override
-    public void addCreativeItems(ArrayList itemList)
-    {
-        itemList.add(new ItemStack(this));
-    }
+		return true;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
+
 }

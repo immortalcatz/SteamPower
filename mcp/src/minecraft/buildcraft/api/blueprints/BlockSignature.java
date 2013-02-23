@@ -1,84 +1,77 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package buildcraft.api.blueprints;
 
-public class BlockSignature
-{
-    public String blockClassName;
-    public String tileClassName;
-    public String blockName;
-    public String mod;
-    public String modVersion;
-    public String customField;
+public class BlockSignature {
 
-    public BlockSignature(String str)
-    {
-        String[] values = str.split("/");
-        int i = 0;
+	public String blockClassName;
+	public String tileClassName;
+	public String blockName;
+	public String mod;
+	public String modVersion;
+	public String customField;
 
-        if (values[0].equals("#B"))
-        {
-            i++;
-        }
+	public BlockSignature(String str) {
+		String[] values = str.split("/");
 
-        blockClassName = values[i];
-        tileClassName = values[i + 1];
-        blockName = values[i + 2];
-        mod = values[i + 3];
-        modVersion = values[i + 4];
-        customField = values[i + 5];
-        replaceNullWithStar();
-    }
+		int i = 0;
 
-    public BlockSignature()
-    {
-        replaceNullWithStar();
-    }
+		if (values[0].equals("#B")) {
+			i++;
+		}
 
-    @Override
-    public String toString()
-    {
-        replaceNullWithStar();
-        return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName + "/" + mod + "/" + modVersion + "/" + customField;
-    }
+		blockClassName = values[i];
+		tileClassName = values[i + 1];
+		blockName = values[i + 2];
+		mod = values[i + 3];
+		modVersion = values[i + 4];
+		customField = values[i + 5];
 
-    public void replaceNullWithStar()
-    {
-        if (blockClassName == null)
-        {
-            blockClassName = "*";
-        }
+		replaceNullWithStar();
 
-        if (tileClassName == null)
-        {
-            tileClassName = "*";
-        }
+	}
 
-        if (blockName == null)
-        {
-            blockName = "*";
-        }
+	public BlockSignature() {
+		replaceNullWithStar();
+	}
 
-        if (mod == null)
-        {
-            mod = "*";
-        }
+	@Override
+	public String toString() {
+		replaceNullWithStar();
 
-        if (modVersion == null)
-        {
-            modVersion = "*";
-        }
+		return "#B/" + blockClassName + "/" + tileClassName + "/" + blockName + "/" + mod + "/" + modVersion + "/" + customField;
+	}
 
-        if (customField == null)
-        {
-            customField = "*";
-        }
-    }
+	public void replaceNullWithStar() {
+		if (blockClassName == null) {
+			blockClassName = "*";
+		}
+
+		if (tileClassName == null) {
+			tileClassName = "*";
+		}
+
+		if (blockName == null) {
+			blockName = "*";
+		}
+
+		if (mod == null) {
+			mod = "*";
+		}
+
+		if (modVersion == null) {
+			modVersion = "*";
+		}
+
+		if (customField == null) {
+			customField = "*";
+		}
+	}
 }

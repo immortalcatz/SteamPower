@@ -2,7 +2,7 @@ package steamcraft.steamcraft.worldgen;
 
 import java.util.Random;
 
-import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.common.SteamCraft;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;

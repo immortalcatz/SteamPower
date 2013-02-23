@@ -1,14 +1,15 @@
 package buildcraft.api.gates;
 
-public interface IAction
-{
-    int getId();
+public interface IAction {
 
-    String getTexture();
+	int getId();
 
-    int getIndexInTexture();
+	String getTexture();
 
-    boolean hasParameter();
+	int getIndexInTexture();
 
-    String getDescription();
+	boolean hasParameter();
+
+	String getDescription();
+
 }

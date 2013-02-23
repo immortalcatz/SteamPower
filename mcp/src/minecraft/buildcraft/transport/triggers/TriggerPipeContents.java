@@ -23,167 +23,124 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportLiquids;
 import buildcraft.transport.PipeTransportPower;
 
-public class TriggerPipeContents extends Trigger implements ITriggerPipe
-{
-    public enum Kind
-    {
-        Empty, ContainsItems, ContainsLiquids, ContainsEnergy
-    };
+public class TriggerPipeContents extends Trigger implements ITriggerPipe {
 
-    Kind kind;
+	public enum Kind {
+		Empty, ContainsItems, ContainsLiquids, ContainsEnergy
+	};
 
-    public TriggerPipeContents(int id, Kind kind)
-    {
-        super(id);
-        this.kind = kind;
-    }
+	Kind kind;
 
-    @Override
-    public int getIndexInTexture()
-    {
-        switch (kind)
-        {
-            case Empty:
-                return 3 * 16 + 0;
+	public TriggerPipeContents(int id, Kind kind) {
+		super(id);
+		this.kind = kind;
+	}
 
-            case ContainsItems:
-                return 3 * 16 + 1;
+	@Override
+	public int getIndexInTexture() {
+		switch (kind) {
+		case Empty:
+			return 3 * 16 + 0;
+		case ContainsItems:
+			return 3 * 16 + 1;
+		case ContainsLiquids:
+			return 3 * 16 + 2;
+		case ContainsEnergy:
+			return 3 * 16 + 3;
+		}
+		return 3 * 16 + 0;
+	}
 
-            case ContainsLiquids:
-                return 3 * 16 + 2;
+	@Override
+	public boolean hasParameter() {
+		switch (kind) {
+		case ContainsItems:
+		case ContainsLiquids:
+			return true;
+		default:
+			return false;
+		}
+	}
 
-            case ContainsEnergy:
-                return 3 * 16 + 3;
-        }
+	@Override
+	public String getDescription() {
 
-        return 3 * 16 + 0;
-    }
+		switch (kind) {
+		case Empty:
+			return "Pipe Empty";
+		case ContainsItems:
+			return "Items Traversing";
+		case ContainsLiquids:
+			return "Liquid Traversing";
+		case ContainsEnergy:
+			return "Power Traversing";
+		}
 
-    @Override
-    public boolean hasParameter()
-    {
-        switch (kind)
-        {
-            case ContainsItems:
-            case ContainsLiquids:
-                return true;
+		return "";
+	}
 
-            default:
-                return false;
-        }
-    }
+	@Override
+	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
+		if (pipe.transport instanceof PipeTransportItems) {
+			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
 
-    @Override
-    public String getDescription()
-    {
-        switch (kind)
-        {
-            case Empty:
-                return "Pipe Empty";
+			if (kind == Kind.Empty)
+				return transportItems.travelingEntities.isEmpty();
+			else if (kind == Kind.ContainsItems)
+				if (parameter != null && parameter.getItem() != null) {
+					for (EntityData data : transportItems.travelingEntities.values())
+						if (data.item.getItemStack().itemID == parameter.getItem().itemID
+								&& data.item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
+							return true;
+				} else
+					return !transportItems.travelingEntities.isEmpty();
+		} else if (pipe.transport instanceof PipeTransportLiquids) {
+			PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
 
-            case ContainsItems:
-                return "Items Traversing";
+			LiquidStack searchedLiquid = null;
 
-            case ContainsLiquids:
-                return "Liquid Traversing";
+			if (parameter != null && parameter.getItem() != null) {
+				searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
+			}
 
-            case ContainsEnergy:
-                return "Power Traversing";
-        }
+			if (kind == Kind.Empty) {
+				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
+					if (b.getLiquid() != null && b.getLiquid().amount != 0)
+						return false;
 
-        return "";
-    }
+				return true;
+			} else {
+				for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
+					if (b.getLiquid() != null && b.getLiquid().amount != 0)
+						if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
+							return true;
 
-    @Override
-    public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter)
-    {
-        if (pipe.transport instanceof PipeTransportItems)
-        {
-            PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
+				return false;
+			}
+		} else if (pipe.transport instanceof PipeTransportPower) {
+			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
-            if (kind == Kind.Empty)
-            {
-                return transportItems.travelingEntities.isEmpty();
-            }
-            else if (kind == Kind.ContainsItems)
-                if (parameter != null && parameter.getItem() != null)
-                {
-                    for (EntityData data : transportItems.travelingEntities.values())
-                        if (data.item.getItemStack().itemID == parameter.getItem().itemID
-                                && data.item.getItemStack().getItemDamage() == parameter.getItem().getItemDamage())
-                        {
-                            return true;
-                        }
-                }
-                else
-                {
-                    return !transportItems.travelingEntities.isEmpty();
-                }
-        }
-        else if (pipe.transport instanceof PipeTransportLiquids)
-        {
-            PipeTransportLiquids transportLiquids = (PipeTransportLiquids) pipe.transport;
-            LiquidStack searchedLiquid = null;
+			if (kind == Kind.Empty) {
+				for (short s : transportPower.displayPower)
+					if (s != 0)
+						return false;
 
-            if (parameter != null && parameter.getItem() != null)
-            {
-                searchedLiquid = LiquidContainerRegistry.getLiquidForFilledItem(parameter.getItem());
-            }
+				return true;
+			} else {
+				for (short s : transportPower.displayPower)
+					if (s != 0)
+						return true;
 
-            if (kind == Kind.Empty)
-            {
-                for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
-                    if (b.getLiquid() != null && b.getLiquid().amount != 0)
-                    {
-                        return false;
-                    }
+				return false;
+			}
+		}
 
-                return true;
-            }
-            else
-            {
-                for (ILiquidTank b : transportLiquids.getTanks(ForgeDirection.UNKNOWN))
-                    if (b.getLiquid() != null && b.getLiquid().amount != 0)
-                        if (searchedLiquid == null || searchedLiquid.isLiquidEqual(b.getLiquid()))
-                        {
-                            return true;
-                        }
+		return false;
+	}
 
-                return false;
-            }
-        }
-        else if (pipe.transport instanceof PipeTransportPower)
-        {
-            PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_TRIGGERS;
+	}
 
-            if (kind == Kind.Empty)
-            {
-                for (short s : transportPower.displayPower)
-                    if (s != 0)
-                    {
-                        return false;
-                    }
-
-                return true;
-            }
-            else
-            {
-                for (short s : transportPower.displayPower)
-                    if (s != 0)
-                    {
-                        return true;
-                    }
-
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_TRIGGERS;
-    }
 }

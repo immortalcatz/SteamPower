@@ -4,37 +4,38 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.SafeTimeTracker;
 
-public interface IPowerProvider
-{
-    int getLatency();
+public interface IPowerProvider {
 
-    int getMinEnergyReceived();
+	int getLatency();
 
-    int getMaxEnergyReceived();
+	int getMinEnergyReceived();
 
-    int getMaxEnergyStored();
+	int getMaxEnergyReceived();
 
-    int getActivationEnergy();
+	int getMaxEnergyStored();
 
-    float getEnergyStored();
+	int getActivationEnergy();
 
-    void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy);
+	float getEnergyStored();
 
-    void configurePowerPerdition(int powerLoss, int powerLossRegularity);
+	void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy);
 
-    boolean update(IPowerReceptor receptor);
+	void configurePowerPerdition(int powerLoss, int powerLossRegularity);
 
-    boolean preConditions(IPowerReceptor receptor);
+	boolean update(IPowerReceptor receptor);
 
-    float useEnergy(float min, float max, boolean doUse);
+	boolean preConditions(IPowerReceptor receptor);
 
-    void readFromNBT(NBTTagCompound nbttagcompound);
+	float useEnergy(float min, float max, boolean doUse);
 
-    void writeToNBT(NBTTagCompound nbttagcompound);
+	void readFromNBT(NBTTagCompound nbttagcompound);
 
-    void receiveEnergy(float quantity, ForgeDirection from);
+	void writeToNBT(NBTTagCompound nbttagcompound);
 
-    boolean isPowerSource(ForgeDirection from);
+	void receiveEnergy(float quantity, ForgeDirection from);
 
-    SafeTimeTracker getTimeTracker();
+	boolean isPowerSource(ForgeDirection from);
+
+	SafeTimeTracker getTimeTracker();
+
 }

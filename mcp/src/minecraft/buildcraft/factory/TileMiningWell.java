@@ -25,127 +25,113 @@ import buildcraft.core.IMachine;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection
-{
-    boolean isDigging = true;
+public class TileMiningWell extends TileMachine implements IMachine, IPowerReceptor, IPipeConnection {
 
-    IPowerProvider powerProvider;
+	boolean isDigging = true;
 
-    public TileMiningWell()
-    {
-        powerProvider = PowerFramework.currentFramework.createPowerProvider();
-        powerProvider.configure(50, 1, 25, 25, 1000);
-    }
+	IPowerProvider powerProvider;
 
-    /**
-     * Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's considered done.
-     */
-    @Override
-    public void doWork()
-    {
-        if (powerProvider.useEnergy(25, 25, true) < 25)
-        {
-            return;
-        }
+	public TileMiningWell() {
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider.configure(50, 1, 25, 25, 1000);
+	}
 
-        World world = worldObj;
-        int depth = yCoord - 1;
+	/**
+	 * Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's considered done.
+	 */
+	@Override
+	public void doWork() {
+		if (powerProvider.useEnergy(25, 25, true) < 25)
+			return;
 
-        while (world.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID)
-        {
-            depth = depth - 1;
-        }
+		World world = worldObj;
 
-        if (depth < 0 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord))
-        {
-            isDigging = false;
-            return;
-        }
+		int depth = yCoord - 1;
 
-        int blockId = world.getBlockId(xCoord, depth, zCoord);
-        List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
-        world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
+		while (world.getBlockId(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock.blockID) {
+			depth = depth - 1;
+		}
 
-        if (blockId == 0)
-        {
-            return;
-        }
+		if (depth < 0 || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
+			isDigging = false;
+			return;
+		}
 
-        if (stacks == null || stacks.isEmpty())
-        {
-            return;
-        }
+		int blockId = world.getBlockId(xCoord, depth, zCoord);
 
-        for (ItemStack stack : stacks)
-        {
-            ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
-            stack.stackSize -= added.stackSize;
+		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock(worldObj, xCoord, depth, zCoord);
 
-            if (stack.stackSize <= 0)
-            {
-                continue;
-            }
+		world.setBlockWithNotify(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock.blockID);
 
-            if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
-            {
-                return;
-            }
+		if (blockId == 0)
+			return;
 
-            // Throw the object away.
-            // TODO: factorize that code
-            float f = world.rand.nextFloat() * 0.8F + 0.1F;
-            float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-            float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-            EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
-            entityitem.lifespan = BuildCraftCore.itemLifespan;
-            entityitem.delayBeforeCanPickup = 10;
-            float f3 = 0.05F;
-            entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-            entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
-            entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-            world.spawnEntityInWorld(entityitem);
-        }
-    }
+		if (stacks == null || stacks.isEmpty())
+			return;
 
-    @Override
-    public boolean isActive()
-    {
-        return isDigging;
-    }
+		for (ItemStack stack : stacks) {
 
-    @Override
-    public void setPowerProvider(IPowerProvider provider)
-    {
-        powerProvider = provider;
-    }
+			ItemStack added = Utils.addToRandomInventory(stack, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN);
+			stack.stackSize -= added.stackSize;
+			if (stack.stackSize <= 0) {
+				continue;
+			}
 
-    @Override
-    public IPowerProvider getPowerProvider()
-    {
-        return powerProvider;
-    }
+			if (Utils.addToRandomPipeEntry(this, ForgeDirection.UNKNOWN, stack) && stack.stackSize <= 0)
+				return;
 
-    @Override
-    public boolean manageLiquids()
-    {
-        return false;
-    }
+			// Throw the object away.
+			// TODO: factorize that code
 
-    @Override
-    public boolean manageSolids()
-    {
-        return true;
-    }
+			float f = world.rand.nextFloat() * 0.8F + 0.1F;
+			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
+			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-    @Override
-    public boolean isPipeConnected(ForgeDirection with)
-    {
-        return true;
-    }
+			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
 
-    @Override
-    public boolean allowActions()
-    {
-        return false;
-    }
+			entityitem.lifespan = BuildCraftCore.itemLifespan;
+			entityitem.delayBeforeCanPickup = 10;
+
+			float f3 = 0.05F;
+			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
+			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
+			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
+			world.spawnEntityInWorld(entityitem);
+		}
+	}
+
+	@Override
+	public boolean isActive() {
+		return isDigging;
+	}
+
+	@Override
+	public void setPowerProvider(IPowerProvider provider) {
+		powerProvider = provider;
+	}
+
+	@Override
+	public IPowerProvider getPowerProvider() {
+		return powerProvider;
+	}
+
+	@Override
+	public boolean manageLiquids() {
+		return false;
+	}
+
+	@Override
+	public boolean manageSolids() {
+		return true;
+	}
+
+	@Override
+	public boolean isPipeConnected(ForgeDirection with) {
+		return true;
+	}
+
+	@Override
+	public boolean allowActions() {
+		return false;
+	}
 }

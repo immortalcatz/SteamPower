@@ -23,106 +23,94 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile
-{
-    @SuppressWarnings("rawtypes")
-    private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
-    @SuppressWarnings("rawtypes")
-    private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
 
-    private final TilePacketWrapper descriptionPacket;
-    private final TilePacketWrapper updatePacket;
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
+	@SuppressWarnings("rawtypes")
+	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
 
-    private boolean init = false;
+	private final TilePacketWrapper descriptionPacket;
+	private final TilePacketWrapper updatePacket;
 
-    public TileBuildCraft()
-    {
-        if (!updateWrappers.containsKey(this.getClass()))
-        {
-            updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-        }
+	private boolean init = false;
 
-        if (!descriptionWrappers.containsKey(this.getClass()))
-        {
-            descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-        }
+	public TileBuildCraft() {
+		if (!updateWrappers.containsKey(this.getClass())) {
+			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
+		}
 
-        updatePacket = updateWrappers.get(this.getClass());
-        descriptionPacket = descriptionWrappers.get(this.getClass());
-    }
+		if (!descriptionWrappers.containsKey(this.getClass())) {
+			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
+		}
 
-    @Override
-    public void updateEntity()
-    {
-        if (!init && !isInvalid())
-        {
-            initialize();
-            init = true;
-        }
+		updatePacket = updateWrappers.get(this.getClass());
+		descriptionPacket = descriptionWrappers.get(this.getClass());
 
-        if (this instanceof IPowerReceptor)
-        {
-            IPowerReceptor receptor = ((IPowerReceptor) this);
-            receptor.getPowerProvider().update(receptor);
-        }
-    }
+	}
 
-    @Override
-    public void invalidate()
-    {
-        init = false;
-        super.invalidate();
-    }
+	@Override
+	public void updateEntity() {
+		if (!init && !isInvalid()) {
+			initialize();
+			init = true;
+		}
 
-    public void initialize()
-    {
-        Utils.handleBufferedDescription(this);
-    }
+		if (this instanceof IPowerReceptor) {
+			IPowerReceptor receptor = ((IPowerReceptor) this);
 
-    public void destroy()
-    {
-    }
+			receptor.getPowerProvider().update(receptor);
+		}
+	}
 
-    public void sendNetworkUpdate()
-    {
-        if (CoreProxy.proxy.isSimulating(worldObj))
-        {
-            CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
-        }
-    }
+	@Override
+	public void invalidate() {
+		init = false;
+		super.invalidate();
+	}
 
-    @Override
-    public Packet getDescriptionPacket()
-    {
-        return new PacketTileUpdate(this).getPacket();
-    }
+	public void initialize() {
+		Utils.handleBufferedDescription(this);
+	}
 
-    @Override
-    public PacketPayload getPacketPayload()
-    {
-        return updatePacket.toPayload(this);
-    }
+	public void destroy() {
 
-    @Override
-    public Packet getUpdatePacket()
-    {
-        return new PacketTileUpdate(this).getPacket();
-    }
+	}
 
-    @Override
-    public void handleDescriptionPacket(PacketUpdate packet)
-    {
-        descriptionPacket.fromPayload(this, packet.payload);
-    }
+	public void sendNetworkUpdate() {
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
+			CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+		}
+	}
 
-    @Override
-    public void handleUpdatePacket(PacketUpdate packet)
-    {
-        updatePacket.fromPayload(this, packet.payload);
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		return new PacketTileUpdate(this).getPacket();
+	}
 
-    @Override
-    public void postPacketHandling(PacketUpdate packet)
-    {
-    }
+	@Override
+	public PacketPayload getPacketPayload() {
+		return updatePacket.toPayload(this);
+	}
+
+	@Override
+	public Packet getUpdatePacket() {
+		return new PacketTileUpdate(this).getPacket();
+	}
+
+	@Override
+	public void handleDescriptionPacket(PacketUpdate packet) {
+		descriptionPacket.fromPayload(this, packet.payload);
+	}
+
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) {
+		updatePacket.fromPayload(this, packet.payload);
+	}
+
+	@Override
+	public void postPacketHandling(PacketUpdate packet) {
+
+	}
+
 }

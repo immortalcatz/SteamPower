@@ -1,8 +1,8 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -16,94 +16,69 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-public class BptBlockRotateMeta extends BptBlock
-{
-    int[] rot;
-    boolean rotateForward;
+public class BptBlockRotateMeta extends BptBlock {
 
-    int infoMask = 0;
+	int[] rot;
+	boolean rotateForward;
 
-    public BptBlockRotateMeta(int blockId, int[] rotations, boolean rotateForward)
-    {
-        super(blockId);
-        rot = rotations;
+	int infoMask = 0;
 
-        for (int i = 0; i < rot.length; ++i)
-        {
-            if (rot[i] < 4)
-            {
-                infoMask = (infoMask < 3 ? 3 : infoMask);
-            }
-            else if (rot[i] < 8)
-            {
-                infoMask = (infoMask < 7 ? 7 : infoMask);
-            }
-            else if (rot[i] < 16)
-            {
-                infoMask = (infoMask < 15 ? 15 : infoMask);
-            }
-        }
+	public BptBlockRotateMeta(int blockId, int[] rotations, boolean rotateForward) {
+		super(blockId);
 
-        this.rotateForward = rotateForward;
-    }
+		rot = rotations;
 
-    @Override
-    public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements)
-    {
-        requirements.add(new ItemStack(slot.blockId, 1, 0));
-    }
+		for (int i = 0; i < rot.length; ++i) {
+			if (rot[i] < 4) {
+				infoMask = (infoMask < 3 ? 3 : infoMask);
+			} else if (rot[i] < 8) {
+				infoMask = (infoMask < 7 ? 7 : infoMask);
+			} else if (rot[i] < 16) {
+				infoMask = (infoMask < 15 ? 15 : infoMask);
+			}
+		}
 
-    @Override
-    public boolean isValid(BptSlotInfo slot, IBptContext context)
-    {
-        return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z);
-    }
+		this.rotateForward = rotateForward;
+	}
 
-    @Override
-    public void rotateLeft(BptSlotInfo slot, IBptContext context)
-    {
-        int pos = slot.meta & infoMask;
-        int others = slot.meta - pos;
+	@Override
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(slot.blockId, 1, 0));
+	}
 
-        if (rotateForward)
-        {
-            if (pos == rot[0])
-            {
-                pos = rot[1];
-            }
-            else if (pos == rot[1])
-            {
-                pos = rot[2];
-            }
-            else if (pos == rot[2])
-            {
-                pos = rot[3];
-            }
-            else if (pos == rot[3])
-            {
-                pos = rot[0];
-            }
-        }
-        else
-        {
-            if (pos == rot[0])
-            {
-                pos = rot[3];
-            }
-            else if (pos == rot[1])
-            {
-                pos = rot[2];
-            }
-            else if (pos == rot[2])
-            {
-                pos = rot[0];
-            }
-            else if (pos == rot[3])
-            {
-                pos = rot[1];
-            }
-        }
+	@Override
+	public boolean isValid(BptSlotInfo slot, IBptContext context) {
+		return slot.blockId == context.world().getBlockId(slot.x, slot.y, slot.z);
+	}
 
-        slot.meta = pos + others;
-    }
+	@Override
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		int pos = slot.meta & infoMask;
+		int others = slot.meta - pos;
+
+		if (rotateForward) {
+			if (pos == rot[0]) {
+				pos = rot[1];
+			} else if (pos == rot[1]) {
+				pos = rot[2];
+			} else if (pos == rot[2]) {
+				pos = rot[3];
+			} else if (pos == rot[3]) {
+				pos = rot[0];
+			}
+		} else {
+			if (pos == rot[0]) {
+				pos = rot[3];
+			} else if (pos == rot[1]) {
+				pos = rot[2];
+			} else if (pos == rot[2]) {
+				pos = rot[0];
+			} else if (pos == rot[3]) {
+				pos = rot[1];
+			}
+		}
+
+		slot.meta = pos + others;
+	}
+
 }

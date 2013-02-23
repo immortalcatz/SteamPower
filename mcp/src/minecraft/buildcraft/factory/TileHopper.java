@@ -12,127 +12,98 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 
-public class TileHopper extends TileBuildCraft implements IInventory
-{
-    private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
+public class TileHopper extends TileBuildCraft implements IInventory {
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbtTagCompound)
-    {
-        super.readFromNBT(nbtTagCompound);
-        NBTTagCompound p = (NBTTagCompound) nbtTagCompound.getTag("inventory");
-        _inventory.readFromNBT(p);
-    }
+	private final SimpleInventory _inventory = new SimpleInventory(4, "Hopper", 64);
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbtTagCompound)
-    {
-        super.writeToNBT(nbtTagCompound);
-        NBTTagCompound inventoryTag = new NBTTagCompound();
-        _inventory.writeToNBT(inventoryTag);
-        nbtTagCompound.setTag("inventory", inventoryTag);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbtTagCompound) {
+		super.readFromNBT(nbtTagCompound);
+		NBTTagCompound p = (NBTTagCompound) nbtTagCompound.getTag("inventory");
+		_inventory.readFromNBT(p);
+	}
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
+	@Override
+	public void writeToNBT(NBTTagCompound nbtTagCompound) {
+		super.writeToNBT(nbtTagCompound);
+		NBTTagCompound inventoryTag = new NBTTagCompound();
+		_inventory.writeToNBT(inventoryTag);
+		nbtTagCompound.setTag("inventory", inventoryTag);
+	}
 
-        if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 5 != 0)
-        {
-            return;
-        }
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+		if (CoreProxy.proxy.isRenderWorld(worldObj) || worldObj.getWorldTime() % 5 != 0)
+			return;
 
-        TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
+		TileEntity tile = this.worldObj.getBlockTileEntity(xCoord, yCoord - 1, zCoord);
 
-        if (tile == null)
-        {
-            return;
-        }
+		if (tile == null) return;
 
-        ITransactor transactor = Transactor.getTransactorFor(tile);
+		ITransactor transactor = Transactor.getTransactorFor(tile);
 
-        if (transactor == null)
-        {
-            return;
-        }
+		if (transactor == null) return;
 
-        for (int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++)
-        {
-            ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
+		for(int internalSlot = 0; internalSlot < _inventory.getSizeInventory(); internalSlot++) {
+			ItemStack stackInSlot = _inventory.getStackInSlot(internalSlot);
+			if(stackInSlot == null) continue;
 
-            if (stackInSlot == null)
-            {
-                continue;
-            }
+			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
+			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
+				_inventory.decrStackSize(internalSlot, 1);
+				return;
+			}
+		}
+	}
 
-            ItemStack clonedStack = stackInSlot.copy().splitStack(1);
+	/** IInventory Implementation **/
 
-            if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0)
-            {
-                _inventory.decrStackSize(internalSlot, 1);
-                return;
-            }
-        }
-    }
+	@Override
+	public int getSizeInventory() {
+		return _inventory.getSizeInventory();
+	}
 
-    /** IInventory Implementation **/
+	@Override
+	public ItemStack getStackInSlot(int slotId) {
+		return _inventory.getStackInSlot(slotId);
+	}
 
-    @Override
-    public int getSizeInventory()
-    {
-        return _inventory.getSizeInventory();
-    }
+	@Override
+	public ItemStack decrStackSize(int slotId, int count) {
+		return _inventory.decrStackSize(slotId, count);
+	}
 
-    @Override
-    public ItemStack getStackInSlot(int slotId)
-    {
-        return _inventory.getStackInSlot(slotId);
-    }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slotId) {
+		return _inventory.getStackInSlotOnClosing(slotId);
+	}
 
-    @Override
-    public ItemStack decrStackSize(int slotId, int count)
-    {
-        return _inventory.decrStackSize(slotId, count);
-    }
+	@Override
+	public void setInventorySlotContents(int slotId, ItemStack itemStack) {
+		_inventory.setInventorySlotContents(slotId, itemStack);
+	}
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slotId)
-    {
-        return _inventory.getStackInSlotOnClosing(slotId);
-    }
+	@Override
+	public String getInvName() {
+		return _inventory.getInvName();
+	}
 
-    @Override
-    public void setInventorySlotContents(int slotId, ItemStack itemStack)
-    {
-        _inventory.setInventorySlotContents(slotId, itemStack);
-    }
+	@Override
+	public int getInventoryStackLimit() {
+		return _inventory.getInventoryStackLimit();
+	}
 
-    @Override
-    public String getInvName()
-    {
-        return _inventory.getInvName();
-    }
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+	}
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return _inventory.getInventoryStackLimit();
-    }
+	@Override
+	public void openChest() {
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityPlayer)
-    {
-        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
-    }
-
-    @Override
-    public void openChest()
-    {
-    }
-
-    @Override
-    public void closeChest()
-    {
-    }
+	@Override
+	public void closeChest() {
+	}
 }

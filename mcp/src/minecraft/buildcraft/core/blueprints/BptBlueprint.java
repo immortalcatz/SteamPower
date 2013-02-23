@@ -32,423 +32,345 @@ import buildcraft.api.blueprints.IBptContext;
 import buildcraft.api.blueprints.ItemSignature;
 import buildcraft.core.IBptContributor;
 
-public class BptBlueprint extends BptBase
-{
-    private int[] idMapping = new int[Item.itemsList.length];
+public class BptBlueprint extends BptBase {
 
-    TreeSet<Integer> idsToMap = new TreeSet<Integer>();
+	private int[] idMapping = new int[Item.itemsList.length];
 
-    public BptBlueprint()
-    {
-        for (int i = 0; i < idMapping.length; ++i)
-        {
-            idMapping[i] = i;
-        }
-    }
+	TreeSet<Integer> idsToMap = new TreeSet<Integer>();
 
-    public BptBlueprint(int sizeX, int sizeY, int sizeZ)
-    {
-        super(sizeX, sizeY, sizeZ);
+	public BptBlueprint() {
+		for (int i = 0; i < idMapping.length; ++i) {
+			idMapping[i] = i;
+		}
+	}
 
-        for (int i = 0; i < idMapping.length; ++i)
-        {
-            idMapping[i] = i;
-        }
-    }
+	public BptBlueprint(int sizeX, int sizeY, int sizeZ) {
+		super(sizeX, sizeY, sizeZ);
 
-    public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z)
-    {
-        BptSlot slot = new BptSlot();
-        slot.x = (int)(x - context.surroundingBox().pMin().x);
-        slot.y = (int)(y - context.surroundingBox().pMin().y);
-        slot.z = (int)(z - context.surroundingBox().pMin().z);
-        slot.blockId = anchorTile.worldObj.getBlockId(x, y, z);
-        slot.meta = anchorTile.worldObj.getBlockMetadata(x, y, z);
+		for (int i = 0; i < idMapping.length; ++i) {
+			idMapping[i] = i;
+		}
+	}
 
-        if (Block.blocksList[slot.blockId] instanceof BlockContainer)
-        {
-            TileEntity tile = anchorTile.worldObj.getBlockTileEntity(x, y, z);
+	public void readFromWorld(IBptContext context, TileEntity anchorTile, int x, int y, int z) {
+		BptSlot slot = new BptSlot();
 
-            if (tile != null && tile instanceof IBptContributor)
-            {
-                IBptContributor contributor = (IBptContributor) tile;
-                contributor.saveToBluePrint(anchorTile, this, slot);
-            }
-        }
+		slot.x = (int) (x - context.surroundingBox().pMin().x);
+		slot.y = (int) (y - context.surroundingBox().pMin().y);
+		slot.z = (int) (z - context.surroundingBox().pMin().z);
+		slot.blockId = anchorTile.worldObj.getBlockId(x, y, z);
+		slot.meta = anchorTile.worldObj.getBlockMetadata(x, y, z);
 
-        try
-        {
-            slot.initializeFromWorld(context, x, y, z);
-            contents[slot.x][slot.y][slot.z] = slot;
-        }
-        catch (Throwable t)
-        {
-            // Defensive code against errors in implementers
-            t.printStackTrace();
-            BuildCraftCore.bcLog.throwing("BptBlueprint", "readFromWorld", t);
-        }
-    }
+		if (Block.blocksList[slot.blockId] instanceof BlockContainer) {
+			TileEntity tile = anchorTile.worldObj.getBlockTileEntity(x, y, z);
 
-    @Override
-    public void saveAttributes(BufferedWriter writer) throws IOException
-    {
-        writer.write("sizeX:" + sizeX);
-        writer.newLine();
-        writer.write("sizeY:" + sizeY);
-        writer.newLine();
-        writer.write("sizeZ:" + sizeZ);
-        writer.newLine();
-        writer.write("anchorX:" + anchorX);
-        writer.newLine();
-        writer.write("anchorY:" + anchorY);
-        writer.newLine();
-        writer.write("anchorZ:" + anchorZ);
-        writer.newLine();
-        boolean[] idsUsed = new boolean[Item.itemsList.length];
+			if (tile != null && tile instanceof IBptContributor) {
+				IBptContributor contributor = (IBptContributor) tile;
 
-        for (int i = 1; i < idsUsed.length; ++i)
-        {
-            idsUsed[i] = false;
-        }
+				contributor.saveToBluePrint(anchorTile, this, slot);
+			}
+		}
 
-        for (int x = 0; x < sizeX; ++x)
-        {
-            for (int y = 0; y < sizeY; ++y)
-            {
-                for (int z = 0; z < sizeZ; ++z)
-                {
-                    BptSlotInfo slot = contents[x][y][z];
-                    storeId(slot.blockId);
+		try {
+			slot.initializeFromWorld(context, x, y, z);
+			contents[slot.x][slot.y][slot.z] = slot;
+		} catch (Throwable t) {
+			// Defensive code against errors in implementers
+			t.printStackTrace();
+			BuildCraftCore.bcLog.throwing("BptBlueprint", "readFromWorld", t);
 
-                    for (ItemStack stack : slot.storedRequirements)
-                    {
-                        storeId(stack.itemID);
-                    }
-                }
-            }
-        }
+		}
+	}
 
-        writer.write("idMap:");
-        writer.newLine();
+	@Override
+	public void saveAttributes(BufferedWriter writer) throws IOException {
+		writer.write("sizeX:" + sizeX);
+		writer.newLine();
+		writer.write("sizeY:" + sizeY);
+		writer.newLine();
+		writer.write("sizeZ:" + sizeZ);
+		writer.newLine();
+		writer.write("anchorX:" + anchorX);
+		writer.newLine();
+		writer.write("anchorY:" + anchorY);
+		writer.newLine();
+		writer.write("anchorZ:" + anchorZ);
+		writer.newLine();
 
-        for (Integer id : idsToMap)
-        {
-            if (id < Block.blocksList.length && Block.blocksList[id] != null)
-            {
-                writer.write(BlueprintManager.getBlockSignature(Block.blocksList[id]) + "=" + id);
-            }
-            else
-            {
-                writer.write(BlueprintManager.getItemSignature(Item.itemsList[id]) + "=" + id);
-            }
+		boolean[] idsUsed = new boolean[Item.itemsList.length];
 
-            writer.newLine();
-        }
+		for (int i = 1; i < idsUsed.length; ++i) {
+			idsUsed[i] = false;
+		}
 
-        writer.write(":idMap");
-        writer.newLine();
-        writer.write("contents:");
-        writer.newLine();
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					BptSlotInfo slot = contents[x][y][z];
 
-        for (int x = 0; x < sizeX; ++x)
-        {
-            for (int y = 0; y < sizeY; ++y)
-            {
-                for (int z = 0; z < sizeZ; ++z)
-                {
-                    BptSlotInfo slot = contents[x][y][z];
+					storeId(slot.blockId);
 
-                    if (slot != null && slot.blockId != 0)
-                    {
-                        slot.cpt.setInteger("bId", slot.blockId);
+					for (ItemStack stack : slot.storedRequirements) {
+						storeId(stack.itemID);
+					}
+				}
+			}
+		}
 
-                        if (slot.meta != 0)
-                        {
-                            slot.cpt.setInteger("meta", slot.meta);
-                        }
+		writer.write("idMap:");
+		writer.newLine();
 
-                        NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
-                        writer.newLine();
-                    }
-                    else
-                    {
-                        writer.newLine();
-                    }
-                }
-            }
-        }
+		for (Integer id : idsToMap) {
+			if (id < Block.blocksList.length && Block.blocksList[id] != null) {
+				writer.write(BlueprintManager.getBlockSignature(Block.blocksList[id]) + "=" + id);
+			} else {
+				writer.write(BlueprintManager.getItemSignature(Item.itemsList[id]) + "=" + id);
+			}
 
-        writer.write(":contents");
-        writer.newLine();
-        writer.write("requirements:");
-        writer.newLine();
+			writer.newLine();
+		}
 
-        for (int x = 0; x < sizeX; ++x)
-        {
-            for (int y = 0; y < sizeY; ++y)
-            {
-                for (int z = 0; z < sizeZ; ++z)
-                {
-                    BptSlotInfo slot = contents[x][y][z];
+		writer.write(":idMap");
+		writer.newLine();
 
-                    if (slot != null && slot.blockId != 0 && slot.storedRequirements.size() > 0)
-                    {
-                        NBTTagList list = new NBTTagList();
+		writer.write("contents:");
+		writer.newLine();
 
-                        for (ItemStack stack : slot.storedRequirements)
-                        {
-                            NBTTagCompound sub = new NBTTagCompound();
-                            stack.writeToNBT(sub);
-                            list.appendTag(sub);
-                        }
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					BptSlotInfo slot = contents[x][y][z];
 
-                        NBTBase.writeNamedTag(list, new BptDataStream(writer));
-                        writer.newLine();
-                    }
-                    else
-                    {
-                        writer.newLine();
-                    }
-                }
-            }
-        }
+					if (slot != null && slot.blockId != 0) {
+						slot.cpt.setInteger("bId", slot.blockId);
 
-        writer.write(":requirements");
-        writer.newLine();
-    }
+						if (slot.meta != 0) {
+							slot.cpt.setInteger("meta", slot.meta);
+						}
 
-    @Override
-    public void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError
-    {
-        if ("3.1.0".equals(version))
-        {
-            throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
-        }
+						NBTBase.writeNamedTag(slot.cpt, new BptDataStream(writer));
 
-        // blockMap is still tested for being able to load pre 3.1.2 bpts
-        if (attr.equals("blockMap") || attr.equals("idMap"))
-        {
-            while (true)
-            {
-                String mapStr = reader.readLine();
+						writer.newLine();
+					} else {
+						writer.newLine();
+					}
+				}
+			}
+		}
 
-                if (mapStr == null)
-                {
-                    break;
-                }
+		writer.write(":contents");
+		writer.newLine();
 
-                mapStr = mapStr.replaceAll("\n", "");
+		writer.write("requirements:");
+		writer.newLine();
 
-                if (mapStr.equals(":blockMap") || mapStr.equals(":idMap"))
-                {
-                    return;
-                }
+		for (int x = 0; x < sizeX; ++x) {
+			for (int y = 0; y < sizeY; ++y) {
+				for (int z = 0; z < sizeZ; ++z) {
+					BptSlotInfo slot = contents[x][y][z];
 
-                String[] parts = mapStr.split("=");
-                int blockId = Integer.parseInt(parts[1]);
+					if (slot != null && slot.blockId != 0 && slot.storedRequirements.size() > 0) {
+						NBTTagList list = new NBTTagList();
 
-                if (parts[0].startsWith("#I"))
-                {
-                    ItemSignature sig = new ItemSignature(parts[0]);
-                    int itemId = Integer.parseInt(parts[1]);
+						for (ItemStack stack : slot.storedRequirements) {
+							NBTTagCompound sub = new NBTTagCompound();
+							stack.writeToNBT(sub);
+							list.appendTag(sub);
+						}
 
-                    if (!itemMatch(sig, Item.itemsList[itemId]))
-                    {
-                        boolean found = false;
+						NBTBase.writeNamedTag(list, new BptDataStream(writer));
 
-                        for (int i = 256; i < Item.itemsList.length; ++i)
-                        {
-                            // Items between 256 and Block.blocksList.length may
-                            // be item or block
-                            if (i < Block.blocksList.length && Block.blocksList[i] != null)
-                            {
-                                continue;
-                            }
+						writer.newLine();
+					} else {
+						writer.newLine();
+					}
+				}
+			}
+		}
 
-                            if (itemMatch(sig, Item.itemsList[i]))
-                            {
-                                found = true;
-                                idMapping[itemId] = i;
-                                break;
-                            }
-                        }
+		writer.write(":requirements");
+		writer.newLine();
+	}
 
-                        if (!found)
-                        {
-                            throw new BptError("BLUEPRINT ERROR: can't find item of signature " + sig + " for " + name);
-                        }
-                    }
-                }
-                else
-                {
-                    BlockSignature bptSignature = new BlockSignature(parts[0]);
-                    BptBlock defaultBlock = BlueprintManager.blockBptProps[0];
-                    BptBlock handlingBlock = BlueprintManager.blockBptProps[blockId];
+	@Override
+	public void loadAttribute(BufferedReader reader, String attr, String val) throws IOException, BptError {
+		if ("3.1.0".equals(version))
+			throw new BptError("Blueprint format 3.1.0 is not supported anymore, can't load " + file);
 
-                    if (handlingBlock == null)
-                    {
-                        handlingBlock = defaultBlock;
-                    }
+		// blockMap is still tested for being able to load pre 3.1.2 bpts
+		if (attr.equals("blockMap") || attr.equals("idMap")) {
+			while (true) {
+				String mapStr = reader.readLine();
 
-                    if (!handlingBlock.match(Block.blocksList[blockId], bptSignature))
-                    {
-                        boolean found = false;
+				if (mapStr == null) {
+					break;
+				}
 
-                        for (int i = 0; i < Block.blocksList.length; ++i)
-                            if (Block.blocksList[i] != null)
-                            {
-                                handlingBlock = BlueprintManager.blockBptProps[i];
+				mapStr = mapStr.replaceAll("\n", "");
 
-                                if (handlingBlock == null)
-                                {
-                                    handlingBlock = defaultBlock;
-                                }
+				if (mapStr.equals(":blockMap") || mapStr.equals(":idMap"))
+					return;
 
-                                if (handlingBlock.match(Block.blocksList[i], bptSignature))
-                                {
-                                    idMapping[blockId] = i;
-                                    found = true;
-                                }
-                            }
+				String[] parts = mapStr.split("=");
+				int blockId = Integer.parseInt(parts[1]);
 
-                        if (!found)
-                        {
-                            throw new BptError("BLUEPRINT ERROR: can't find block of signature " + bptSignature + " for " + name);
-                        }
-                    }
-                }
-            }
-        }
-        else if (attr.equals("contents"))
-        {
-            contents = new BptSlot[sizeX][sizeY][sizeZ];
+				if (parts[0].startsWith("#I")) {
+					ItemSignature sig = new ItemSignature(parts[0]);
+					int itemId = Integer.parseInt(parts[1]);
 
-            for (int x = 0; x < sizeX; ++x)
-            {
-                for (int y = 0; y < sizeY; ++y)
-                {
-                    for (int z = 0; z < sizeZ; ++z)
-                    {
-                        String slotStr = reader.readLine().replaceAll("\n", "");
+					if (!itemMatch(sig, Item.itemsList[itemId])) {
+						boolean found = false;
+						for (int i = 256; i < Item.itemsList.length; ++i) {
 
-                        if (slotStr.equals(":contents"))
-                        {
-                            return;
-                        }
+							// Items between 256 and Block.blocksList.length may
+							// be item or block
+							if (i < Block.blocksList.length && Block.blocksList[i] != null) {
+								continue;
+							}
 
-                        if (!slotStr.equals(""))
-                        {
-                            BptSlot slot = new BptSlot();
-                            slot.x = x;
-                            slot.y = y;
-                            slot.z = z;
-                            slot.cpt = (NBTTagCompound) NBTBase.readNamedTag(new BptDataStream(new StringReader(slotStr)));
-                            slot.blockId = mapWorldId(slot.cpt.getInteger("bId"));
+							if (itemMatch(sig, Item.itemsList[i])) {
+								found = true;
+								idMapping[itemId] = i;
+								break;
+							}
+						}
 
-                            if (slot.cpt.hasKey("meta"))
-                            {
-                                slot.meta = slot.cpt.getInteger("meta");
-                            }
+						if (!found)
+							throw new BptError("BLUEPRINT ERROR: can't find item of signature " + sig + " for " + name);
+					}
 
-                            contents[x][y][z] = slot;
-                        }
-                    }
-                }
-            }
-        }
-        else if (attr.equals("requirements"))
-        {
-            for (int x = 0; x < sizeX; ++x)
-            {
-                for (int y = 0; y < sizeY; ++y)
-                {
-                    for (int z = 0; z < sizeZ; ++z)
-                    {
-                        String reqStr = reader.readLine().replaceAll("\n", "");
+				} else {
+					BlockSignature bptSignature = new BlockSignature(parts[0]);
+					BptBlock defaultBlock = BlueprintManager.blockBptProps[0];
 
-                        if (reqStr.equals(":requirements"))
-                        {
-                            return;
-                        }
+					BptBlock handlingBlock = BlueprintManager.blockBptProps[blockId];
 
-                        if (!reqStr.equals(""))
-                        {
-                            NBTTagList list = (NBTTagList) NBTBase.readNamedTag(new BptDataStream(new StringReader(reqStr)));
+					if (handlingBlock == null) {
+						handlingBlock = defaultBlock;
+					}
 
-                            for (int i = 0; i < list.tagCount(); ++i)
-                            {
-                                ItemStack stk = mapItemStack(ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i)));
-                                contents[x][y][z].storedRequirements.add(stk);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+					if (!handlingBlock.match(Block.blocksList[blockId], bptSignature)) {
+						boolean found = false;
 
-    @Override
-    public String getName()
-    {
-        if (name == null)
-        {
-            return "Blueprint #" + position;
-        }
-        else
-        {
-            return name;
-        }
-    }
+						for (int i = 0; i < Block.blocksList.length; ++i)
+							if (Block.blocksList[i] != null) {
+								handlingBlock = BlueprintManager.blockBptProps[i];
 
-    public ItemStack mapItemStack(ItemStack bptItemStack)
-    {
-        ItemStack newStack = bptItemStack.copy();
-        newStack.itemID = idMapping[newStack.itemID];
-        return newStack;
-    }
+								if (handlingBlock == null) {
+									handlingBlock = defaultBlock;
+								}
 
-    public int mapWorldId(int bptWorldId)
-    {
-        return idMapping[bptWorldId];
-    }
+								if (handlingBlock.match(Block.blocksList[i], bptSignature)) {
+									idMapping[blockId] = i;
+									found = true;
+								}
+							}
 
-    public void storeId(int worldId)
-    {
-        if (worldId != 0)
-        {
-            idsToMap.add(worldId);
-        }
-    }
+						if (!found)
+							throw new BptError("BLUEPRINT ERROR: can't find block of signature " + bptSignature + " for " + name);
+					}
+				}
+			}
+		} else if (attr.equals("contents")) {
+			contents = new BptSlot[sizeX][sizeY][sizeZ];
 
-    private boolean itemMatch(ItemSignature sig, Item item)
-    {
-        if (item == null)
-        {
-            return false;
-        }
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
+					for (int z = 0; z < sizeZ; ++z) {
+						String slotStr = reader.readLine().replaceAll("\n", "");
 
-        if (!"*".equals(sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
-        {
-            return false;
-        }
+						if (slotStr.equals(":contents"))
+							return;
 
-        if (!"*".equals(sig.itemName) && !item.getItemNameIS(new ItemStack(item)).equals(sig.itemName))
-        {
-            return false;
-        }
+						if (!slotStr.equals("")) {
+							BptSlot slot = new BptSlot();
+							slot.x = x;
+							slot.y = y;
+							slot.z = z;
 
-        return true;
-    }
+							slot.cpt = (NBTTagCompound) NBTBase.readNamedTag(new BptDataStream(new StringReader(slotStr)));
 
-    @Override
-    public void setBlockId(int x, int y, int z, int blockId)
-    {
-        super.setBlockId(x, y, z, blockId);
-    }
+							slot.blockId = mapWorldId(slot.cpt.getInteger("bId"));
 
-    @Override
-    protected void copyTo(BptBase bpt)
-    {
-        ((BptBlueprint) bpt).idMapping = idMapping.clone();
-    }
+							if (slot.cpt.hasKey("meta")) {
+								slot.meta = slot.cpt.getInteger("meta");
+							}
+
+							contents[x][y][z] = slot;
+						}
+					}
+				}
+			}
+		} else if (attr.equals("requirements")) {
+			for (int x = 0; x < sizeX; ++x) {
+				for (int y = 0; y < sizeY; ++y) {
+					for (int z = 0; z < sizeZ; ++z) {
+						String reqStr = reader.readLine().replaceAll("\n", "");
+
+						if (reqStr.equals(":requirements"))
+							return;
+
+						if (!reqStr.equals("")) {
+							NBTTagList list = (NBTTagList) NBTBase.readNamedTag(new BptDataStream(new StringReader(reqStr)));
+
+							for (int i = 0; i < list.tagCount(); ++i) {
+								ItemStack stk = mapItemStack(ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i)));
+
+								contents[x][y][z].storedRequirements.add(stk);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public String getName() {
+		if (name == null)
+			return "Blueprint #" + position;
+		else
+			return name;
+	}
+
+	public ItemStack mapItemStack(ItemStack bptItemStack) {
+		ItemStack newStack = bptItemStack.copy();
+
+		newStack.itemID = idMapping[newStack.itemID];
+
+		return newStack;
+	}
+
+	public int mapWorldId(int bptWorldId) {
+		return idMapping[bptWorldId];
+	}
+
+	public void storeId(int worldId) {
+		if (worldId != 0) {
+			idsToMap.add(worldId);
+		}
+	}
+
+	private boolean itemMatch(ItemSignature sig, Item item) {
+		if (item == null)
+			return false;
+
+		if (!"*".equals(sig.itemClassName) && !item.getClass().getSimpleName().equals(sig.itemClassName))
+			return false;
+
+		if (!"*".equals(sig.itemName) && !item.getItemNameIS(new ItemStack(item)).equals(sig.itemName))
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public void setBlockId(int x, int y, int z, int blockId) {
+		super.setBlockId(x, y, z, blockId);
+	}
+
+	@Override
+	protected void copyTo(BptBase bpt) {
+		((BptBlueprint) bpt).idMapping = idMapping.clone();
+	}
 }

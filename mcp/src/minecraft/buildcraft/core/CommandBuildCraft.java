@@ -8,74 +8,62 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import buildcraft.core.proxy.CoreProxy;
 
-public class CommandBuildCraft extends CommandBase
-{
-    @Override
-    public int compareTo(Object arg0)
-    {
-        return this.getCommandName().compareTo(((ICommand) arg0).getCommandName());
-    }
+public class CommandBuildCraft extends CommandBase {
 
-    @Override
-    public String getCommandName()
-    {
-        return "buildcraft";
-    }
+	@Override
+	public int compareTo(Object arg0) {
+		return this.getCommandName().compareTo(((ICommand) arg0).getCommandName());
+	}
 
-    @Override
-    public String getCommandUsage(ICommandSender sender)
-    {
-        return "/" + this.getCommandName() + " help";
-    }
+	@Override
+	public String getCommandName() {
+		return "buildcraft";
+	}
 
-    @Override
-    public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
-    {
-        return true;
-    }
+	@Override
+	public String getCommandUsage(ICommandSender sender) {
+		return "/" + this.getCommandName() + " help";
+	}
+	
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender) {
+		return true;
+	}
 
-    @Override
-    public List getCommandAliases()
-    {
-        return null;
-    }
+	@Override
+	public List getCommandAliases() {
+		return null;
+	}
 
-    @Override
-    public void processCommand(ICommandSender sender, String[] arguments)
-    {
-        if (arguments.length <= 0)
-        {
-            throw new WrongUsageException("Type '" + this.getCommandUsage(sender) + "' for help.");
-        }
+	@Override
+	public void processCommand(ICommandSender sender, String[] arguments) {
 
-        if (arguments[0].matches("version"))
-        {
-            commandVersion(sender, arguments);
-            return;
-        }
-        else if (arguments[0].matches("help"))
-        {
-            sender.sendChatToPlayer("Format: '" + this.getCommandName() + " <command> <arguments>'");
-            sender.sendChatToPlayer("Available commands:");
-            sender.sendChatToPlayer("- version : Version information.");
-            return;
-        }
+		if (arguments.length <= 0)
+			throw new WrongUsageException("Type '" + this.getCommandUsage(sender) + "' for help.");
 
-        throw new WrongUsageException(this.getCommandUsage(sender));
-    }
+		if (arguments[0].matches("version")) {
+			commandVersion(sender, arguments);
+			return;
+		} else if (arguments[0].matches("help")) {
+			sender.sendChatToPlayer("Format: '" + this.getCommandName() + " <command> <arguments>'");
+			sender.sendChatToPlayer("Available commands:");
+			sender.sendChatToPlayer("- version : Version information.");
+			return;
+		}
 
-    private void commandVersion(ICommandSender sender, String[] arguments)
-    {
-        String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
-        sender.sendChatToPlayer(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
-                CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
+		throw new WrongUsageException(this.getCommandUsage(sender));
+	}
 
-        if (Version.isOutdated())
-        {
-            for (String updateLine : Version.getChangelog())
-            {
-                sender.sendChatToPlayer("\u00A79" + updateLine);
-            }
-        }
-    }
+	private void commandVersion(ICommandSender sender, String[] arguments) {
+		String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
+
+		sender.sendChatToPlayer(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
+				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion()));
+		if (Version.isOutdated()) {
+			for (String updateLine : Version.getChangelog()) {
+				sender.sendChatToPlayer("\u00A79" + updateLine);
+			}
+		}
+	}
+
 }

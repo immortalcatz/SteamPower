@@ -9,6 +9,6 @@
 
 package buildcraft.transport.pipes;
 
-public class PipeLogicVoid extends PipeLogic
-{
+public class PipeLogicVoid extends PipeLogic {
+
 }

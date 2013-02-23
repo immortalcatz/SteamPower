@@ -12,28 +12,24 @@ package buildcraft.core.triggers;
 import buildcraft.api.gates.Action;
 import buildcraft.core.DefaultProps;
 
-public class ActionRedstoneOutput extends Action
-{
-    public ActionRedstoneOutput(int id)
-    {
-        super(id);
-    }
+public class ActionRedstoneOutput extends Action {
 
-    @Override
-    public int getIndexInTexture()
-    {
-        return 0 * 16 + 0;
-    }
+	public ActionRedstoneOutput(int id) {
+		super(id);
+	}
 
-    @Override
-    public String getDescription()
-    {
-        return "Redstone Signal";
-    }
+	@Override
+	public int getIndexInTexture() {
+		return 0 * 16 + 0;
+	}
 
-    @Override
-    public String getTexture()
-    {
-        return DefaultProps.TEXTURE_TRIGGERS;
-    }
+	@Override
+	public String getDescription() {
+		return "Redstone Signal";
+	}
+
+	@Override
+	public String getTexture() {
+		return DefaultProps.TEXTURE_TRIGGERS;
+	}
 }

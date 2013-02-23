@@ -66,12 +66,14 @@ public class EntityMusketBall extends Entity implements IProjectile
 
     public EntityMusketBall(World par1World, EntityLiving par2EntityLiving, float par3, float par4, float par5)
     {
+    	
         super(par1World);
         this.damage = par5;
         this.renderDistanceWeight = 10.0D;
         this.shootingEntity = par2EntityLiving;
+
         this.setSize(0.5F, 0.5F);
-        this.setLocationAndAngles(par2EntityLiving.posX, par2EntityLiving.posY + (double)par2EntityLiving.getEyeHeight(), par2EntityLiving.posZ, par2EntityLiving.rotationYaw + ((itemRand.nextFloat() - 0.5F) * par4 * 15F), par2EntityLiving.rotationPitch + ((itemRand.nextFloat() - 0.5F) * par4 * 15F));
+		this.setLocationAndAngles(par2EntityLiving.posX, par2EntityLiving.posY + (double)par2EntityLiving.getEyeHeight(), par2EntityLiving.posZ, par2EntityLiving.rotationYaw + ((itemRand.nextFloat() - 0.5F) * par4 * 15F), par2EntityLiving.rotationPitch + ((itemRand.nextFloat() - 0.5F) * par4 * 15F));
         this.posX -= (double)(MathHelper.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
         this.posY -= 0.10000000149011612D;
         this.posZ -= (double)(MathHelper.sin(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
@@ -260,6 +262,8 @@ public class EntityMusketBall extends Entity implements IProjectile
                 {
                     var20 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
                     int var23 = (int) this.damage;
+
+
                     DamageSource var21 = null;
 
                     if (this.shootingEntity == null)
@@ -308,6 +312,7 @@ public class EntityMusketBall extends Entity implements IProjectile
                             }
                         }
 
+
                         if (!(var4.entityHit instanceof EntityEnderman))
                         {
                             this.setDead();
@@ -340,6 +345,7 @@ public class EntityMusketBall extends Entity implements IProjectile
                     //this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
                     this.inGround = true;
                     this.arrowShake = 7;
+                   
 
                     if (this.inTile != 0)
                     {
@@ -347,6 +353,7 @@ public class EntityMusketBall extends Entity implements IProjectile
                     }
                 }
             }
+
 
             this.posX += this.motionX;
             this.posY += this.motionY;
@@ -431,11 +438,13 @@ public class EntityMusketBall extends Entity implements IProjectile
         {
             this.damage = par1NBTTagCompound.getDouble("damage");
         }
+
     }
 
     /**
      * Called by a player entity when they collide with an entity
      */
+ 
 
     /**
      * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to

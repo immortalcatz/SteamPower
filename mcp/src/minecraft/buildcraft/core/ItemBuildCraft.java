@@ -13,18 +13,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.utils.StringUtil;
 
-public class ItemBuildCraft extends Item
-{
-    public ItemBuildCraft(int i)
-    {
-        super(i);
-        setTextureFile(DefaultProps.TEXTURE_ITEMS);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+public class ItemBuildCraft extends Item {
 
-    @Override
-    public String getItemDisplayName(ItemStack itemstack)
-    {
-        return StringUtil.localize(getItemNameIS(itemstack));
-    }
+	public ItemBuildCraft(int i) {
+		super(i);
+		setTextureFile(DefaultProps.TEXTURE_ITEMS);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	}
+
+	@Override
+	public String getItemDisplayName(ItemStack itemstack) {
+		return StringUtil.localize(getItemNameIS(itemstack));
+	}
 }

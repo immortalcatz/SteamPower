@@ -11,292 +11,258 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SessionVars;
 
-public abstract class GuiBuildCraft extends GuiContainer
-{
-    // / LEDGERS
-    protected LedgerManager ledgerManager = new LedgerManager(this);
+public abstract class GuiBuildCraft extends GuiContainer {
 
-    protected class LedgerManager
-    {
-        private GuiBuildCraft gui;
-        protected ArrayList<Ledger> ledgers = new ArrayList<Ledger>();
+	// / LEDGERS
+	protected LedgerManager ledgerManager = new LedgerManager(this);
 
-        public LedgerManager(GuiBuildCraft gui)
-        {
-            this.gui = gui;
-        }
+	protected class LedgerManager {
 
-        public void add(Ledger ledger)
-        {
-            this.ledgers.add(ledger);
+		private GuiBuildCraft gui;
+		protected ArrayList<Ledger> ledgers = new ArrayList<Ledger>();
 
-            if (SessionVars.getOpenedLedger() != null && ledger.getClass().equals(SessionVars.getOpenedLedger()))
-            {
-                ledger.setFullyOpen();
-            }
-        }
+		public LedgerManager(GuiBuildCraft gui) {
+			this.gui = gui;
+		}
 
-        /**
-         * Inserts a ledger into the next-to-last position.
-         *
-         * @param ledger
-         */
-        public void insert(Ledger ledger)
-        {
-            this.ledgers.add(ledgers.size() - 1, ledger);
-        }
+		public void add(Ledger ledger) {
+			this.ledgers.add(ledger);
+			if (SessionVars.getOpenedLedger() != null && ledger.getClass().equals(SessionVars.getOpenedLedger())) {
+				ledger.setFullyOpen();
+			}
+		}
 
-        protected Ledger getAtPosition(int mX, int mY)
-        {
-            int xShift = ((gui.width - gui.xSize) / 2) + gui.xSize;
-            int yShift = ((gui.height - gui.ySize) / 2) + 8;
+		/**
+		 * Inserts a ledger into the next-to-last position.
+		 * 
+		 * @param ledger
+		 */
+		public void insert(Ledger ledger) {
+			this.ledgers.add(ledgers.size() - 1, ledger);
+		}
 
-            for (int i = 0; i < ledgers.size(); i++)
-            {
-                Ledger ledger = ledgers.get(i);
+		protected Ledger getAtPosition(int mX, int mY) {
 
-                if (!ledger.isVisible())
-                {
-                    continue;
-                }
+			int xShift = ((gui.width - gui.xSize) / 2) + gui.xSize;
+			int yShift = ((gui.height - gui.ySize) / 2) + 8;
 
-                ledger.currentShiftX = xShift;
-                ledger.currentShiftY = yShift;
+			for (int i = 0; i < ledgers.size(); i++) {
+				Ledger ledger = ledgers.get(i);
+				if (!ledger.isVisible()) {
+					continue;
+				}
 
-                if (ledger.intersectsWith(mX, mY, xShift, yShift))
-                {
-                    return ledger;
-                }
+				ledger.currentShiftX = xShift;
+				ledger.currentShiftY = yShift;
+				if (ledger.intersectsWith(mX, mY, xShift, yShift))
+					return ledger;
 
-                yShift += ledger.getHeight();
-            }
+				yShift += ledger.getHeight();
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        protected void drawLedgers(int mouseX, int mouseY)
-        {
-            int xPos = 8;
+		protected void drawLedgers(int mouseX, int mouseY) {
 
-            for (Ledger ledger : ledgers)
-            {
-                ledger.update();
+			int xPos = 8;
+			for (Ledger ledger : ledgers) {
 
-                if (!ledger.isVisible())
-                {
-                    continue;
-                }
+				ledger.update();
+				if (!ledger.isVisible()) {
+					continue;
+				}
 
-                ledger.draw(xSize, xPos);
-                xPos += ledger.getHeight();
-            }
+				ledger.draw(xSize, xPos);
+				xPos += ledger.getHeight();
+			}
 
-            Ledger ledger = getAtPosition(mouseX, mouseY);
+			Ledger ledger = getAtPosition(mouseX, mouseY);
+			if (ledger != null) {
+				int startX = mouseX - ((gui.width - gui.xSize) / 2) + 12;
+				int startY = mouseY - ((gui.height - gui.ySize) / 2) - 12;
 
-            if (ledger != null)
-            {
-                int startX = mouseX - ((gui.width - gui.xSize) / 2) + 12;
-                int startY = mouseY - ((gui.height - gui.ySize) / 2) - 12;
-                String tooltip = ledger.getTooltip();
-                int textWidth = fontRenderer.getStringWidth(tooltip);
-                drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-                fontRenderer.drawStringWithShadow(tooltip, startX, startY, -1);
-            }
-        }
+				String tooltip = ledger.getTooltip();
+				int textWidth = fontRenderer.getStringWidth(tooltip);
+				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
+				fontRenderer.drawStringWithShadow(tooltip, startX, startY, -1);
+			}
+		}
 
-        public void handleMouseClicked(int x, int y, int mouseButton)
-        {
-            if (mouseButton == 0)
-            {
-                Ledger ledger = this.getAtPosition(x, y);
+		public void handleMouseClicked(int x, int y, int mouseButton) {
 
-                // Default action only if the mouse click was not handled by the
-                // ledger itself.
-                if (ledger != null && !ledger.handleMouseClicked(x, y, mouseButton))
-                {
-                    for (Ledger other : ledgers)
-                        if (other != ledger && other.isOpen())
-                        {
-                            other.toggleOpen();
-                        }
+			if (mouseButton == 0) {
 
-                    ledger.toggleOpen();
-                }
-            }
-        }
-    }
+				Ledger ledger = this.getAtPosition(x, y);
 
-    /**
-     * Side ledger for guis
-     */
-    protected abstract class Ledger
-    {
-        private boolean open;
+				// Default action only if the mouse click was not handled by the
+				// ledger itself.
+				if (ledger != null && !ledger.handleMouseClicked(x, y, mouseButton)) {
 
-        protected int overlayColor = 0xffffff;
+					for (Ledger other : ledgers)
+						if (other != ledger && other.isOpen()) {
+							other.toggleOpen();
+						}
+					ledger.toggleOpen();
+				}
+			}
 
-        public int currentShiftX = 0;
-        public int currentShiftY = 0;
+		}
 
-        protected int limitWidth = 128;
-        protected int maxWidth = 124;
-        protected int minWidth = 24;
-        protected int currentWidth = minWidth;
+	}
 
-        protected int maxHeight = 24;
-        protected int minHeight = 24;
-        protected int currentHeight = minHeight;
+	/**
+	 * Side ledger for guis
+	 */
+	protected abstract class Ledger {
 
-        public void update()
-        {
-            // Width
-            if (open && currentWidth < maxWidth)
-            {
-                currentWidth += 4;
-            }
-            else if (!open && currentWidth > minWidth)
-            {
-                currentWidth -= 4;
-            }
+		private boolean open;
 
-            // Height
-            if (open && currentHeight < maxHeight)
-            {
-                currentHeight += 4;
-            }
-            else if (!open && currentHeight > minHeight)
-            {
-                currentHeight -= 4;
-            }
-        }
+		protected int overlayColor = 0xffffff;
 
-        public int getHeight()
-        {
-            return currentHeight;
-        }
+		public int currentShiftX = 0;
+		public int currentShiftY = 0;
 
-        public abstract void draw(int x, int y);
+		protected int limitWidth = 128;
+		protected int maxWidth = 124;
+		protected int minWidth = 24;
+		protected int currentWidth = minWidth;
 
-        public abstract String getTooltip();
+		protected int maxHeight = 24;
+		protected int minHeight = 24;
+		protected int currentHeight = minHeight;
 
-        public boolean handleMouseClicked(int x, int y, int mouseButton)
-        {
-            return false;
-        }
+		public void update() {
+			// Width
+			if (open && currentWidth < maxWidth) {
+				currentWidth += 4;
+			} else if (!open && currentWidth > minWidth) {
+				currentWidth -= 4;
+			}
 
-        public boolean intersectsWith(int mouseX, int mouseY, int shiftX, int shiftY)
-        {
-            if (mouseX >= shiftX && mouseX <= shiftX + currentWidth && mouseY >= shiftY && mouseY <= shiftY + getHeight())
-            {
-                return true;
-            }
+			// Height
+			if (open && currentHeight < maxHeight) {
+				currentHeight += 4;
+			} else if (!open && currentHeight > minHeight) {
+				currentHeight -= 4;
+			}
+		}
 
-            return false;
-        }
+		public int getHeight() {
+			return currentHeight;
+		}
 
-        public void setFullyOpen()
-        {
-            open = true;
-            currentWidth = maxWidth;
-            currentHeight = maxHeight;
-        }
+		public abstract void draw(int x, int y);
 
-        public void toggleOpen()
-        {
-            if (open)
-            {
-                open = false;
-                SessionVars.setOpenedLedger(null);
-            }
-            else
-            {
-                open = true;
-                SessionVars.setOpenedLedger(this.getClass());
-            }
-        }
+		public abstract String getTooltip();
 
-        public boolean isVisible()
-        {
-            return true;
-        }
+		public boolean handleMouseClicked(int x, int y, int mouseButton) {
+			return false;
+		}
 
-        public boolean isOpen()
-        {
-            return this.open;
-        }
+		public boolean intersectsWith(int mouseX, int mouseY, int shiftX, int shiftY) {
 
-        protected boolean isFullyOpened()
-        {
-            return currentWidth >= maxWidth;
-        }
+			if (mouseX >= shiftX && mouseX <= shiftX + currentWidth && mouseY >= shiftY && mouseY <= shiftY + getHeight())
+				return true;
 
-        protected void drawBackground(int x, int y)
-        {
-            int texture = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
-            float colorR = (overlayColor >> 16 & 255) / 255.0F;
-            float colorG = (overlayColor >> 8 & 255) / 255.0F;
-            float colorB = (overlayColor & 255) / 255.0F;
-            GL11.glColor4f(colorR, colorG, colorB, 1.0F);
-            mc.renderEngine.bindTexture(texture);
-            drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
-            drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
-            // Add in top left corner again
-            drawTexturedModalRect(x, y, 0, 0, 4, 4);
-            drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4, currentHeight - 4);
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-        }
+			return false;
+		}
 
-        protected void drawIcon(String texture, int iconIndex, int x, int y)
-        {
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-            int tex = mc.renderEngine.getTexture(texture);
-            mc.renderEngine.bindTexture(tex);
-            int textureRow = iconIndex >> 4;
-            int textureColumn = iconIndex - 16 * textureRow;
-            drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow, 16, 16);
-        }
-    }
+		public void setFullyOpen() {
+			open = true;
+			currentWidth = maxWidth;
+			currentHeight = maxHeight;
+		}
 
-    protected TileEntity tile;
+		public void toggleOpen() {
+			if (open) {
+				open = false;
+				SessionVars.setOpenedLedger(null);
+			} else {
+				open = true;
+				SessionVars.setOpenedLedger(this.getClass());
+			}
+		}
 
-    public GuiBuildCraft(BuildCraftContainer container, IInventory inventory)
-    {
-        super(container);
+		public boolean isVisible() {
+			return true;
+		}
 
-        if (inventory instanceof TileEntity)
-        {
-            tile = (TileEntity) inventory;
-        }
+		public boolean isOpen() {
+			return this.open;
+		}
 
-        initLedgers(inventory);
-    }
+		protected boolean isFullyOpened() {
+			return currentWidth >= maxWidth;
+		}
 
-    protected void initLedgers(IInventory inventory)
-    {
-    }
+		protected void drawBackground(int x, int y) {
+			int texture = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2)
-    {
-        ledgerManager.drawLedgers(par1, par2);
-    }
+			float colorR = (overlayColor >> 16 & 255) / 255.0F;
+			float colorG = (overlayColor >> 8 & 255) / 255.0F;
+			float colorB = (overlayColor & 255) / 255.0F;
 
-    protected int getCenteredOffset(String string)
-    {
-        return getCenteredOffset(string, xSize);
-    }
+			GL11.glColor4f(colorR, colorG, colorB, 1.0F);
 
-    protected int getCenteredOffset(String string, int xWidth)
-    {
-        return (xWidth - fontRenderer.getStringWidth(string)) / 2;
-    }
+			mc.renderEngine.bindTexture(texture);
+			drawTexturedModalRect(x, y, 0, 256 - currentHeight, 4, currentHeight);
+			drawTexturedModalRect(x + 4, y, 256 - currentWidth + 4, 0, currentWidth - 4, 4);
+			// Add in top left corner again
+			drawTexturedModalRect(x, y, 0, 0, 4, 4);
 
-    // / MOUSE CLICKS
-    @Override
-    protected void mouseClicked(int par1, int par2, int mouseButton)
-    {
-        super.mouseClicked(par1, par2, mouseButton);
-        // / Handle ledger clicks
-        ledgerManager.handleMouseClicked(par1, par2, mouseButton);
-    }
+			drawTexturedModalRect(x + 4, y + 4, 256 - currentWidth + 4, 256 - currentHeight + 4, currentWidth - 4, currentHeight - 4);
+
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
+		}
+
+		protected void drawIcon(String texture, int iconIndex, int x, int y) {
+
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
+			int tex = mc.renderEngine.getTexture(texture);
+			mc.renderEngine.bindTexture(tex);
+			int textureRow = iconIndex >> 4;
+			int textureColumn = iconIndex - 16 * textureRow;
+			drawTexturedModalRect(x, y, 16 * textureColumn, 16 * textureRow, 16, 16);
+
+		}
+	}
+
+	protected TileEntity tile;
+
+	public GuiBuildCraft(BuildCraftContainer container, IInventory inventory) {
+		super(container);
+
+		if (inventory instanceof TileEntity) {
+			tile = (TileEntity) inventory;
+		}
+
+		initLedgers(inventory);
+	}
+
+	protected void initLedgers(IInventory inventory) {
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		ledgerManager.drawLedgers(par1, par2);
+	}
+
+	protected int getCenteredOffset(String string) {
+		return getCenteredOffset(string, xSize);
+	}
+
+	protected int getCenteredOffset(String string, int xWidth) {
+		return (xWidth - fontRenderer.getStringWidth(string)) / 2;
+	}
+
+	// / MOUSE CLICKS
+	@Override
+	protected void mouseClicked(int par1, int par2, int mouseButton) {
+		super.mouseClicked(par1, par2, mouseButton);
+
+		// / Handle ledger clicks
+		ledgerManager.handleMouseClicked(par1, par2, mouseButton);
+	}
+
 }

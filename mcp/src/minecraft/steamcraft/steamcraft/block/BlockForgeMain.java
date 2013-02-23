@@ -3,8 +3,8 @@ package steamcraft.steamcraft.block;
 import java.util.List;
 import java.util.Random;
 
-import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.common.CommonProxy;
+import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 
 import cpw.mods.fml.relauncher.Side;

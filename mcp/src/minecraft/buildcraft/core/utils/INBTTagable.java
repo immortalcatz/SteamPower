@@ -2,9 +2,9 @@ package buildcraft.core.utils;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public interface INBTTagable
-{
-    void readFromNBT(NBTTagCompound nbttagcompound);
+public interface INBTTagable {
 
-    void writeToNBT(NBTTagCompound nbttagcompound);
+	void readFromNBT(NBTTagCompound nbttagcompound);
+
+	void writeToNBT(NBTTagCompound nbttagcompound);
 }

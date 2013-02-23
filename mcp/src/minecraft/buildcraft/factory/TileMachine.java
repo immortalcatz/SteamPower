@@ -13,17 +13,15 @@ import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.IMachine;
 import buildcraft.core.TileBuildCraft;
 
-public abstract class TileMachine extends TileBuildCraft implements IMachine, IPowerReceptor
-{
-    @Override
-    public int powerRequest()
-    {
-        if (isActive())
-            return (int) Math.ceil(Math.min(getPowerProvider().getMaxEnergyReceived(), getPowerProvider().getMaxEnergyStored()
-                    - getPowerProvider().getEnergyStored()));
-        else
-        {
-            return 0;
-        }
-    }
+public abstract class TileMachine extends TileBuildCraft implements IMachine, IPowerReceptor {
+
+	@Override
+	public int powerRequest() {
+		if (isActive())
+			return (int) Math.ceil(Math.min(getPowerProvider().getMaxEnergyReceived(), getPowerProvider().getMaxEnergyStored()
+					- getPowerProvider().getEnergyStored()));
+		else
+			return 0;
+	}
+
 }

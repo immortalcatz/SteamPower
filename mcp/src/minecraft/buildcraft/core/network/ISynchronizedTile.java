@@ -11,17 +11,17 @@ package buildcraft.core.network;
 
 import net.minecraft.network.packet.Packet;
 
-public interface ISynchronizedTile
-{
-    public void handleDescriptionPacket(PacketUpdate packet);
+public interface ISynchronizedTile {
 
-    public void handleUpdatePacket(PacketUpdate packet);
+	public void handleDescriptionPacket(PacketUpdate packet);
 
-    public void postPacketHandling(PacketUpdate packet);
+	public void handleUpdatePacket(PacketUpdate packet);
 
-    public Packet getUpdatePacket();
+	public void postPacketHandling(PacketUpdate packet);
 
-    public Packet getDescriptionPacket();
+	public Packet getUpdatePacket();
 
-    public PacketPayload getPacketPayload();
+	public Packet getDescriptionPacket();
+
+	public PacketPayload getPacketPayload();
 }

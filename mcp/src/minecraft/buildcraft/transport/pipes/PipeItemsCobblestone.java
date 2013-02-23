@@ -13,22 +13,21 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsCobblestone extends Pipe
-{
-    public PipeItemsCobblestone(int itemID)
-    {
-        super(new PipeTransportItems(), new PipeLogicCobblestone(), itemID);
-    }
+public class PipeItemsCobblestone extends Pipe {
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	public PipeItemsCobblestone(int itemID) {
+		super(new PipeTransportItems(), new PipeLogicCobblestone(), itemID);
 
-    @Override
-    public int getTextureIndex(ForgeDirection direction)
-    {
-        return 1 * 16 + 1;
-    }
+	}
+
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int getTextureIndex(ForgeDirection direction) {
+		return 1 * 16 + 1;
+	}
+
 }

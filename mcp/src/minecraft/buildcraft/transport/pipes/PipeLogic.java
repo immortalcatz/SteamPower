@@ -17,81 +17,67 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogic implements IDropControlInventory
-{
-    public int xCoord;
-    public int yCoord;
-    public int zCoord;
-    public World worldObj;
-    public TileGenericPipe container;
+public class PipeLogic implements IDropControlInventory {
 
-    public void setPosition(int xCoord, int yCoord, int zCoord)
-    {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.zCoord = zCoord;
-    }
+	public int xCoord;
+	public int yCoord;
+	public int zCoord;
+	public World worldObj;
+	public TileGenericPipe container;
 
-    public void setWorld(World worldObj)
-    {
-        this.worldObj = worldObj;
-    }
+	public void setPosition(int xCoord, int yCoord, int zCoord) {
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.zCoord = zCoord;
+	}
 
-    public void setTile(TileGenericPipe tile)
-    {
-        this.container = tile;
-    }
+	public void setWorld(World worldObj) {
+		this.worldObj = worldObj;
+	}
 
-    /* SAVING & LOADING */
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-    }
+	public void setTile(TileGenericPipe tile) {
+		this.container = tile;
+	}
 
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-    }
+	/* SAVING & LOADING */
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+	}
 
-    /* PIPE LOGIC */
-    public void initialize()
-    {
-    }
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+	}
 
-    public void updateEntity()
-    {
-    }
+	/* PIPE LOGIC */
+	public void initialize() {
+	}
 
-    public boolean blockActivated(EntityPlayer entityplayer)
-    {
-        return false;
-    }
+	public void updateEntity() {
+	}
 
-    public boolean isPipeConnected(TileEntity tile)
-    {
-        return true;
-    }
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return false;
+	}
 
-    public void onNeighborBlockChange(int blockId)
-    {
-    }
+	public boolean isPipeConnected(TileEntity tile) {
+		return true;
+	}
 
-    public void onBlockPlaced()
-    {
-    }
+	public void onNeighborBlockChange(int blockId) {
+	}
 
-    public boolean inputOpen(ForgeDirection from)
-    {
-        return true;
-    }
+	public void onBlockPlaced() {
+	}
 
-    public boolean outputOpen(ForgeDirection to)
-    {
-        return true;
-    }
+	public boolean inputOpen(ForgeDirection from) {
+		return true;
+	}
 
-    /* IDROPCONTROLINVENTORY */
-    @Override
-    public boolean doDrop()
-    {
-        return true;
-    }
+	public boolean outputOpen(ForgeDirection to) {
+		return true;
+	}
+
+	/* IDROPCONTROLINVENTORY */
+	@Override
+	public boolean doDrop() {
+		return true;
+	}
 }

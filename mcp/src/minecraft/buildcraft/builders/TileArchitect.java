@@ -1,8 +1,8 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -29,424 +29,342 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class TileArchitect extends TileBuildCraft implements IInventory
-{
-    public @TileNetworkData
-    Box box = new Box();
+public class TileArchitect extends TileBuildCraft implements IInventory {
 
-    private ItemStack items[] = new ItemStack[2];
+	public @TileNetworkData
+	Box box = new Box();
 
-    private boolean isComputing = false;
-    public int computingTime = 0;
+	private ItemStack items[] = new ItemStack[2];
 
-    public @TileNetworkData
-    String name = "";
+	private boolean isComputing = false;
+	public int computingTime = 0;
 
-    // Use that field to avoid creating several times the same template if
-    // they're the same!
-    private int lastBptId = 0;
+	public @TileNetworkData
+	String name = "";
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
+	// Use that field to avoid creating several times the same template if
+	// they're the same!
+	private int lastBptId = 0;
 
-        if (CoreProxy.proxy.isSimulating(worldObj) && isComputing)
-        {
-            if (computingTime < 200)
-            {
-                computingTime++;
-            }
-            else
-            {
-                createBpt();
-            }
-        }
-    }
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
 
-    @Override
-    public void initialize()
-    {
-        super.initialize();
+		if (CoreProxy.proxy.isSimulating(worldObj) && isComputing) {
+			if (computingTime < 200) {
+				computingTime++;
+			} else {
+				createBpt();
+			}
+		}
+	}
 
-        if (!box.isInitialized())
-        {
-            IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+	@Override
+	public void initialize() {
+		super.initialize();
 
-            if (a != null)
-            {
-                box.initialize(a);
-                a.removeFromWorld();
-            }
-        }
+		if (!box.isInitialized()) {
+			IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
 
-        if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized())
-        {
-            box.createLasers(worldObj, LaserKind.Stripes);
-        }
+			if (a != null) {
+				box.initialize(a);
+				a.removeFromWorld();
 
-        sendNetworkUpdate();
-    }
+			}
+		}
 
-    public void createBpt()
-    {
-        if (!box.isInitialized() || items[1] != null)
-        {
-            return;
-        }
+		if (!CoreProxy.proxy.isRenderWorld(worldObj) && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
 
-        BptBase result;
-        BptContext context = null;
+		sendNetworkUpdate();
+	}
 
-        if (items[0].getItem() instanceof ItemBptTemplate)
-        {
-            result = createBptTemplate();
-            context = new BptContext(worldObj, null, box);
-        }
-        else
-        {
-            result = createBptBlueprint();
-            context = new BptContext(worldObj, (BptBlueprint) result, box);
-        }
+	public void createBpt() {
+		if (!box.isInitialized() || items[1] != null)
+			return;
 
-        if (!name.equals(""))
-        {
-            result.setName(name);
-        }
+		BptBase result;
+		BptContext context = null;
 
-        result.anchorX = xCoord - box.xMin;
-        result.anchorY = yCoord - box.yMin;
-        result.anchorZ = zCoord - box.zMin;
-        ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+		if (items[0].getItem() instanceof ItemBptTemplate) {
+			result = createBptTemplate();
+			context = new BptContext(worldObj, null, box);
+		} else {
+			result = createBptBlueprint();
+			context = new BptContext(worldObj, (BptBlueprint) result, box);
+		}
 
-        if (o == ForgeDirection.EAST)
-        {
-            // Do nothing
-        }
-        else if (o == ForgeDirection.SOUTH)
-        {
-            result.rotateLeft(context);
-            result.rotateLeft(context);
-            result.rotateLeft(context);
-        }
-        else if (o == ForgeDirection.WEST)
-        {
-            result.rotateLeft(context);
-            result.rotateLeft(context);
-        }
-        else if (o == ForgeDirection.NORTH)
-        {
-            result.rotateLeft(context);
-        }
+		if (!name.equals("")) {
+			result.setName(name);
+		}
 
-        ItemStack stack;
+		result.anchorX = xCoord - box.xMin;
+		result.anchorY = yCoord - box.yMin;
+		result.anchorZ = zCoord - box.zMin;
 
-        if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId)))
-        {
-            result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
-            stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, lastBptId, result.getName());
-        }
-        else
-        {
-            int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
-            stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, bptId, result.getName());
-            lastBptId = bptId;
-        }
+		ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
-        setInventorySlotContents(1, stack);
-        setInventorySlotContents(0, null);
-    }
+		if (o == ForgeDirection.EAST) {
+			// Do nothing
+		} else if (o == ForgeDirection.SOUTH) {
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+		} else if (o == ForgeDirection.WEST) {
+			result.rotateLeft(context);
+			result.rotateLeft(context);
+		} else if (o == ForgeDirection.NORTH) {
+			result.rotateLeft(context);
+		}
 
-    public BptBase createBptTemplate()
-    {
-        int mask1 = 1;
-        int mask0 = 0;
+		ItemStack stack;
+		if (result.equals(BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId))) {
+			result = BuildCraftBuilders.getBptRootIndex().getBluePrint(lastBptId);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, lastBptId, result.getName());
+		} else {
+			int bptId = BuildCraftBuilders.getBptRootIndex().storeBluePrint(result);
+			stack = BuildCraftBuilders.getBptItemStack(items[0].itemID, bptId, result.getName());
+			lastBptId = bptId;
+		}
 
-        if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord))
-        {
-            mask1 = 0;
-            mask0 = 1;
-        }
+		setInventorySlotContents(1, stack);
+		setInventorySlotContents(0, null);
+	}
 
-        BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
+	public BptBase createBptTemplate() {
+		int mask1 = 1;
+		int mask0 = 0;
 
-        for (int x = box.xMin; x <= box.xMax; ++x)
-        {
-            for (int y = box.yMin; y <= box.yMax; ++y)
-            {
-                for (int z = box.zMin; z <= box.zMax; ++z)
-                {
-                    if (worldObj.getBlockId(x, y, z) != 0)
-                    {
-                        result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask1);
-                    }
-                    else
-                    {
-                        result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask0);
-                    }
-                }
-            }
-        }
+		if (worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord)) {
+			mask1 = 0;
+			mask0 = 1;
+		}
 
-        return result;
-    }
+		BptBase result = new BptTemplate(box.sizeX(), box.sizeY(), box.sizeZ());
 
-    private BptBase createBptBlueprint()
-    {
-        BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
-        BptContext context = new BptContext(worldObj, result, box);
+		for (int x = box.xMin; x <= box.xMax; ++x) {
+			for (int y = box.yMin; y <= box.yMax; ++y) {
+				for (int z = box.zMin; z <= box.zMax; ++z) {
+					if (worldObj.getBlockId(x, y, z) != 0) {
+						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask1);
+					} else {
+						result.setBlockId(x - box.xMin, y - box.yMin, z - box.zMin, mask0);
+					}
+				}
+			}
+		}
 
-        for (int x = box.xMin; x <= box.xMax; ++x)
-        {
-            for (int y = box.yMin; y <= box.yMax; ++y)
-            {
-                for (int z = box.zMin; z <= box.zMax; ++z)
-                {
-                    result.readFromWorld(context, this, x, y, z);
-                }
-            }
-        }
+		return result;
+	}
 
-        return result;
-    }
+	private BptBase createBptBlueprint() {
+		BptBlueprint result = new BptBlueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
-    public void handleClientInput(char c)
-    {
-        if (c == 8)
-        {
-            if (name.length() > 0)
-            {
-                name = name.substring(0, name.length() - 1);
-            }
-        }
-        else if (Character.isLetterOrDigit(c) || c == ' ')
-        {
-            if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE)
-            {
-                name += c;
-            }
-        }
+		BptContext context = new BptContext(worldObj, result, box);
 
-        sendNetworkUpdate();
-    }
+		for (int x = box.xMin; x <= box.xMax; ++x) {
+			for (int y = box.yMin; y <= box.yMax; ++y) {
+				for (int z = box.zMin; z <= box.zMax; ++z) {
+					result.readFromWorld(context, this, x, y, z);
+				}
+			}
+		}
 
-    @Override
-    public int getSizeInventory()
-    {
-        return 2;
-    }
+		return result;
+	}
 
-    @Override
-    public ItemStack getStackInSlot(int i)
-    {
-        return items[i];
-    }
+	public void handleClientInput(char c) {
+		if (c == 8) {
+			if (name.length() > 0) {
+				name = name.substring(0, name.length() - 1);
+			}
+		} else if (Character.isLetterOrDigit(c) || c == ' ') {
+			if (name.length() < BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
+				name += c;
+			}
+		}
+		sendNetworkUpdate();
+	}
 
-    @Override
-    public ItemStack decrStackSize(int i, int j)
-    {
-        ItemStack result;
+	@Override
+	public int getSizeInventory() {
+		return 2;
+	}
 
-        if (items[i] == null)
-        {
-            result = null;
-        }
-        else if (items[i].stackSize > j)
-        {
-            result = items[i].splitStack(j);
-        }
-        else
-        {
-            ItemStack tmp = items[i];
-            items[i] = null;
-            result = tmp;
-        }
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return items[i];
+	}
 
-        initializeComputing();
-        return result;
-    }
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		ItemStack result;
+		if (items[i] == null) {
+			result = null;
+		} else if (items[i].stackSize > j) {
+			result = items[i].splitStack(j);
+		} else {
+			ItemStack tmp = items[i];
+			items[i] = null;
+			result = tmp;
+		}
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        items[i] = itemstack;
-        initializeComputing();
-    }
+		initializeComputing();
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
-        if (items[slot] == null)
-        {
-            return null;
-        }
+		return result;
+	}
 
-        ItemStack toReturn = items[slot];
-        items[slot] = null;
-        return toReturn;
-    }
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		items[i] = itemstack;
 
-    @Override
-    public String getInvName()
-    {
-        return "Template";
-    }
+		initializeComputing();
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return 1;
-    }
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
-        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
-    }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (items[slot] == null)
+			return null;
+		ItemStack toReturn = items[slot];
+		items[slot] = null;
+		return toReturn;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        lastBptId = nbttagcompound.getInteger("lastTemplateId");
-        computingTime = nbttagcompound.getInteger("computingTime");
-        isComputing = nbttagcompound.getBoolean("isComputing");
+	@Override
+	public String getInvName() {
+		return "Template";
+	}
 
-        if (nbttagcompound.hasKey("box"))
-        {
-            box.initialize(nbttagcompound.getCompoundTag("box"));
-        }
+	@Override
+	public int getInventoryStackLimit() {
+		return 1;
+	}
 
-        NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
-        items = new ItemStack[getSizeInventory()];
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+	}
 
-        for (int i = 0; i < nbttaglist.tagCount(); i++)
-        {
-            NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.tagAt(i);
-            int j = nbttagcompound1.getByte("Slot") & 0xff;
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-            if (j >= 0 && j < items.length)
-            {
-                items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-            }
-        }
+		lastBptId = nbttagcompound.getInteger("lastTemplateId");
+		computingTime = nbttagcompound.getInteger("computingTime");
+		isComputing = nbttagcompound.getBoolean("isComputing");
 
-        name = nbttagcompound.getString("name");
-    }
+		if (nbttagcompound.hasKey("box")) {
+			box.initialize(nbttagcompound.getCompoundTag("box"));
+		}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        nbttagcompound.setInteger("lastTemplateId", lastBptId);
-        nbttagcompound.setInteger("computingTime", computingTime);
-        nbttagcompound.setBoolean("isComputing", isComputing);
+		NBTTagList nbttaglist = nbttagcompound.getTagList("Items");
+		items = new ItemStack[getSizeInventory()];
+		for (int i = 0; i < nbttaglist.tagCount(); i++) {
+			NBTTagCompound nbttagcompound1 = (NBTTagCompound) nbttaglist.tagAt(i);
+			int j = nbttagcompound1.getByte("Slot") & 0xff;
+			if (j >= 0 && j < items.length) {
+				items[j] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+			}
+		}
 
-        if (box.isInitialized())
-        {
-            NBTTagCompound boxStore = new NBTTagCompound();
-            box.writeToNBT(boxStore);
-            nbttagcompound.setTag("box", boxStore);
-        }
+		name = nbttagcompound.getString("name");
+	}
 
-        NBTTagList nbttaglist = new NBTTagList();
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
-        for (int i = 0; i < items.length; i++)
-        {
-            if (items[i] != null)
-            {
-                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-                nbttagcompound1.setByte("Slot", (byte) i);
-                items[i].writeToNBT(nbttagcompound1);
-                nbttaglist.appendTag(nbttagcompound1);
-            }
-        }
+		nbttagcompound.setInteger("lastTemplateId", lastBptId);
+		nbttagcompound.setInteger("computingTime", computingTime);
+		nbttagcompound.setBoolean("isComputing", isComputing);
 
-        nbttagcompound.setTag("Items", nbttaglist);
-        nbttagcompound.setString("name", name);
-    }
+		if (box.isInitialized()) {
+			NBTTagCompound boxStore = new NBTTagCompound();
+			box.writeToNBT(boxStore);
+			nbttagcompound.setTag("box", boxStore);
+		}
 
-    @Override
-    public void invalidate()
-    {
-        super.invalidate();
-        destroy();
-    }
+		NBTTagList nbttaglist = new NBTTagList();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] != null) {
+				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+				nbttagcompound1.setByte("Slot", (byte) i);
+				items[i].writeToNBT(nbttagcompound1);
+				nbttaglist.appendTag(nbttagcompound1);
+			}
+		}
 
-    @Override
-    public void destroy()
-    {
-        if (box.isInitialized())
-        {
-            box.deleteLasers();
-        }
-    }
+		nbttagcompound.setTag("Items", nbttaglist);
+		nbttagcompound.setString("name", name);
+	}
 
-    private void initializeComputing()
-    {
-        if (!box.isInitialized())
-        {
-            return;
-        }
-        else if (!isComputing)
-        {
-            if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null)
-            {
-                isComputing = true;
-                computingTime = 0;
-            }
-            else
-            {
-                isComputing = false;
-                computingTime = 0;
-            }
-        }
-        else
-        {
-            if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase))
-            {
-                isComputing = false;
-                computingTime = 0;
-            }
-        }
-    }
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		destroy();
+	}
 
-    public int getComputingProgressScaled(int i)
-    {
-        return (computingTime * i) / 200;
-    }
+	@Override
+	public void destroy() {
+		if (box.isInitialized()) {
+			box.deleteLasers();
+		}
+	}
 
-    @Override
-    public void handleDescriptionPacket(PacketUpdate packet)
-    {
-        boolean initialized = box.isInitialized();
-        super.handleDescriptionPacket(packet);
+	private void initializeComputing() {
+		if (!box.isInitialized())
+			return;
+		else if (!isComputing) {
+			if (items[0] != null && items[0].getItem() instanceof ItemBptBase && items[1] == null) {
+				isComputing = true;
+				computingTime = 0;
+			} else {
+				isComputing = false;
+				computingTime = 0;
+			}
+		} else {
+			if (items[0] == null || !(items[0].getItem() instanceof ItemBptBase)) {
+				isComputing = false;
+				computingTime = 0;
+			}
+		}
+	}
 
-        if (!initialized && box.isInitialized())
-        {
-            box.createLasers(worldObj, LaserKind.Stripes);
-        }
-    }
+	public int getComputingProgressScaled(int i) {
+		return (computingTime * i) / 200;
+	}
 
-    @Override
-    public void handleUpdatePacket(PacketUpdate packet)
-    {
-        boolean initialized = box.isInitialized();
-        super.handleUpdatePacket(packet);
+	@Override
+	public void handleDescriptionPacket(PacketUpdate packet) {
+		boolean initialized = box.isInitialized();
 
-        if (!initialized && box.isInitialized())
-        {
-            box.createLasers(worldObj, LaserKind.Stripes);
-        }
-    }
+		super.handleDescriptionPacket(packet);
 
-    @Override
-    public void openChest()
-    {
-    }
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
+	}
 
-    @Override
-    public void closeChest()
-    {
-    }
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) {
+		boolean initialized = box.isInitialized();
+
+		super.handleUpdatePacket(packet);
+
+		if (!initialized && box.isInitialized()) {
+			box.createLasers(worldObj, LaserKind.Stripes);
+		}
+	}
+
+	@Override
+	public void openChest() {
+
+	}
+
+	@Override
+	public void closeChest() {
+
+	}
 }

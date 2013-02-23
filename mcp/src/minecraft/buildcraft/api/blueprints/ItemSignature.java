@@ -1,49 +1,47 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
 
 package buildcraft.api.blueprints;
 
-public class ItemSignature
-{
-    public String itemClassName;
-    public String itemName;
+public class ItemSignature {
 
-    public ItemSignature(String str)
-    {
-        String[] values = str.split("/");
-        itemClassName = values[1];
-        itemName = values[2];
-        replaceNullWithStar();
-    }
+	public String itemClassName;
+	public String itemName;
 
-    public ItemSignature()
-    {
-        replaceNullWithStar();
-    }
+	public ItemSignature(String str) {
+		String[] values = str.split("/");
 
-    @Override
-    public String toString()
-    {
-        replaceNullWithStar();
-        return "#I/" + itemClassName + "/" + itemName;
-    }
+		itemClassName = values[1];
+		itemName = values[2];
 
-    public void replaceNullWithStar()
-    {
-        if (itemClassName == null)
-        {
-            itemClassName = "*";
-        }
+		replaceNullWithStar();
 
-        if (itemName == null)
-        {
-            itemName = "*";
-        }
-    }
+	}
+
+	public ItemSignature() {
+		replaceNullWithStar();
+	}
+
+	@Override
+	public String toString() {
+		replaceNullWithStar();
+
+		return "#I/" + itemClassName + "/" + itemName;
+	}
+
+	public void replaceNullWithStar() {
+		if (itemClassName == null) {
+			itemClassName = "*";
+		}
+
+		if (itemName == null) {
+			itemName = "*";
+		}
+	}
 }

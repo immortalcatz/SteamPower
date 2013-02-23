@@ -11,58 +11,52 @@ package buildcraft.core;
 
 import buildcraft.api.core.IAreaProvider;
 
-public class DefaultAreaProvider implements IAreaProvider
-{
-    int xMin, yMin, zMin, xMax, yMax, zMax;
+public class DefaultAreaProvider implements IAreaProvider {
 
-    public DefaultAreaProvider(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax)
-    {
-        this.xMin = xMin;
-        this.xMax = xMax;
-        this.yMin = yMin;
-        this.yMax = yMax;
-        this.zMin = zMin;
-        this.zMax = zMax;
-    }
+	int xMin, yMin, zMin, xMax, yMax, zMax;
 
-    @Override
-    public int xMin()
-    {
-        return xMin;
-    }
+	public DefaultAreaProvider(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 
-    @Override
-    public int yMin()
-    {
-        return yMin;
-    }
+		this.xMin = xMin;
+		this.xMax = xMax;
+		this.yMin = yMin;
+		this.yMax = yMax;
+		this.zMin = zMin;
+		this.zMax = zMax;
+	}
 
-    @Override
-    public int zMin()
-    {
-        return zMin;
-    }
+	@Override
+	public int xMin() {
+		return xMin;
+	}
 
-    @Override
-    public int xMax()
-    {
-        return xMax;
-    }
+	@Override
+	public int yMin() {
+		return yMin;
+	}
 
-    @Override
-    public int yMax()
-    {
-        return yMax;
-    }
+	@Override
+	public int zMin() {
+		return zMin;
+	}
 
-    @Override
-    public int zMax()
-    {
-        return zMax;
-    }
+	@Override
+	public int xMax() {
+		return xMax;
+	}
 
-    @Override
-    public void removeFromWorld()
-    {
-    }
+	@Override
+	public int yMax() {
+		return yMax;
+	}
+
+	@Override
+	public int zMax() {
+		return zMax;
+	}
+
+	@Override
+	public void removeFromWorld() {
+
+	}
 }

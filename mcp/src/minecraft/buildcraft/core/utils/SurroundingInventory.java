@@ -20,191 +20,159 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.core.IBuilderInventory;
 
-public class SurroundingInventory implements IInventory, IBuilderInventory
-{
-    LinkedList<IInventory> invs = new LinkedList<IInventory>();
-    int invSize = 0;
+public class SurroundingInventory implements IInventory, IBuilderInventory {
 
-    int x, y, z;
-    World world;
+	LinkedList<IInventory> invs = new LinkedList<IInventory>();
+	int invSize = 0;
 
-    public SurroundingInventory(World world, int x, int y, int z)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.world = world;
-        updateInvs();
-    }
+	int x, y, z;
+	World world;
 
-    public void updateInvs()
-    {
-        invs.clear();
-        invSize = 0;
-        TileEntity tile = world.getBlockTileEntity(x, y, z);
+	public SurroundingInventory(World world, int x, int y, int z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.world = world;
 
-        if (tile instanceof IInventory)
-        {
-            IInventory inv = Utils.getInventory((IInventory) tile);
-            invs.add(inv);
-            invSize += inv.getSizeInventory();
-        }
+		updateInvs();
+	}
 
-        Position pos = new Position(x, y, z);
+	public void updateInvs() {
+		invs.clear();
+		invSize = 0;
 
-        for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS)
-        {
-            tile = Utils.getTile(world, pos, o);
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-            if (tile instanceof IInventory)
-            {
-                IInventory inv = Utils.getInventory((IInventory) tile);
-                invs.add(inv);
-                invSize += inv.getSizeInventory();
-            }
-        }
-    }
+		if (tile instanceof IInventory) {
+			IInventory inv = Utils.getInventory((IInventory) tile);
+			invs.add(inv);
+			invSize += inv.getSizeInventory();
+		}
 
-    @Override
-    public int getSizeInventory()
-    {
-        return invSize;
-    }
+		Position pos = new Position(x, y, z);
 
-    @Override
-    public ItemStack getStackInSlot(int i)
-    {
-        int lastSize = 0, size = 0;
+		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			tile = Utils.getTile(world, pos, o);
 
-        for (IInventory inv : invs)
-        {
-            size += inv.getSizeInventory();
+			if (tile instanceof IInventory) {
+				IInventory inv = Utils.getInventory((IInventory) tile);
+				invs.add(inv);
+				invSize += inv.getSizeInventory();
+			}
+		}
+	}
 
-            if (size > i)
-            {
-                return inv.getStackInSlot(i - lastSize);
-            }
+	@Override
+	public int getSizeInventory() {
+		return invSize;
+	}
 
-            lastSize = size;
-        }
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		int lastSize = 0, size = 0;
 
-        return null;
-    }
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
 
-    @Override
-    public ItemStack decrStackSize(int i, int j)
-    {
-        int lastSize = 0, size = 0;
+			if (size > i)
+				return inv.getStackInSlot(i - lastSize);
 
-        for (IInventory inv : invs)
-        {
-            size += inv.getSizeInventory();
+			lastSize = size;
+		}
 
-            if (size > i)
-            {
-                return inv.decrStackSize(i - lastSize, j);
-            }
+		return null;
+	}
 
-            lastSize = size;
-        }
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		int lastSize = 0, size = 0;
 
-        return null;
-    }
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        int lastSize = 0, size = 0;
+			if (size > i)
+				return inv.decrStackSize(i - lastSize, j);
 
-        for (IInventory inv : invs)
-        {
-            size += inv.getSizeInventory();
+			lastSize = size;
+		}
 
-            if (size > i)
-            {
-                inv.setInventorySlotContents(i - lastSize, itemstack);
-                break;
-            }
+		return null;
+	}
 
-            lastSize = size;
-        }
-    }
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		int lastSize = 0, size = 0;
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
-        int lastSize = 0, size = 0;
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
 
-        for (IInventory inv : invs)
-        {
-            size += inv.getSizeInventory();
+			if (size > i) {
+				inv.setInventorySlotContents(i - lastSize, itemstack);
+				break;
+			}
 
-            if (size > slot)
-            {
-                return inv.getStackInSlotOnClosing(slot - lastSize);
-            }
+			lastSize = size;
+		}
+	}
 
-            lastSize = size;
-        }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		int lastSize = 0, size = 0;
 
-        return null;
-    }
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
 
-    @Override
-    public String getInvName()
-    {
-        return "";
-    }
+			if (size > slot)
+				return inv.getStackInSlotOnClosing(slot - lastSize);
+			lastSize = size;
+		}
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
+		return null;
+	}
 
-    @Override
-    public void onInventoryChanged()
-    {
-    }
+	@Override
+	public String getInvName() {
+		return "";
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
-        return true;
-    }
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
 
-    @Override
-    public void openChest()
-    {
-    }
+	@Override
+	public void onInventoryChanged() {
+	}
 
-    @Override
-    public void closeChest()
-    {
-    }
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return true;
+	}
 
-    @Override
-    public boolean isBuildingMaterial(int i)
-    {
-        int lastSize = 0, size = 0;
+	@Override
+	public void openChest() {
+	}
 
-        for (IInventory inv : invs)
-        {
-            size += inv.getSizeInventory();
+	@Override
+	public void closeChest() {
+	}
 
-            if (size > i)
-                if (inv instanceof IBuilderInventory)
-                {
-                    return ((IBuilderInventory) inv).isBuildingMaterial(i - lastSize);
-                }
-                else
-                {
-                    return true;
-                }
+	@Override
+	public boolean isBuildingMaterial(int i) {
+		int lastSize = 0, size = 0;
 
-            lastSize = size;
-        }
+		for (IInventory inv : invs) {
+			size += inv.getSizeInventory();
 
-        return false;
-    }
+			if (size > i)
+				if (inv instanceof IBuilderInventory)
+					return ((IBuilderInventory) inv).isBuildingMaterial(i - lastSize);
+				else
+					return true;
+
+			lastSize = size;
+		}
+
+		return false;
+	}
 }

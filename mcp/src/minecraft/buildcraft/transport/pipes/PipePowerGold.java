@@ -13,23 +13,22 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerGold extends Pipe
-{
-    public PipePowerGold(int itemID)
-    {
-        super(new PipeTransportPower(), new PipeLogicGold(), itemID);
-        ((PipeTransportPower) transport).powerResistance = 0.005;
-    }
+public class PipePowerGold extends Pipe {
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	public PipePowerGold(int itemID) {
+		super(new PipeTransportPower(), new PipeLogicGold(), itemID);
 
-    @Override
-    public int getTextureIndex(ForgeDirection direction)
-    {
-        return 7 * 16 + 10;
-    }
+		((PipeTransportPower) transport).powerResistance = 0.005;
+	}
+
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int getTextureIndex(ForgeDirection direction) {
+		return 7 * 16 + 10;
+	}
+
 }

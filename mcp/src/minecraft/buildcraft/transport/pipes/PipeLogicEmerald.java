@@ -12,6 +12,5 @@ package buildcraft.transport.pipes;
  *
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
-public class PipeLogicEmerald extends PipeLogicWood
-{
+public class PipeLogicEmerald extends PipeLogicWood {
 }

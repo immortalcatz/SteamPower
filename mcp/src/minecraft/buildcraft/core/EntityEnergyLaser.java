@@ -12,82 +12,67 @@ package buildcraft.core;
 import net.minecraft.world.World;
 import buildcraft.api.core.Position;
 
-public class EntityEnergyLaser extends EntityLaser
-{
-    public static final short POWER_AVERAGING = 100;
-    public int displayStage = 0;
+public class EntityEnergyLaser extends EntityLaser {
 
-    private final float power[] = new float[POWER_AVERAGING];
-    private int powerIndex = 0;
-    private float powerAverage = 0;
+	public static final short POWER_AVERAGING = 100;
+	public int displayStage = 0;
 
-    public EntityEnergyLaser(World world)
-    {
-        super(world);
-    }
+	private final float power[] = new float[POWER_AVERAGING];
+	private int powerIndex = 0;
+	private float powerAverage = 0;
 
-    public EntityEnergyLaser(World world, Position head, Position tail)
-    {
-        super(world, head, tail);
-    }
+	public EntityEnergyLaser(World world) {
+		super(world);
+	}
 
-    public void pushPower(float received)
-    {
-        powerAverage -= power[powerIndex];
-        powerAverage += received;
-        power[powerIndex] = received;
-        powerIndex++;
+	public EntityEnergyLaser(World world, Position head, Position tail) {
+		super(world, head, tail);
+	}
 
-        if (powerIndex == power.length)
-        {
-            powerIndex = 0;
-        }
-    }
+	public void pushPower(float received) {
 
-    public float getPowerAverage()
-    {
-        return powerAverage / POWER_AVERAGING;
-    }
+		powerAverage -= power[powerIndex];
+		powerAverage += received;
+		power[powerIndex] = received;
+		powerIndex++;
 
-    @Override
-    public String getTexture()
-    {
-        if (getPowerAverage() <= 1.0)
-        {
-            return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png";
-        }
-        else if (getPowerAverage() <= 2.0)
-        {
-            return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png";
-        }
-        else if (getPowerAverage() <= 3.0)
-        {
-            return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png";
-        }
-        else
-        {
-            return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png";
-        }
-    }
+		if (powerIndex == power.length) {
+			powerIndex = 0;
+		}
+	}
 
-    @Override
-    protected void updateDataClient()
-    {
-        super.updateDataClient();
-        powerAverage = (float) decodeDouble(dataWatcher.getWatchableObjectInt(15));
-    }
+	public float getPowerAverage() {
+		return powerAverage / POWER_AVERAGING;
+	}
 
-    @Override
-    protected void updateDataServer()
-    {
-        super.updateDataServer();
-        dataWatcher.updateObject(15, Integer.valueOf(encodeDouble(powerAverage)));
-    }
+	@Override
+	public String getTexture() {
 
-    @Override
-    protected void entityInit()
-    {
-        super.entityInit();
-        dataWatcher.addObject(15, Integer.valueOf(0));
-    }
+		if (getPowerAverage() <= 1.0)
+			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png";
+		else if (getPowerAverage() <= 2.0)
+			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png";
+		else if (getPowerAverage() <= 3.0)
+			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png";
+		else
+			return DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png";
+	}
+
+	@Override
+	protected void updateDataClient() {
+		super.updateDataClient();
+		powerAverage = (float) decodeDouble(dataWatcher.getWatchableObjectInt(15));
+	}
+
+	@Override
+	protected void updateDataServer() {
+		super.updateDataServer();
+		dataWatcher.updateObject(15, Integer.valueOf(encodeDouble(powerAverage)));
+	}
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(15, Integer.valueOf(0));
+	}
 }

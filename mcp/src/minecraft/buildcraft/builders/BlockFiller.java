@@ -26,116 +26,90 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class BlockFiller extends BlockContainer
-{
-    int textureSides;
-    int textureTopOn;
-    int textureTopOff;
-    public IFillerPattern currentPattern;
+public class BlockFiller extends BlockContainer {
 
-    public BlockFiller(int i)
-    {
-        super(i, Material.iron);
-        setHardness(0.5F);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-        textureSides = 4 * 16 + 2;
-        textureTopOn = 4 * 16 + 0;
-        textureTopOff = 4 * 16 + 1;
-    }
+	int textureSides;
+	int textureTopOn;
+	int textureTopOff;
+	public IFillerPattern currentPattern;
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
-    {
-        // Drop through if the player is sneaking
-        if (entityplayer.isSneaking())
-        {
-            return false;
-        }
+	public BlockFiller(int i) {
+		super(i, Material.iron);
 
-        if (!CoreProxy.proxy.isRenderWorld(world))
-        {
-            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
-        }
+		setHardness(0.5F);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
 
-        return true;
-    }
+		textureSides = 4 * 16 + 2;
+		textureTopOn = 4 * 16 + 0;
+		textureTopOff = 4 * 16 + 1;
+	}
 
-    @SuppressWarnings( { "all" })
-    public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l)
-    {
-        int m = iblockaccess.getBlockMetadata(i, j, k);
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
-        if (iblockaccess == null)
-        {
-            return getBlockTextureFromSideAndMetadata(i, m);
-        }
+		// Drop through if the player is sneaking
+		if (entityplayer.isSneaking())
+			return false;
 
-        TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
+		if (!CoreProxy.proxy.isRenderWorld(world)) {
+			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, i, j, k);
+		}
+		return true;
 
-        if (tile != null && tile instanceof TileFiller)
-        {
-            TileFiller filler = (TileFiller) tile;
+	}
 
-            if (l == 1 || l == 0)
-            {
-                if (!filler.isActive())
-                {
-                    return textureTopOff;
-                }
-                else
-                {
-                    return textureTopOn;
-                }
-            }
-            else if (filler.currentPattern != null)
-            {
-                return filler.currentPattern.getTextureIndex();
-            }
-            else
-            {
-                return textureSides;
-            }
-        }
+	@SuppressWarnings({ "all" })
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+		int m = iblockaccess.getBlockMetadata(i, j, k);
 
-        return getBlockTextureFromSideAndMetadata(l, m);
-    }
+		if (iblockaccess == null)
+			return getBlockTextureFromSideAndMetadata(i, m);
 
-    @Override
-    public int getBlockTextureFromSide(int i)
-    {
-        if (i == 0 || i == 1)
-        {
-            return textureTopOn;
-        }
-        else
-        {
-            return textureSides;
-        }
-    }
+		TileEntity tile = iblockaccess.getBlockTileEntity(i, j, k);
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return new TileFiller();
-    }
+		if (tile != null && tile instanceof TileFiller) {
+			TileFiller filler = (TileFiller) tile;
+			if (l == 1 || l == 0) {
+				if (!filler.isActive())
+					return textureTopOff;
+				else
+					return textureTopOn;
+			} else if (filler.currentPattern != null)
+				return filler.currentPattern.getTextureIndex();
+			else
+				return textureSides;
+		}
 
-    @Override
-    public void breakBlock(World world, int x, int y, int z, int par5, int par6)
-    {
-        Utils.preDestroyBlock(world, x, y, z);
-        super.breakBlock(world, x, y, z, par5, par6);
-    }
+		return getBlockTextureFromSideAndMetadata(l, m);
+	}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	@Override
+	public int getBlockTextureFromSide(int i) {
+		if (i == 0 || i == 1)
+			return textureTopOn;
+		else
+			return textureSides;
+	}
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    @Override
-    public void addCreativeItems(ArrayList itemList)
-    {
-        itemList.add(new ItemStack(this));
-    }
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return new TileFiller();
+	}
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
+	}
+
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
 }
