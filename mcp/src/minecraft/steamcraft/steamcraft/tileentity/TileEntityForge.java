@@ -1,7 +1,7 @@
 package steamcraft.steamcraft.tileentity;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockForgeMain;
-import steamcraft.steamcraft.common.SteamCraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;

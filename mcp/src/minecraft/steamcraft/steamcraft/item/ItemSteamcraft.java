@@ -1,6 +1,6 @@
 package steamcraft.steamcraft.item;
 
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 import net.minecraft.item.Item;
 import net.minecraft.src.*;
 

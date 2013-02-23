@@ -1,6 +1,7 @@
-package steamcraft.steamcraft.common;
+package steamcraft.steamcraft;
 
 import steamcraft.steamcraft.block.*;
+import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.*;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
@@ -46,6 +47,7 @@ public class SteamCraft {
 	public static String BLOCKS_PNG =  textureLocation+"blocks.png";
 	public static String armorLocation = textureLocation+"armor/";
 	public static String guiLocation = textureLocation+"gui/";
+	public static String modelTextureLocation = texuterLocation+"model/";
 
 	//Blocks
 	public static Block boilerIdle;
