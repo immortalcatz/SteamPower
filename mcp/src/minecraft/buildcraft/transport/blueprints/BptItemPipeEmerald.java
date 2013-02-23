@@ -18,28 +18,28 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.blueprints.BptItem;
 
-public class BptItemPipeEmerald extends BptItem {
+public class BptItemPipeEmerald extends BptItem
+{
+    public BptItemPipeEmerald()
+    {
+    }
 
-	public BptItemPipeEmerald() {
-	}
+    @Override
+    public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements)
+    {
+    }
 
-	@Override
-	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
+    @Override
+    public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z)
+    {
+        IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
+        BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
+    }
 
-	}
-	
-	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
-
-		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
-	}
-
-	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
-
-		BptBlockUtils.buildInventoryContents(slot, context, inventory);
-	}
-
+    @Override
+    public void buildBlock(BptSlotInfo slot, IBptContext context)
+    {
+        IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+        BptBlockUtils.buildInventoryContents(slot, context, inventory);
+    }
 }

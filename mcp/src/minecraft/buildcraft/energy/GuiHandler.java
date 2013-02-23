@@ -9,56 +9,65 @@ import buildcraft.energy.gui.GuiCombustionEngine;
 import buildcraft.energy.gui.GuiSteamEngine;
 import cpw.mods.fml.common.network.IGuiHandler;
 
-public class GuiHandler implements IGuiHandler {
+public class GuiHandler implements IGuiHandler
+{
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        if (!world.blockExists(x, y, z))
+        {
+            return null;
+        }
 
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (!world.blockExists(x, y, z))
-			return null;
+        if (!(tile instanceof TileEngine))
+        {
+            return null;
+        }
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileEngine))
-			return null;
+        TileEngine engine = (TileEngine) tile;
 
-		TileEngine engine = (TileEngine) tile;
+        switch (ID)
+        {
+            case GuiIds.ENGINE_IRON:
+                return new GuiCombustionEngine(player.inventory, engine);
 
-		switch (ID) {
+            case GuiIds.ENGINE_STONE:
+                return new GuiSteamEngine(player.inventory, engine);
 
-		case GuiIds.ENGINE_IRON:
-			return new GuiCombustionEngine(player.inventory, engine);
+            default:
+                return null;
+        }
+    }
 
-		case GuiIds.ENGINE_STONE:
-			return new GuiSteamEngine(player.inventory, engine);
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        if (!world.blockExists(x, y, z))
+        {
+            return null;
+        }
 
-		default:
-			return null;
-		}
-	}
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+        if (!(tile instanceof TileEngine))
+        {
+            return null;
+        }
 
-		if (!world.blockExists(x, y, z))
-			return null;
+        TileEngine engine = (TileEngine) tile;
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileEngine))
-			return null;
+        switch (ID)
+        {
+            case GuiIds.ENGINE_IRON:
+                return new ContainerEngine(player.inventory, engine);
 
-		TileEngine engine = (TileEngine) tile;
+            case GuiIds.ENGINE_STONE:
+                return new ContainerEngine(player.inventory, engine);
 
-		switch (ID) {
-
-		case GuiIds.ENGINE_IRON:
-			return new ContainerEngine(player.inventory, engine);
-
-		case GuiIds.ENGINE_STONE:
-			return new ContainerEngine(player.inventory, engine);
-
-		default:
-			return null;
-		}
-	}
-
+            default:
+                return null;
+        }
+    }
 }

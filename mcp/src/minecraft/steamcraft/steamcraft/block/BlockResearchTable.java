@@ -31,30 +31,31 @@ public class BlockResearchTable extends BlockContainer
     }
 
     @Override
-	public int idDropped(int par1, Random par2Random, int par3)
+    public int idDropped(int par1, Random par2Random, int par3)
     {
         return SteamCraft.researchTable.blockID;
     }
 
     @Override
-	public int getRenderType(){
+    public int getRenderType()
+    {
         return -1;
     }
 
     @Override
     public boolean isOpaqueCube()
     {
-    	return false;
+        return false;
     }
 
-	@Override
-	public boolean renderAsNormalBlock()
-	{
-		return false;
-	}
+    @Override
+    public boolean renderAsNormalBlock()
+    {
+        return false;
+    }
 
     @Override
-	public void onBlockAdded(World par1World, int par2, int par3, int par4)
+    public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
         super.onBlockAdded(par1World, par2, par3, par4);
         this.setDefaultDirection(par1World, par2, par3, par4);
@@ -95,7 +96,7 @@ public class BlockResearchTable extends BlockContainer
     }
 
     @Override
-	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
+    public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
         if (par1World.isRemote)
         {
@@ -107,7 +108,6 @@ public class BlockResearchTable extends BlockContainer
 
             if (var10 != null)
             {
-
                 par5EntityPlayer.openGui(SteamCraft.instance, 2, par1World, par2, par3, par4);
             }
 
@@ -120,13 +120,13 @@ public class BlockResearchTable extends BlockContainer
     }
 
     @Override
-	public TileEntity createNewTileEntity(World par1World)
+    public TileEntity createNewTileEntity(World par1World)
     {
         return new TileEntityResearchTable();
     }
 
     @Override
-	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
+    public void onBlockPlacedBy(World par1World, int par2, int par3, int par4, EntityLiving par5EntityLiving)
     {
         int var6 = MathHelper.floor_double(par5EntityLiving.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
@@ -152,7 +152,7 @@ public class BlockResearchTable extends BlockContainer
     }
 
     @Override
-	public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+    public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
     {
         TileEntityResearchTable var7 = (TileEntityResearchTable)par1World.getBlockTileEntity(par2, par3, par4);
 
@@ -194,6 +194,7 @@ public class BlockResearchTable extends BlockContainer
                 }
             }
         }
+
         super.breakBlock(par1World, par2, par3, par4, par5, par6);
     }
 }

@@ -13,36 +13,47 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportLiquids;
 
-public class PipeLiquidsIron extends Pipe {
+public class PipeLiquidsIron extends Pipe
+{
+    private int baseTexture = 7 * 16 + 3;
+    private int plainTexture = 1 * 16 + 3;
 
-	private int baseTexture = 7 * 16 + 3;
-	private int plainTexture = 1 * 16 + 3;
+    public PipeLiquidsIron(int itemID)
+    {
+        super(new PipeTransportLiquids(), new PipeLogicIron(), itemID);
+    }
 
-	public PipeLiquidsIron(int itemID) {
-		super(new PipeTransportLiquids(), new PipeLogicIron(), itemID);
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        if (direction == ForgeDirection.UNKNOWN)
+        {
+            return baseTexture;
+        }
+        else
+        {
+            int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return baseTexture;
-		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            if (metadata == direction.ordinal())
+            {
+                return baseTexture;
+            }
+            else
+            {
+                return plainTexture;
+            }
+        }
+    }
 
-			if (metadata == direction.ordinal())
-				return baseTexture;
-			else
-				return plainTexture;
-		}
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		return true;
-	}
+    @Override
+    public boolean canConnectRedstone()
+    {
+        return true;
+    }
 }

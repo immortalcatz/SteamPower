@@ -19,42 +19,47 @@ import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook {
+public class PipeItemsStone extends Pipe implements IPipeTransportItemsHook
+{
+    public PipeItemsStone(int itemID)
+    {
+        super(new PipeTransportItems(), new PipeLogicStone(), itemID);
+    }
 
-	public PipeItemsStone(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicStone(), itemID);
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        return 1 * 16 + 13;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public void readjustSpeed(IPipedItem item)
+    {
+        if (item.getSpeed() > Utils.pipeNormalSpeed)
+        {
+            item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 2.0F);
+        }
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 1 * 16 + 13;
-	}
+        if (item.getSpeed() < Utils.pipeNormalSpeed)
+        {
+            item.setSpeed(Utils.pipeNormalSpeed);
+        }
+    }
 
-	@Override
-	public void readjustSpeed(IPipedItem item) {
-		if (item.getSpeed() > Utils.pipeNormalSpeed) {
-			item.setSpeed(item.getSpeed() - Utils.pipeNormalSpeed / 2.0F);
-		}
+    @Override
+    public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item)
+    {
+        return possibleOrientations;
+    }
 
-		if (item.getSpeed() < Utils.pipeNormalSpeed) {
-			item.setSpeed(Utils.pipeNormalSpeed);
-		}
-	}
-
-	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
-		return possibleOrientations;
-	}
-
-	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
-
-	}
-
+    @Override
+    public void entityEntered(IPipedItem item, ForgeDirection orientation)
+    {
+    }
 }

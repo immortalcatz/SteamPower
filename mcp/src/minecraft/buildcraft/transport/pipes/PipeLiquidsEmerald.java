@@ -14,15 +14,14 @@ import buildcraft.transport.PipeTransportLiquids;
  *
  * @author CovertJaguar <railcraft.wikispaces.com>
  */
-public class PipeLiquidsEmerald extends PipeLiquidsWood {
-
-	public PipeLiquidsEmerald(int itemID) {
-		super(new PipeLogicEmerald(), itemID);
-
-		baseTexture = 6 * 16 + 15;
-		plainTexture = baseTexture - 1;
-
-		((PipeTransportLiquids) transport).flowRate = 40;
-		((PipeTransportLiquids) transport).travelDelay = 4;
-	}
+public class PipeLiquidsEmerald extends PipeLiquidsWood
+{
+    public PipeLiquidsEmerald(int itemID)
+    {
+        super(new PipeLogicEmerald(), itemID);
+        baseTexture = 6 * 16 + 15;
+        plainTexture = baseTexture - 1;
+        ((PipeTransportLiquids) transport).flowRate = 40;
+        ((PipeTransportLiquids) transport).travelDelay = 4;
+    }
 }

@@ -1,14 +1,16 @@
 package buildcraft.core.utils;
 
-public class SessionVars {
+public class SessionVars
+{
+    private static Class openedLedger;
 
-	private static Class openedLedger;
+    public static void setOpenedLedger(Class ledgerClass)
+    {
+        openedLedger = ledgerClass;
+    }
 
-	public static void setOpenedLedger(Class ledgerClass) {
-		openedLedger = ledgerClass;
-	}
-
-	public static Class getOpenedLedger() {
-		return openedLedger;
-	}
+    public static Class getOpenedLedger()
+    {
+        return openedLedger;
+    }
 }

@@ -38,7 +38,7 @@ public class ItemMusketEmpty extends Item
         done = true;
         return par1ItemStack;
     }
-    
+
     @Override
     public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
     {
@@ -46,9 +46,8 @@ public class ItemMusketEmpty extends Item
         {
             done = false;
             //par3EntityPlayer.inventoryContainer.putStackInSlot(par3EntityPlayer.inventory.currentItem + 36, new ItemStack(BoilerMod.musket, 1));
-           //par3EntityPlayer.inventoryContainer.detectAndSendChanges();
-           par3EntityPlayer.inventory.setInventorySlotContents(par3EntityPlayer.inventory.currentItem, new ItemStack(SteamCraft.musket, 1));
-       
+            //par3EntityPlayer.inventoryContainer.detectAndSendChanges();
+            par3EntityPlayer.inventory.setInventorySlotContents(par3EntityPlayer.inventory.currentItem, new ItemStack(SteamCraft.musket, 1));
         }
     }
 

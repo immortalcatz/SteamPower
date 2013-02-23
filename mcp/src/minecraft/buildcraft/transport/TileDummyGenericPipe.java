@@ -1,5 +1,5 @@
 package buildcraft.transport;
 
-public class TileDummyGenericPipe extends TileGenericPipe {
-
+public class TileDummyGenericPipe extends TileGenericPipe
+{
 }

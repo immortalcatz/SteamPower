@@ -15,16 +15,17 @@ public class ShapedInfusionCraftingRecipes implements IInfusionRecipe
 
     /** How many vertical slots this recipe uses. */
     public int recipeHeight;
-    
+
     public String key;
-    
+
     @Override
-	public String getKey() {
-		return key;
-	}
-    
+    public String getKey()
+    {
+        return key;
+    }
+
     public int cost;
-    
+
     public ObjectTags tags;
 
     /** Is a array of ItemStack that composes the recipe. */
@@ -58,9 +59,11 @@ public class ShapedInfusionCraftingRecipes implements IInfusionRecipe
      */
     public boolean matches(IInventory par1InventoryCrafting, EntityPlayer player)
     {
-    	if (key.length()>0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key)) {
-    		return false;
-    	}
+        if (key.length() > 0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key))
+        {
+            return false;
+        }
+
         for (int var2 = 0; var2 <= 3 - this.recipeWidth; ++var2)
         {
             for (int var3 = 0; var3 <= 3 - this.recipeHeight; ++var3)
@@ -123,18 +126,23 @@ public class ShapedInfusionCraftingRecipes implements IInfusionRecipe
                     {
                         return false;
                     }
-                    
-                    if (var9.hasTagCompound()) {
-                		NBTTagCompound tc = var9.getTagCompound();
-                		for (Object tag:tc.getTags().toArray()) {
-                			NBTBase base = (NBTBase)tag;
-                			Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
-                    		if (!(var10.hasTagCompound() && 
-                    				nc.cast(var10.getTagCompound().getTag(base.getName())).equals(nc.cast(base)))) {
-                    			return false;
-                    		}
-                		}
-                	}
+
+                    if (var9.hasTagCompound())
+                    {
+                        NBTTagCompound tc = var9.getTagCompound();
+
+                        for (Object tag: tc.getTags().toArray())
+                        {
+                            NBTBase base = (NBTBase)tag;
+                            Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
+
+                            if (!(var10.hasTagCompound() &&
+                                    nc.cast(var10.getTagCompound().getTag(base.getName())).equals(nc.cast(base))))
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -158,13 +166,15 @@ public class ShapedInfusionCraftingRecipes implements IInfusionRecipe
         return this.recipeWidth * this.recipeHeight;
     }
 
-	@Override
-	public int getCost() {
-		return cost;
-	}
-	
-	@Override
-	public ObjectTags getTags() {
-		return tags;
-	}
+    @Override
+    public int getCost()
+    {
+        return cost;
+    }
+
+    @Override
+    public ObjectTags getTags()
+    {
+        return tags;
+    }
 }

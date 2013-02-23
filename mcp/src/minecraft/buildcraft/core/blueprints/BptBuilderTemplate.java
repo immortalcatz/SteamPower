@@ -17,139 +17,171 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 
-public class BptBuilderTemplate extends BptBuilderBase {
+public class BptBuilderTemplate extends BptBuilderBase
+{
+    LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
+    LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
 
-	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
-	LinkedList<BptSlot> buildList = new LinkedList<BptSlot>();
+    public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z)
+    {
+        super(bluePrint, world, x, y, z);
 
-	public BptBuilderTemplate(BptBase bluePrint, World world, int x, int y, int z) {
-		super(bluePrint, world, x, y, z);
+        for (int j = bluePrint.sizeY - 1; j >= 0; --j)
+        {
+            for (int i = 0; i < bluePrint.sizeX; ++i)
+            {
+                for (int k = 0; k < bluePrint.sizeZ; ++k)
+                {
+                    int xCoord = i + x - bluePrint.anchorX;
+                    int yCoord = j + y - bluePrint.anchorY;
+                    int zCoord = k + z - bluePrint.anchorZ;
+                    BptSlot slot = bluePrint.contents[i][j][k];
 
-		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+                    if (slot == null || slot.blockId == 0)
+                    {
+                        slot = new BptSlot();
+                        slot.meta = 0;
+                        slot.blockId = 0;
+                        slot.x = xCoord;
+                        slot.y = yCoord;
+                        slot.z = zCoord;
+                        slot.mode = Mode.ClearIfInvalid;
+                        clearList.add(slot);
+                    }
+                }
+            }
+        }
 
-					BptSlot slot = bluePrint.contents[i][j][k];
+        for (int j = 0; j < bluePrint.sizeY; ++j)
+        {
+            for (int i = 0; i < bluePrint.sizeX; ++i)
+            {
+                for (int k = 0; k < bluePrint.sizeZ; ++k)
+                {
+                    int xCoord = i + x - bluePrint.anchorX;
+                    int yCoord = j + y - bluePrint.anchorY;
+                    int zCoord = k + z - bluePrint.anchorZ;
+                    BptSlot slot = bluePrint.contents[i][j][k];
 
-					if (slot == null || slot.blockId == 0) {
-						slot = new BptSlot();
-						slot.meta = 0;
-						slot.blockId = 0;
-						slot.x = xCoord;
-						slot.y = yCoord;
-						slot.z = zCoord;
+                    if (slot != null)
+                    {
+                        slot = slot.clone();
+                    }
+                    else
+                    {
+                        slot = new BptSlot();
+                        slot.meta = 0;
+                        slot.blockId = 0;
+                    }
 
-						slot.mode = Mode.ClearIfInvalid;
+                    slot.x = xCoord;
+                    slot.y = yCoord;
+                    slot.z = zCoord;
+                    slot.mode = Mode.Build;
 
-						clearList.add(slot);
-					}
-				}
-			}
-		}
+                    if (slot.blockId != 0)
+                    {
+                        buildList.add(slot);
+                    }
+                }
+            }
+        }
+    }
 
-		for (int j = 0; j < bluePrint.sizeY; ++j) {
-			for (int i = 0; i < bluePrint.sizeX; ++i) {
-				for (int k = 0; k < bluePrint.sizeZ; ++k) {
-					int xCoord = i + x - bluePrint.anchorX;
-					int yCoord = j + y - bluePrint.anchorY;
-					int zCoord = k + z - bluePrint.anchorZ;
+    private void checkDone()
+    {
+        if (clearList.size() == 0 && buildList.size() == 0)
+        {
+            done = true;
+        }
+        else
+        {
+            done = false;
+        }
+    }
 
-					BptSlot slot = bluePrint.contents[i][j][k];
+    @Override
+    public BptSlot getNextBlock(World world, IBuilderInventory inv)
+    {
+        if (clearList.size() != 0)
+        {
+            BptSlot slot = internalGetNextBlock(world, inv, clearList);
+            checkDone();
 
-					if (slot != null) {
-						slot = slot.clone();
-					} else {
-						slot = new BptSlot();
-						slot.meta = 0;
-						slot.blockId = 0;
-					}
+            if (slot != null)
+            {
+                return slot;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-					slot.x = xCoord;
-					slot.y = yCoord;
-					slot.z = zCoord;
+        if (buildList.size() != 0)
+        {
+            BptSlot slot = internalGetNextBlock(world, inv, buildList);
+            checkDone();
 
-					slot.mode = Mode.Build;
+            if (slot != null)
+            {
+                return slot;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-					if (slot.blockId != 0) {
-						buildList.add(slot);
-					}
-				}
-			}
-		}
-	}
+        checkDone();
+        return null;
+    }
 
-	private void checkDone() {
-		if (clearList.size() == 0 && buildList.size() == 0) {
-			done = true;
-		} else {
-			done = false;
-		}
-	}
+    public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list)
+    {
+        BptSlot result = null;
 
-	@Override
-	public BptSlot getNextBlock(World world, IBuilderInventory inv) {
-		if (clearList.size() != 0) {
-			BptSlot slot = internalGetNextBlock(world, inv, clearList);
-			checkDone();
+        while (list.size() > 0)
+        {
+            BptSlot slot = list.getFirst();
 
-			if (slot != null)
-				return slot;
-			else
-				return null;
-		}
+            // Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
+            if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z)))
+            {
+                list.removeFirst();
+            }
+            else if (slot.mode == Mode.ClearIfInvalid)
+            {
+                result = slot;
+                list.removeFirst();
+                break;
+            }
+            else
+            {
+                int size = inv.getSizeInventory();
 
-		if (buildList.size() != 0) {
-			BptSlot slot = internalGetNextBlock(world, inv, buildList);
-			checkDone();
+                for (int i = 0; i < size; ++i)
+                {
+                    if (!inv.isBuildingMaterial(i))
+                    {
+                        continue;
+                    }
 
-			if (slot != null)
-				return slot;
-			else
-				return null;
-		}
+                    ItemStack stack = inv.decrStackSize(i, 1);
 
-		checkDone();
+                    if (stack != null && stack.stackSize > 0)
+                    {
+                        result = slot.clone();
+                        result.stackToUse = stack;
+                        list.removeFirst();
+                        break;
+                    }
+                }
 
-		return null;
-	}
+                break;
+            }
+        }
 
-	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
-		BptSlot result = null;
-
-		while (list.size() > 0) {
-			BptSlot slot = list.getFirst();
-
-			// Note from CJ: I have no idea what this code is supposed to do, so I'm not touching it.
-			if (BuildCraftAPI.softBlock(slot.blockId) == BuildCraftAPI.softBlock(world.getBlockId(slot.x, slot.y, slot.z))) {
-				list.removeFirst();
-			} else if (slot.mode == Mode.ClearIfInvalid) {
-				result = slot;
-				list.removeFirst();
-				break;
-			} else {
-				int size = inv.getSizeInventory();
-				for (int i = 0; i < size; ++i) {
-					if (!inv.isBuildingMaterial(i)) {
-						continue;
-					}
-
-					ItemStack stack = inv.decrStackSize(i, 1);
-
-					if (stack != null && stack.stackSize > 0) {
-						result = slot.clone();
-						result.stackToUse = stack;
-						list.removeFirst();
-						break;
-					}
-				}
-
-				break;
-			}
-		}
-
-		return result;
-	}
+        return result;
+    }
 }

@@ -23,16 +23,13 @@ public class SlotBoiler extends Slot
 
     public boolean isItemValid(ItemStack par1ItemStack)
     {
-        if (par1ItemStack.equals(new ItemStack(Item.bucketWater))){
-        	return true;
-        			
+        if (par1ItemStack.equals(new ItemStack(Item.bucketWater)))
+        {
+            return true;
         }
         else
         {
-        	return false;
+            return false;
         }
     }
-
-  
-    
 }

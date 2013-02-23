@@ -15,48 +15,65 @@ import buildcraft.api.gates.Trigger;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
 
-public class TriggerMachine extends Trigger {
+public class TriggerMachine extends Trigger
+{
+    boolean active;
 
-	boolean active;
+    public TriggerMachine(int id, boolean active)
+    {
+        super(id);
+        this.active = active;
+    }
 
-	public TriggerMachine(int id, boolean active) {
-		super(id);
+    @Override
+    public int getIndexInTexture()
+    {
+        if (active)
+        {
+            return 4 * 16 + 0;
+        }
+        else
+        {
+            return 4 * 16 + 1;
+        }
+    }
 
-		this.active = active;
-	}
+    @Override
+    public String getDescription()
+    {
+        if (active)
+        {
+            return "Work Scheduled";
+        }
+        else
+        {
+            return "Work Done";
+        }
+    }
 
-	@Override
-	public int getIndexInTexture() {
-		if (active)
-			return 4 * 16 + 0;
-		else
-			return 4 * 16 + 1;
-	}
+    @Override
+    public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter)
+    {
+        if (tile instanceof IMachine)
+        {
+            IMachine machine = (IMachine) tile;
 
-	@Override
-	public String getDescription() {
-		if (active)
-			return "Work Scheduled";
-		else
-			return "Work Done";
-	}
+            if (active)
+            {
+                return machine.isActive();
+            }
+            else
+            {
+                return !machine.isActive();
+            }
+        }
 
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
-		if (tile instanceof IMachine) {
-			IMachine machine = (IMachine) tile;
+        return false;
+    }
 
-			if (active)
-				return machine.isActive();
-			else
-				return !machine.isActive();
-		}
-
-		return false;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_TRIGGERS;
+    }
 }

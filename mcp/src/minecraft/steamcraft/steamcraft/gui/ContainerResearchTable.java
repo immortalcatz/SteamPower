@@ -38,22 +38,19 @@ public class ContainerResearchTable extends Container
     }
 
     @Override
-	public void addCraftingToCrafters(ICrafting par1ICrafting)
+    public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
-
     }
 
-
-
     @Override
-	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {
         return this.entityTable.isUseableByPlayer(par1EntityPlayer);
     }
 
     @Override
-	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
+    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
         ItemStack var3 = null;
         Slot var4 = (Slot)this.inventorySlots.get(par2);
@@ -83,12 +80,11 @@ public class ContainerResearchTable extends Container
                 }
                 else
                 {
-                	 if (!this.mergeItemStack(var5,0 , 1, false))
-                     {
-                         return null;
-                     }
+                    if (!this.mergeItemStack(var5, 0 , 1, false))
+                    {
+                        return null;
+                    }
                 }
-
             }
             else if (!this.mergeItemStack(var5, 4, 39, false))
             {

@@ -14,83 +14,99 @@ import net.minecraftforge.liquids.ILiquidTank;
 import net.minecraftforge.liquids.LiquidStack;
 import buildcraft.core.DefaultProps;
 
-public class EngineWood extends Engine {
+public class EngineWood extends Engine
+{
+    public EngineWood(TileEngine engine)
+    {
+        super(engine);
+        maxEnergy = 1000;
+    }
 
-	public EngineWood(TileEngine engine) {
-		super(engine);
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png";
+    }
 
-		maxEnergy = 1000;
-	}
+    @Override
+    public int explosionRange()
+    {
+        return 1;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png";
-	}
+    @Override
+    public int minEnergyReceived()
+    {
+        return 1;
+    }
 
-	@Override
-	public int explosionRange() {
-		return 1;
-	}
+    @Override
+    public int maxEnergyReceived()
+    {
+        return 50;
+    }
 
-	@Override
-	public int minEnergyReceived() {
-		return 1;
-	}
+    @Override
+    public float getPistonSpeed()
+    {
+        switch (getEnergyStage())
+        {
+            case Blue:
+                return 0.01F;
 
-	@Override
-	public int maxEnergyReceived() {
-		return 50;
-	}
+            case Green:
+                return 0.02F;
 
-	@Override
-	public float getPistonSpeed() {
-		switch (getEnergyStage()) {
-		case Blue:
-			return 0.01F;
-		case Green:
-			return 0.02F;
-		case Yellow:
-			return 0.04F;
-		case Red:
-			return 0.08F;
-		default:
-			return 0;
-		}
-	}
+            case Yellow:
+                return 0.04F;
 
-	@Override
-	public void update() {
-		super.update();
+            case Red:
+                return 0.08F;
 
-		if (tile.isRedstonePowered) {
-			if ((tile.worldObj.getWorldTime() % 20) == 0) {
-				energy++;
-			}
-		}
-	}
+            default:
+                return 0;
+        }
+    }
 
-	@Override
-	public boolean isBurning() {
-		return tile.isRedstonePowered;
-	}
+    @Override
+    public void update()
+    {
+        super.update();
 
-	@Override
-	public int getScaledBurnTime(int i) {
-		return 0;
-	}
+        if (tile.isRedstonePowered)
+        {
+            if ((tile.worldObj.getWorldTime() % 20) == 0)
+            {
+                energy++;
+            }
+        }
+    }
 
-	@Override
-	public void delete() {
+    @Override
+    public boolean isBurning()
+    {
+        return tile.isRedstonePowered;
+    }
 
-	}
+    @Override
+    public int getScaledBurnTime(int i)
+    {
+        return 0;
+    }
 
-	@Override
-	public void burn() {
+    @Override
+    public void delete()
+    {
+    }
 
-	}
+    @Override
+    public void burn()
+    {
+    }
 
-	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		return null;
-	}
+    @Override
+    public ILiquidTank getTank(ForgeDirection direction, LiquidStack type)
+    {
+        return null;
+    }
 }

@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import thaumcraft.api.ThaumcraftApiHelper;
-import thaumcraft.common.blocks.TileMagicWorkbench;
+//import thaumcraft.common.blocks.TileMagicWorkbench;
 
 public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
 {
@@ -17,16 +17,16 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
 
     /** How many vertical slots this recipe uses. */
     public int recipeHeight;
-    
+
     public String key;
-    
+
     public int cost;
 
     /** Is a array of ItemStack that composes the recipe. */
     public ItemStack[] recipeItems;
 
     /** Is the ItemStack that you get when craft the recipe. */
-    private ItemStack recipeOutput;
+    private final ItemStack recipeOutput;
 
     /** Is the itemID of the output item that you get when craft the recipe. */
     public final int recipeOutputItemID;
@@ -42,6 +42,7 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
         this.cost = cost;
     }
 
+    @Override
     public ItemStack getRecipeOutput()
     {
         return this.recipeOutput;
@@ -50,11 +51,14 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
     /**
      * Used to check if a recipe matches current crafting inventory
      */
+    @Override
     public boolean matches(IInventory par1InventoryCrafting, EntityPlayer player)
     {
-    	if (key.length()>0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key)) {
-    		return false;
-    	}
+        if (key.length() > 0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key))
+        {
+            return false;
+        }
+
         for (int var2 = 0; var2 <= 3 - this.recipeWidth; ++var2)
         {
             for (int var3 = 0; var3 <= 3 - this.recipeHeight; ++var3)
@@ -74,9 +78,6 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
         return false;
     }
 
-    
-    
-    
     /**
      * Checks if the region of a crafting inventory is match for the recipe.
      */
@@ -120,20 +121,23 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
                     {
                         return false;
                     }
-                    
-                	if (var9.hasTagCompound()) {
-                		NBTTagCompound tc = var9.getTagCompound();
-                		for (Object tag:tc.getTags().toArray()) {
-                			NBTBase base = (NBTBase)tag;
-                			Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
-                    		if (!(var10.hasTagCompound() && 
-                    				nc.cast(var10.getTagCompound().getTag(base.getName())).equals(nc.cast(base)))) {
-                    			return false;
-                    		}
-                		}
-                	}
-                    
-                    
+
+                    if (var9.hasTagCompound())
+                    {
+                        NBTTagCompound tc = var9.getTagCompound();
+
+                        for (Object tag: tc.getTags().toArray())
+                        {
+                            NBTBase base = (NBTBase)tag;
+                            Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
+
+                            if (!(var10.hasTagCompound() &&
+                                    nc.cast(var10.getTagCompound().getTag(base.getName())).equals(nc.cast(base))))
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -144,6 +148,7 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
     /**
      * Returns an Item that is the result of this recipe
      */
+    @Override
     public ItemStack getCraftingResult(IInventory par1InventoryCrafting)
     {
         return new ItemStack(this.recipeOutput.itemID, this.recipeOutput.stackSize, this.recipeOutput.getItemDamage());
@@ -152,18 +157,21 @@ public class ShapedArcaneCraftingRecipes implements IArcaneRecipe
     /**
      * Returns the size of the recipe area
      */
+    @Override
     public int getRecipeSize()
     {
         return this.recipeWidth * this.recipeHeight;
     }
 
-	@Override
-	public int getCost() {
-		return cost;
-	}
-	
-	@Override
-	public String getKey() {
-		return key;
-	}
+    @Override
+    public int getCost()
+    {
+        return cost;
+    }
+
+    @Override
+    public String getKey()
+    {
+        return key;
+    }
 }

@@ -23,101 +23,126 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogicWood extends PipeLogic {
+public class PipeLogicWood extends PipeLogic
+{
+    public void switchSource()
+    {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        int newMeta = 6;
 
-	public void switchSource() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		int newMeta = 6;
+        for (int i = meta + 1; i <= meta + 6; ++i)
+        {
+            ForgeDirection o = ForgeDirection.values()[i % 6];
+            TileEntity tile = container.getTile(o);
 
-		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection o = ForgeDirection.values()[i % 6];
+            if (isInput(tile))
+                if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)
+                        || PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord))
+                {
+                    newMeta = o.ordinal();
+                    break;
+                }
+        }
 
-			TileEntity tile = container.getTile(o);
+        if (newMeta != meta)
+        {
+            worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
+            container.scheduleRenderUpdate();
+            // worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
+        }
+    }
 
-			if (isInput(tile))
-				if (PipeManager.canExtractItems(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)
-						|| PipeManager.canExtractLiquids(container.getPipe(), tile.worldObj, tile.xCoord, tile.yCoord, tile.zCoord)) {
-					newMeta = o.ordinal();
-					break;
-				}
-		}
+    public boolean isInput(TileEntity tile)
+    {
+        return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ITankContainer)
+                && Utils.checkPipesConnections(container, tile);
+    }
 
-		if (newMeta != meta) {
-			worldObj.setBlockMetadata(xCoord, yCoord, zCoord, newMeta);
-			container.scheduleRenderUpdate();
-			// worldObj.markBlockNeedsUpdate(xCoord, yCoord, zCoord);
-		}
-	}
+    @Override
+    public boolean blockActivated(EntityPlayer entityplayer)
+    {
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 
-	public boolean isInput(TileEntity tile) {
-		return !(tile instanceof TileGenericPipe) && (tile instanceof IInventory || tile instanceof ITankContainer)
-				&& Utils.checkPipesConnections(container, tile);
-	}
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord))
+        {
+            switchSource();
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+            return true;
+        }
 
-	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
-			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
-			return true;
-		}
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public boolean isPipeConnected(TileEntity tile)
+    {
+        Pipe pipe2 = null;
 
-	@Override
-	public boolean isPipeConnected(TileEntity tile) {
-		Pipe pipe2 = null;
+        if (tile instanceof TileGenericPipe)
+        {
+            pipe2 = ((TileGenericPipe) tile).pipe;
+        }
 
-		if (tile instanceof TileGenericPipe) {
-			pipe2 = ((TileGenericPipe) tile).pipe;
-		}
+        if (BuildCraftTransport.alwaysConnectPipes)
+        {
+            return super.isPipeConnected(tile);
+        }
+        else
+        {
+            return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.isPipeConnected(tile);
+        }
+    }
 
-		if (BuildCraftTransport.alwaysConnectPipes)
-			return super.isPipeConnected(tile);
-		else
-			return (pipe2 == null || !(pipe2.logic instanceof PipeLogicWood)) && super.isPipeConnected(tile);
-	}
+    @Override
+    public void initialize()
+    {
+        super.initialize();
 
-	@Override
-	public void initialize() {
-		super.initialize();
+        if (!CoreProxy.proxy.isRenderWorld(worldObj))
+        {
+            switchSourceIfNeeded();
+        }
+    }
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			switchSourceIfNeeded();
-		}
-	}
+    private void switchSourceIfNeeded()
+    {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-	private void switchSourceIfNeeded() {
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        if (meta > 5)
+        {
+            switchSource();
+        }
+        else
+        {
+            TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
 
-		if (meta > 5) {
-			switchSource();
-		} else {
-			TileEntity tile = container.getTile(ForgeDirection.values()[meta]);
+            if (!isInput(tile))
+            {
+                switchSource();
+            }
+        }
+    }
 
-			if (!isInput(tile)) {
-				switchSource();
-			}
-		}
-	}
+    @Override
+    public void onNeighborBlockChange(int blockId)
+    {
+        super.onNeighborBlockChange(blockId);
 
-	@Override
-	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
+        if (!CoreProxy.proxy.isRenderWorld(worldObj))
+        {
+            switchSourceIfNeeded();
+        }
+    }
 
-		if (!CoreProxy.proxy.isRenderWorld(worldObj)) {
-			switchSourceIfNeeded();
-		}
-	}
+    @Override
+    public boolean outputOpen(ForgeDirection to)
+    {
+        if (this.container.pipe instanceof PipeLiquidsWood)
+        {
+            int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            return meta != to.ordinal();
+        }
 
-	@Override
-	public boolean outputOpen(ForgeDirection to) {
-		if (this.container.pipe instanceof PipeLiquidsWood) {
-			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			return meta != to.ordinal();
-		}
-		return super.outputOpen(to);
-	}
+        return super.outputOpen(to);
+    }
 }

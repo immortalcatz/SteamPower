@@ -23,94 +23,106 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile {
+public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile
+{
+    @SuppressWarnings("rawtypes")
+    private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
+    @SuppressWarnings("rawtypes")
+    private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
 
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
+    private final TilePacketWrapper descriptionPacket;
+    private final TilePacketWrapper updatePacket;
 
-	private final TilePacketWrapper descriptionPacket;
-	private final TilePacketWrapper updatePacket;
+    private boolean init = false;
 
-	private boolean init = false;
+    public TileBuildCraft()
+    {
+        if (!updateWrappers.containsKey(this.getClass()))
+        {
+            updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
+        }
 
-	public TileBuildCraft() {
-		if (!updateWrappers.containsKey(this.getClass())) {
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
+        if (!descriptionWrappers.containsKey(this.getClass()))
+        {
+            descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
+        }
 
-		if (!descriptionWrappers.containsKey(this.getClass())) {
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
+        updatePacket = updateWrappers.get(this.getClass());
+        descriptionPacket = descriptionWrappers.get(this.getClass());
+    }
 
-		updatePacket = updateWrappers.get(this.getClass());
-		descriptionPacket = descriptionWrappers.get(this.getClass());
+    @Override
+    public void updateEntity()
+    {
+        if (!init && !isInvalid())
+        {
+            initialize();
+            init = true;
+        }
 
-	}
+        if (this instanceof IPowerReceptor)
+        {
+            IPowerReceptor receptor = ((IPowerReceptor) this);
+            receptor.getPowerProvider().update(receptor);
+        }
+    }
 
-	@Override
-	public void updateEntity() {
-		if (!init && !isInvalid()) {
-			initialize();
-			init = true;
-		}
+    @Override
+    public void invalidate()
+    {
+        init = false;
+        super.invalidate();
+    }
 
-		if (this instanceof IPowerReceptor) {
-			IPowerReceptor receptor = ((IPowerReceptor) this);
+    public void initialize()
+    {
+        Utils.handleBufferedDescription(this);
+    }
 
-			receptor.getPowerProvider().update(receptor);
-		}
-	}
+    public void destroy()
+    {
+    }
 
-	@Override
-	public void invalidate() {
-		init = false;
-		super.invalidate();
-	}
+    public void sendNetworkUpdate()
+    {
+        if (CoreProxy.proxy.isSimulating(worldObj))
+        {
+            CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+        }
+    }
 
-	public void initialize() {
-		Utils.handleBufferedDescription(this);
-	}
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        return new PacketTileUpdate(this).getPacket();
+    }
 
-	public void destroy() {
+    @Override
+    public PacketPayload getPacketPayload()
+    {
+        return updatePacket.toPayload(this);
+    }
 
-	}
+    @Override
+    public Packet getUpdatePacket()
+    {
+        return new PacketTileUpdate(this).getPacket();
+    }
 
-	public void sendNetworkUpdate() {
-		if (CoreProxy.proxy.isSimulating(worldObj)) {
-			CoreProxy.proxy.sendToPlayers(getUpdatePacket(), worldObj, xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
-		}
-	}
+    @Override
+    public void handleDescriptionPacket(PacketUpdate packet)
+    {
+        descriptionPacket.fromPayload(this, packet.payload);
+    }
 
-	@Override
-	public Packet getDescriptionPacket() {
-		return new PacketTileUpdate(this).getPacket();
-	}
+    @Override
+    public void handleUpdatePacket(PacketUpdate packet)
+    {
+        updatePacket.fromPayload(this, packet.payload);
+    }
 
-	@Override
-	public PacketPayload getPacketPayload() {
-		return updatePacket.toPayload(this);
-	}
-
-	@Override
-	public Packet getUpdatePacket() {
-		return new PacketTileUpdate(this).getPacket();
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) {
-		descriptionPacket.fromPayload(this, packet.payload);
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) {
-		updatePacket.fromPayload(this, packet.payload);
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-
-	}
-
+    @Override
+    public void postPacketHandling(PacketUpdate packet)
+    {
+    }
 }

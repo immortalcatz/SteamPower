@@ -12,14 +12,13 @@ package buildcraft.core;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 
-public interface ITileBufferHolder {
+public interface ITileBufferHolder
+{
+    public void blockRemoved(ForgeDirection from);
 
-	public void blockRemoved(ForgeDirection from);
+    public void blockCreated(ForgeDirection from, int blockID, TileEntity tile);
 
-	public void blockCreated(ForgeDirection from, int blockID, TileEntity tile);
+    public int getBlockId(ForgeDirection to);
 
-	public int getBlockId(ForgeDirection to);
-
-	public TileEntity getTile(ForgeDirection to);
-
+    public TileEntity getTile(ForgeDirection to);
 }

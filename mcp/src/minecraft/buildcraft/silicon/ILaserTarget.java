@@ -1,15 +1,16 @@
 package buildcraft.silicon;
 
-public interface ILaserTarget {
-	boolean hasCurrentWork();
+public interface ILaserTarget
+{
+    boolean hasCurrentWork();
 
-	void receiveLaserEnergy(float energy);
+    void receiveLaserEnergy(float energy);
 
-	boolean isInvalid();
+    boolean isInvalid();
 
-	int getXCoord();
+    int getXCoord();
 
-	int getYCoord();
+    int getYCoord();
 
-	int getZCoord();
+    int getZCoord();
 }

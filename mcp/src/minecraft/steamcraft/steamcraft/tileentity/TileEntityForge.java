@@ -33,19 +33,19 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     public int furnaceCookTime = 0;
 
     @Override
-	public int getSizeInventory()
+    public int getSizeInventory()
     {
         return this.furnaceItemStacks.length;
     }
 
     @Override
-	public ItemStack getStackInSlot(int par1)
+    public ItemStack getStackInSlot(int par1)
     {
         return this.furnaceItemStacks[par1];
     }
 
     @Override
-	public ItemStack decrStackSize(int par1, int par2)
+    public ItemStack decrStackSize(int par1, int par2)
     {
         if (this.furnaceItemStacks[par1] != null)
         {
@@ -76,7 +76,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public ItemStack getStackInSlotOnClosing(int par1)
+    public ItemStack getStackInSlotOnClosing(int par1)
     {
         if (this.furnaceItemStacks[par1] != null)
         {
@@ -91,7 +91,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
+    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.furnaceItemStacks[par1] = par2ItemStack;
 
@@ -102,13 +102,13 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public String getInvName()
+    public String getInvName()
     {
         return "container.Forge";
     }
 
     @Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
@@ -131,7 +131,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
         par1NBTTagCompound.setShort("BurnTime", (short)this.furnaceBurnTime);
@@ -154,7 +154,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public int getInventoryStackLimit()
+    public int getInventoryStackLimit()
     {
         return 64;
     }
@@ -184,7 +184,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public void updateEntity()
+    public void updateEntity()
     {
         boolean var1 = this.furnaceBurnTime > 0;
         boolean var2 = false;
@@ -416,16 +416,16 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     }
 
     @Override
-	public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
         return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
     }
 
     @Override
-	public void openChest() {}
+    public void openChest() {}
 
     @Override
-	public void closeChest() {}
+    public void closeChest() {}
 
     @Override
     public int getStartInventorySide(ForgeDirection side)

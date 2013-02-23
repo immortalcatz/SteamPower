@@ -24,14 +24,15 @@ public class SlotLiquid extends Slot
     }
 
     @Override
-	public boolean isItemValid(ItemStack par1ItemStack)
+    public boolean isItemValid(ItemStack par1ItemStack)
     {
-        if (LiquidContainerRegistry.containsLiquid(par1ItemStack, liquid)){
-        	return true;
+        if (LiquidContainerRegistry.containsLiquid(par1ItemStack, liquid))
+        {
+            return true;
         }
         else
         {
-        	return false;
+            return false;
         }
     }
 }

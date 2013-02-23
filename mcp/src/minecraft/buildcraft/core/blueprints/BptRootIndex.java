@@ -21,161 +21,174 @@ import java.util.TreeMap;
 
 import buildcraft.core.proxy.CoreProxy;
 
-public class BptRootIndex {
+public class BptRootIndex
+{
+    private TreeMap<Integer, File> bluePrintsFile = new TreeMap<Integer, File>();
+    public TreeMap<String, Integer> filesSet = new TreeMap<String, Integer>();
 
-	private TreeMap<Integer, File> bluePrintsFile = new TreeMap<Integer, File>();
-	public TreeMap<String, Integer> filesSet = new TreeMap<String, Integer>();
+    private TreeMap<Integer, BptBase> bluePrints = new TreeMap<Integer, BptBase>();
 
-	private TreeMap<Integer, BptBase> bluePrints = new TreeMap<Integer, BptBase>();
+    private File baseDir;
+    private File file;
 
-	private File baseDir;
-	private File file;
+    public int maxBpt = 0;
 
-	public int maxBpt = 0;
+    public BptRootIndex(String filename) throws IOException
+    {
+        baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+        file = new File(baseDir, filename);
+        baseDir.mkdir();
 
-	public BptRootIndex(String filename) throws IOException {
-		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
-		file = new File(baseDir, filename);
-		baseDir.mkdir();
+        if (!file.exists())
+        {
+            file.createNewFile();
+        }
+    }
 
-		if (!file.exists()) {
-			file.createNewFile();
-		}
-	}
+    public void loadIndex() throws IOException
+    {
+        FileInputStream input = new FileInputStream(file);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
 
-	public void loadIndex() throws IOException {
-		FileInputStream input = new FileInputStream(file);
+        while (true)
+        {
+            String line = reader.readLine();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
+            if (line == null)
+            {
+                break;
+            }
 
-		while (true) {
-			String line = reader.readLine();
+            line = line.replaceAll("\\n", "");
+            File bptFile = new File(baseDir, line);
+            maxBpt++;
+            filesSet.put(line, maxBpt);
 
-			if (line == null) {
-				break;
-			}
+            if (bptFile.exists())
+            {
+                bluePrintsFile.put(maxBpt, bptFile);
+            }
+        }
 
-			line = line.replaceAll("\\n", "");
+        input.close();
+        saveIndex();
+    }
 
-			File bptFile = new File(baseDir, line);
+    public void importNewFiles() throws IOException
+    {
+        String files[] = baseDir.list();
 
-			maxBpt++;
+        for (String foundFile : files)
+        {
+            String[] parts = foundFile.split("[.]");
 
-			filesSet.put(line, maxBpt);
+            if (parts.length < 2 || !parts[1].equals("bpt"))
+            {
+                continue;
+            }
 
-			if (bptFile.exists()) {
-				bluePrintsFile.put(maxBpt, bptFile);
-			}
+            if (!filesSet.containsKey(foundFile))
+            {
+                maxBpt++;
+                filesSet.put(foundFile, maxBpt);
+                File newFile = new File(baseDir, foundFile);
+                bluePrintsFile.put(maxBpt, newFile);
+                // for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
+                // playerIndex.addBlueprint(newFile);
+            }
+        }
 
-		}
+        saveIndex();
+    }
 
-		input.close();
+    public void saveIndex() throws IOException
+    {
+        FileOutputStream output = new FileOutputStream(file);
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
-		saveIndex();
-	}
+        for (int i = 1; i <= maxBpt; ++i)
+        {
+            File f = bluePrintsFile.get(i);
 
-	public void importNewFiles() throws IOException {
-		String files[] = baseDir.list();
+            if (f != null)
+            {
+                writer.write(f.getName());
+            }
 
-		for (String foundFile : files) {
-			String[] parts = foundFile.split("[.]");
+            writer.newLine();
+        }
 
-			if (parts.length < 2 || !parts[1].equals("bpt")) {
-				continue;
-			}
+        writer.flush();
+        output.close();
+    }
 
-			if (!filesSet.containsKey(foundFile)) {
-				maxBpt++;
-				filesSet.put(foundFile, maxBpt);
+    public BptBase getBluePrint(int number)
+    {
+        if (!bluePrints.containsKey(number))
+            if (bluePrintsFile.containsKey(number))
+            {
+                BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number), number);
 
-				File newFile = new File(baseDir, foundFile);
+                if (bpt != null)
+                {
+                    bluePrints.put(number, bpt);
+                    bpt.file = bluePrintsFile.get(number);
+                }
+                else
+                {
+                    bluePrintsFile.remove(number);
+                    return null;
+                }
+            }
 
-				bluePrintsFile.put(maxBpt, newFile);
+        return bluePrints.get(number);
+    }
 
-				// for (BptPlayerIndex playerIndex : BuildCraftBuilders.playerLibrary.values())
-				// playerIndex.addBlueprint(newFile);
-			}
-		}
+    public BptBase getBluePrint(String filename)
+    {
+        return getBluePrint(filesSet.get(filename));
+    }
 
-		saveIndex();
-	}
+    public int storeBluePrint(BptBase bluePrint)
+    {
+        String name = bluePrint.name;
 
-	public void saveIndex() throws IOException {
-		FileOutputStream output = new FileOutputStream(file);
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
+        if (name == null || name.equals(""))
+        {
+            name = "unnamed";
+        }
 
-		for (int i = 1; i <= maxBpt; ++i) {
-			File f = bluePrintsFile.get(i);
+        if (filesSet.containsKey(name + ".bpt"))
+        {
+            int n = 0;
 
-			if (f != null) {
-				writer.write(f.getName());
-			}
+            while (filesSet.containsKey(name + "_" + n + ".bpt"))
+            {
+                n++;
+            }
 
-			writer.newLine();
-		}
+            name = name + "_" + n;
+        }
 
-		writer.flush();
-		output.close();
-	}
+        maxBpt++;
+        filesSet.put(name + ".bpt", maxBpt);
+        name = name + ".bpt";
+        File bptFile = new File(baseDir, name);
+        bluePrintsFile.put(maxBpt, bptFile);
+        bluePrints.put(maxBpt, bluePrint);
+        bluePrint.file = bptFile;
+        bluePrint.save();
+        bluePrint.position = maxBpt;
 
-	public BptBase getBluePrint(int number) {
-		if (!bluePrints.containsKey(number))
-			if (bluePrintsFile.containsKey(number)) {
-				BptBase bpt = BptBase.loadBluePrint(bluePrintsFile.get(number), number);
+        try
+        {
+            saveIndex();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
 
-				if (bpt != null) {
-					bluePrints.put(number, bpt);
-					bpt.file = bluePrintsFile.get(number);
-				} else {
-					bluePrintsFile.remove(number);
-					return null;
-				}
-			}
-
-		return bluePrints.get(number);
-	}
-
-	public BptBase getBluePrint(String filename) {
-		return getBluePrint(filesSet.get(filename));
-	}
-
-	public int storeBluePrint(BptBase bluePrint) {
-		String name = bluePrint.name;
-
-		if (name == null || name.equals("")) {
-			name = "unnamed";
-		}
-
-		if (filesSet.containsKey(name + ".bpt")) {
-			int n = 0;
-
-			while (filesSet.containsKey(name + "_" + n + ".bpt")) {
-				n++;
-			}
-
-			name = name + "_" + n;
-		}
-
-		maxBpt++;
-
-		filesSet.put(name + ".bpt", maxBpt);
-
-		name = name + ".bpt";
-
-		File bptFile = new File(baseDir, name);
-
-		bluePrintsFile.put(maxBpt, bptFile);
-		bluePrints.put(maxBpt, bluePrint);
-		bluePrint.file = bptFile;
-		bluePrint.save();
-		bluePrint.position = maxBpt;
-
-		try {
-			saveIndex();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return maxBpt;
-	}
+        return maxBpt;
+    }
 }

@@ -12,19 +12,24 @@ package buildcraft.builders;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-public class BuildersProxy {
+public class BuildersProxy
+{
+    public static boolean canPlaceTorch(World world, int i, int j, int k)
+    {
+        Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
-	public static boolean canPlaceTorch(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
+        if (block == null || !block.renderAsNormalBlock())
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
-		if (block == null || !block.renderAsNormalBlock())
-			return false;
-		else
-			return true;
-	}
-
-	public static String getOwner(TileBlueprintLibrary library) {
-		return library.owner;
-	}
-
+    public static String getOwner(TileBlueprintLibrary library)
+    {
+        return library.owner;
+    }
 }

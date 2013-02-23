@@ -1,5 +1,6 @@
 package buildcraft.transport;
 
-public interface IPipeRenderState {
-	public PipeRenderState getRenderState();
+public interface IPipeRenderState
+{
+    public PipeRenderState getRenderState();
 }

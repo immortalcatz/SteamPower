@@ -32,19 +32,19 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     private ItemStack[] researchStacks = new ItemStack[3];
 
     @Override
-	public int getSizeInventory()
+    public int getSizeInventory()
     {
         return this.researchStacks.length;
     }
 
     @Override
-	public ItemStack getStackInSlot(int par1)
+    public ItemStack getStackInSlot(int par1)
     {
         return this.researchStacks[par1];
     }
 
     @Override
-	public ItemStack decrStackSize(int par1, int par2)
+    public ItemStack decrStackSize(int par1, int par2)
     {
         if (this.researchStacks[par1] != null)
         {
@@ -75,7 +75,7 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     }
 
     @Override
-	public ItemStack getStackInSlotOnClosing(int par1)
+    public ItemStack getStackInSlotOnClosing(int par1)
     {
         if (this.researchStacks[par1] != null)
         {
@@ -90,7 +90,7 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     }
 
     @Override
-	public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
+    public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
         this.researchStacks[par1] = par2ItemStack;
 
@@ -101,13 +101,13 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     }
 
     @Override
-	public String getInvName()
+    public String getInvName()
     {
         return "container.ResearchTable";
     }
 
     @Override
-	public void readFromNBT(NBTTagCompound par1NBTTagCompound)
+    public void readFromNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
@@ -123,11 +123,10 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
                 this.researchStacks[var5] = ItemStack.loadItemStackFromNBT(var4);
             }
         }
-
     }
 
     @Override
-	public void writeToNBT(NBTTagCompound par1NBTTagCompound)
+    public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
         NBTTagList var2 = new NBTTagList();
@@ -147,42 +146,42 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     }
 
     @Override
-	public int getInventoryStackLimit()
+    public int getInventoryStackLimit()
     {
         return 64;
     }
 
     @Override
-	public void updateEntity()
+    public void updateEntity()
     {
-    	//entity update, for later use?
+        //entity update, for later use?
     }
 
     public void research()
     {
-    	if (!this.worldObj.isRemote){
-	        System.out.println("Research initiated...");
-	    	if(this.researchStacks[2] != null) {
-	            System.out.println("Server success");
-            	if(this.researchStacks[2].itemID == Item.paper.itemID && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0)) {
-            		System.out.println("Done!");
-            		this.researchStacks[2].stackSize--;
-            		ItemStack stack = new ItemStack(SteamCraft.researchNotes, 1);
-            		this.researchStacks[1] = stack;
-            	}
-    		}
-		}
+        if (!this.worldObj.isRemote)
+        {
+            if (this.researchStacks[2] != null)
+            {
+                if (this.researchStacks[2].itemID == Item.paper.itemID && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0))
+                {
+                    this.researchStacks[2].stackSize--;
+                    ItemStack stack = new ItemStack(SteamCraft.researchNotes, 1);
+                    this.researchStacks[1] = stack;
+                }
+            }
+        }
     }
 
     @Override
-	public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
+    public boolean isUseableByPlayer(EntityPlayer par1EntityPlayer)
     {
         return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ? false : par1EntityPlayer.getDistanceSq(this.xCoord + 0.5D, this.yCoord + 0.5D, this.zCoord + 0.5D) <= 64.0D;
     }
 
     public int getMetadata()
     {
-    	return this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
+        return this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord);
     }
 
     @Override
@@ -207,9 +206,9 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
         return 1;
     }
 
-	@Override
-	public void openChest() {}
+    @Override
+    public void openChest() {}
 
-	@Override
-	public void closeChest() {}
+    @Override
+    public void closeChest() {}
 }

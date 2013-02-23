@@ -20,16 +20,17 @@ public class ShapelessInfusionCraftingRecipes implements IInfusionRecipe
 
     /** Is a List of ItemStack that composes the recipe. */
     public final List recipeItems;
-    
+
     public String key;
-    
+
     @Override
-	public String getKey() {
-		return key;
-	}
-    
+    public String getKey()
+    {
+        return key;
+    }
+
     public int cost;
-    
+
     public ObjectTags tags;
 
     public ShapelessInfusionCraftingRecipes(String key, ItemStack par1ItemStack, List par2List, int cost, ObjectTags tags)
@@ -51,10 +52,11 @@ public class ShapelessInfusionCraftingRecipes implements IInfusionRecipe
      */
     public boolean matches(IInventory par1InventoryCrafting, EntityPlayer player)
     {
-    	if (key.length()>0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key)) {
-    		return false;
-    	}
-    	
+        if (key.length() > 0 && !ThaumcraftApiHelper.isResearchComplete(player.username, key))
+        {
+            return false;
+        }
+
         ArrayList var2 = new ArrayList(this.recipeItems);
 
         for (int var3 = 0; var3 < 3; ++var3)
@@ -74,25 +76,32 @@ public class ShapelessInfusionCraftingRecipes implements IInfusionRecipe
 
                         if (var5.itemID == var8.itemID && (var8.getItemDamage() == -1 || var5.getItemDamage() == var8.getItemDamage()))
                         {
-                        	boolean matches=true;
-                        	if (var8.hasTagCompound()) {
-                        		NBTTagCompound tc = var8.getTagCompound();
-                        		for (Object tag:tc.getTags().toArray()) {
-                        			NBTBase base = (NBTBase)tag;
-                        			Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
-	                        		if (!(var5.hasTagCompound() && 
-	                        				nc.cast(var5.getTagCompound().getTag(base.getName())).equals(nc.cast(base)))) {
-	                        			matches=false;
-	                        			break;
-	                        		}
-                        		}
-                        	}
-                        	
-                        	if (matches) {
-                        		var6 = true;
-                        		var2.remove(var8);
-                        		break;
-                        	}
+                            boolean matches = true;
+
+                            if (var8.hasTagCompound())
+                            {
+                                NBTTagCompound tc = var8.getTagCompound();
+
+                                for (Object tag: tc.getTags().toArray())
+                                {
+                                    NBTBase base = (NBTBase)tag;
+                                    Class nc = NBTBase.newTag(base.getId(), base.getName()).getClass();
+
+                                    if (!(var5.hasTagCompound() &&
+                                            nc.cast(var5.getTagCompound().getTag(base.getName())).equals(nc.cast(base))))
+                                    {
+                                        matches = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (matches)
+                            {
+                                var6 = true;
+                                var2.remove(var8);
+                                break;
+                            }
                         }
                     }
 
@@ -124,13 +133,14 @@ public class ShapelessInfusionCraftingRecipes implements IInfusionRecipe
     }
 
     @Override
-	public int getCost() {
-		return cost;
-	}
-    
-    @Override
-	public ObjectTags getTags() {
-		return tags;
-	}
+    public int getCost()
+    {
+        return cost;
+    }
 
+    @Override
+    public ObjectTags getTags()
+    {
+        return tags;
+    }
 }

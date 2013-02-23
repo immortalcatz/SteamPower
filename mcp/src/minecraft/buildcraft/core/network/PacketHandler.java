@@ -11,49 +11,63 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-public class PacketHandler implements IPacketHandler {
+public class PacketHandler implements IPacketHandler
+{
+    private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet)
+    {
+        World world = player.worldObj;
 
-	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) {
-		World world = player.worldObj;
+        if (!packet.targetExists(world))
+        {
+            return;
+        }
 
-		if (!packet.targetExists(world))
-			return;
+        TileEntity entity = packet.getTarget(world);
 
-		TileEntity entity = packet.getTarget(world);
-		if (!(entity instanceof ISynchronizedTile))
-			return;
+        if (!(entity instanceof ISynchronizedTile))
+        {
+            return;
+        }
 
-		ISynchronizedTile tile = (ISynchronizedTile) entity;
-		tile.handleUpdatePacket(packet);
-		tile.postPacketHandling(packet);
-	}
+        ISynchronizedTile tile = (ISynchronizedTile) entity;
+        tile.handleUpdatePacket(packet);
+        tile.postPacketHandling(packet);
+    }
 
-	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
-		try {
+    @Override
+    public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
+    {
+        DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 
-			int packetID = data.read();
-			switch (packetID) {
-			case PacketIds.TILE_UPDATE:
-				PacketTileUpdate packetT = new PacketTileUpdate();
-				packetT.readData(data);
-				onTileUpdate((EntityPlayer) player, packetT);
-				break;
+        try
+        {
+            int packetID = data.read();
 
-			case PacketIds.STATE_UPDATE:
-				PacketTileState inPacket = new PacketTileState();
-				inPacket.readData(data);
-				World world = ((EntityPlayer) player).worldObj;
-				TileEntity tile = world.getBlockTileEntity(inPacket.posX, inPacket.posY, inPacket.posZ);
-				if (tile instanceof ISyncedTile) {
-					inPacket.applyStates(data, (ISyncedTile) tile);
-				}
-				break;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+            switch (packetID)
+            {
+                case PacketIds.TILE_UPDATE:
+                    PacketTileUpdate packetT = new PacketTileUpdate();
+                    packetT.readData(data);
+                    onTileUpdate((EntityPlayer) player, packetT);
+                    break;
 
-	}
+                case PacketIds.STATE_UPDATE:
+                    PacketTileState inPacket = new PacketTileState();
+                    inPacket.readData(data);
+                    World world = ((EntityPlayer) player).worldObj;
+                    TileEntity tile = world.getBlockTileEntity(inPacket.posX, inPacket.posY, inPacket.posZ);
+
+                    if (tile instanceof ISyncedTile)
+                    {
+                        inPacket.applyStates(data, (ISyncedTile) tile);
+                    }
+
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
 }

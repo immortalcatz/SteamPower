@@ -16,52 +16,48 @@ import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
-public class PacketHandler implements IPacketHandler {
-
-        @Override
-        public void onPacketData(INetworkManager manager,
-                        Packet250CustomPayload packet, Player player) {
-                if (packet.channel.equals("SteamCraft")) {
-
-                        handleResearch(packet);
-                }
+public class PacketHandler implements IPacketHandler
+{
+    @Override
+    public void onPacketData(INetworkManager manager,
+            Packet250CustomPayload packet, Player player)
+    {
+        if (packet.channel.equals("SteamCraft"))
+        {
+            handleResearch(packet);
         }
+    }
 
-        private void handleResearch(Packet250CustomPayload packet) {
-                DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
+    private void handleResearch(Packet250CustomPayload packet)
+    {
+        DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
+        byte packetType;
+        int dimension;
+        byte packetID;
 
-        		byte packetType;
-        		int dimension;
-        		byte packetID;
+        try
+        {
+            packetID = inputStream.readByte();
+            dimension = inputStream.readInt();
+            World world = DimensionManager.getWorld(dimension);
 
-        		try
-        		{
-        			packetID = inputStream.readByte();
-        			dimension = inputStream.readInt();
+            if (packetID == 1)
+            {
+                int x = inputStream.readInt();
+                int y = inputStream.readInt();
+                int z = inputStream.readInt();
+                TileEntity te = world.getBlockTileEntity(x, y, z);
 
-        			World world = DimensionManager.getWorld(dimension);
-
-        			if (packetID == 1)
-        			{
-        				int x = inputStream.readInt();
-        				int y = inputStream.readInt();
-        				int z = inputStream.readInt();
-        				TileEntity te = world.getBlockTileEntity(x, y, z);
-
-        				if (te instanceof TileEntityResearchTable)
-        				{
-        					((TileEntityResearchTable) te).research();
-        				}
-        			}
-
-
-        		}
-        		catch (IOException e)
-        		{
-        			e.printStackTrace();
-        			return;
-        		}
-        	}
-
-
+                if (te instanceof TileEntityResearchTable)
+                {
+                    ((TileEntityResearchTable) te).research();
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return;
+        }
+    }
 }

@@ -12,9 +12,10 @@ package buildcraft.energy.render;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.render.TextureLiquidsFX;
 
-public class TextureOilFX extends TextureLiquidsFX {
-
-	public TextureOilFX() {
-		super(10, 31, 10, 31, 10, 31, BuildCraftEnergy.oilStill.blockIndexInTexture, BuildCraftEnergy.oilStill.getTextureFile());
-	}
+public class TextureOilFX extends TextureLiquidsFX
+{
+    public TextureOilFX()
+    {
+        super(10, 31, 10, 31, 10, 31, BuildCraftEnergy.oilStill.blockIndexInTexture, BuildCraftEnergy.oilStill.getTextureFile());
+    }
 }

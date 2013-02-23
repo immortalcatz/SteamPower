@@ -13,139 +13,147 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.core.ByteBuffer;
 import buildcraft.core.network.ClassMapping.Indexes;
 
-public class TilePacketWrapper {
+public class TilePacketWrapper
+{
+    ClassMapping rootMappings[];
 
-	ClassMapping rootMappings[];
+    @SuppressWarnings("rawtypes")
+    public TilePacketWrapper(Class c)
+    {
+        this(new Class[] { c });
+    }
 
-	@SuppressWarnings("rawtypes")
-	public TilePacketWrapper(Class c) {
-		this(new Class[] { c });
-	}
+    @SuppressWarnings( { "rawtypes", "unchecked" })
+    public TilePacketWrapper(Class c[])
+    {
+        rootMappings = new ClassMapping[c.length];
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public TilePacketWrapper(Class c[]) {
-		rootMappings = new ClassMapping[c.length];
+        for (int i = 0; i < c.length; ++i)
+        {
+            rootMappings[i] = new ClassMapping(c[i]);
+        }
+    }
 
-		for (int i = 0; i < c.length; ++i) {
-			rootMappings[i] = new ClassMapping(c[i]);
-		}
-	}
+    public PacketPayload toPayload(TileEntity tile)
+    {
+        int sizeF = 0, sizeS = 0;
 
-	public PacketPayload toPayload(TileEntity tile) {
-		int sizeF = 0, sizeS = 0;
+        for (int i = 0; i < rootMappings.length; ++i)
+        {
+            int[] size = rootMappings[i].getSize();
+            sizeF += size[1];
+            sizeS += size[2];
+        }
 
-		for (int i = 0; i < rootMappings.length; ++i) {
-			int[] size = rootMappings[i].getSize();
+        PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
+        ByteBuffer buf = new ByteBuffer();
+        buf.writeInt(tile.xCoord);
+        buf.writeInt(tile.yCoord);
+        buf.writeInt(tile.zCoord);
 
-			sizeF += size[1];
-			sizeS += size[2];
-		}
+        try
+        {
+            rootMappings[0].setData(tile, buf, payload.floatPayload, payload.stringPayload, new Indexes(0, 0));
+            payload.intPayload = buf.readIntArray();
+            return payload;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
+    public PacketPayload toPayload(Object obj)
+    {
+        return toPayload(0, 0, 0, new Object[] { obj });
+    }
 
-		ByteBuffer buf = new ByteBuffer();
+    public PacketPayload toPayload(int x, int y, int z, Object obj)
+    {
+        return toPayload(x, y, z, new Object[] { obj });
+    }
 
-		buf.writeInt(tile.xCoord);
-		buf.writeInt(tile.yCoord);
-		buf.writeInt(tile.zCoord);
+    public PacketPayload toPayload(int x, int y, int z, Object[] obj)
+    {
+        int sizeF = 0, sizeS = 0;
 
-		try {
-			rootMappings[0].setData(tile, buf, payload.floatPayload, payload.stringPayload, new Indexes(0, 0));
+        for (int i = 0; i < rootMappings.length; ++i)
+        {
+            int[] size = rootMappings[i].getSize();
+            sizeF += size[1];
+            sizeS += size[2];
+        }
 
-			payload.intPayload = buf.readIntArray();
+        PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
+        ByteBuffer buf = new ByteBuffer();
+        buf.writeInt(x);
+        buf.writeInt(y);
+        buf.writeInt(z);
 
-			return payload;
+        try
+        {
+            Indexes ind = new Indexes(0, 0);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+            for (int i = 0; i < rootMappings.length; ++i)
+            {
+                rootMappings[i].setData(obj[i], buf, payload.floatPayload, payload.stringPayload, ind);
+            }
 
-			return null;
-		}
-	}
+            payload.intPayload = buf.readIntArray();
+            return payload;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-	public PacketPayload toPayload(Object obj) {
-		return toPayload(0, 0, 0, new Object[] { obj });
-	}
+    public void fromPayload(TileEntity tile, PacketPayload packet)
+    {
+        try
+        {
+            ByteBuffer buf = new ByteBuffer();
+            buf.writeIntArray(packet.intPayload);
+            buf.readInt();
+            buf.readInt();
+            buf.readInt();
+            rootMappings[0].updateFromData(tile, buf, packet.floatPayload, packet.stringPayload, new Indexes(0, 0));
+            packet.intPayload = buf.readIntArray();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	public PacketPayload toPayload(int x, int y, int z, Object obj) {
-		return toPayload(x, y, z, new Object[] { obj });
-	}
+    public void fromPayload(Object obj, PacketPayload packet)
+    {
+        fromPayload(new Object[] { obj }, packet);
+    }
 
-	public PacketPayload toPayload(int x, int y, int z, Object[] obj) {
+    public void fromPayload(Object[] obj, PacketPayload packet)
+    {
+        try
+        {
+            ByteBuffer buf = new ByteBuffer();
+            buf.writeIntArray(packet.intPayload);
+            buf.readInt();
+            buf.readInt();
+            buf.readInt();
+            Indexes ind = new Indexes(0, 0);
 
-		int sizeF = 0, sizeS = 0;
+            for (int i = 0; i < rootMappings.length; ++i)
+            {
+                rootMappings[i].updateFromData(obj[i], buf, packet.floatPayload, packet.stringPayload, ind);
+            }
 
-		for (int i = 0; i < rootMappings.length; ++i) {
-			int[] size = rootMappings[i].getSize();
-
-			sizeF += size[1];
-			sizeS += size[2];
-		}
-
-		PacketPayload payload = new PacketPayload(0, sizeF, sizeS);
-
-		ByteBuffer buf = new ByteBuffer();
-
-		buf.writeInt(x);
-		buf.writeInt(y);
-		buf.writeInt(z);
-
-		try {
-			Indexes ind = new Indexes(0, 0);
-
-			for (int i = 0; i < rootMappings.length; ++i) {
-				rootMappings[i].setData(obj[i], buf, payload.floatPayload, payload.stringPayload, ind);
-			}
-
-			payload.intPayload = buf.readIntArray();
-
-			return payload;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-
-			return null;
-		}
-	}
-
-	public void fromPayload(TileEntity tile, PacketPayload packet) {
-		try {
-			ByteBuffer buf = new ByteBuffer();
-			buf.writeIntArray(packet.intPayload);
-			buf.readInt();
-			buf.readInt();
-			buf.readInt();
-
-			rootMappings[0].updateFromData(tile, buf, packet.floatPayload, packet.stringPayload, new Indexes(0, 0));
-
-			packet.intPayload = buf.readIntArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void fromPayload(Object obj, PacketPayload packet) {
-		fromPayload(new Object[] { obj }, packet);
-	}
-
-	public void fromPayload(Object[] obj, PacketPayload packet) {
-		try {
-			ByteBuffer buf = new ByteBuffer();
-			buf.writeIntArray(packet.intPayload);
-			buf.readInt();
-			buf.readInt();
-			buf.readInt();
-
-			Indexes ind = new Indexes(0, 0);
-
-			for (int i = 0; i < rootMappings.length; ++i) {
-				rootMappings[i].updateFromData(obj[i], buf, packet.floatPayload, packet.stringPayload, ind);
-			}
-
-			packet.intPayload = buf.readIntArray();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+            packet.intPayload = buf.readIntArray();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

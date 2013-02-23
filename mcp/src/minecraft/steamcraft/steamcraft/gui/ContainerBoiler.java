@@ -12,13 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-
 public class ContainerBoiler extends Container
 {
-	private TileEntityBoiler boiler;
+    private TileEntityBoiler boiler;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
-	private int lastWaterVolume = 0;
+    private int lastWaterVolume = 0;
 
     public ContainerBoiler(InventoryPlayer playerInventory, TileEntityBoiler boilerEntity)
     {
@@ -68,8 +67,9 @@ public class ContainerBoiler extends Container
                 currentCrafter.sendProgressBarUpdate(this, 1, this.boiler.currentItemBurnTime);
             }
 
-            if (this.lastWaterVolume  != this.boiler.getWater()) {
-            	currentCrafter.sendProgressBarUpdate(this, 2, this.boiler.getWater());
+            if (this.lastWaterVolume  != this.boiler.getWater())
+            {
+                currentCrafter.sendProgressBarUpdate(this, 2, this.boiler.getWater());
             }
         }
 
@@ -92,17 +92,19 @@ public class ContainerBoiler extends Container
             this.boiler.currentItemBurnTime = value;
         }
 
-        if (key == 2) {
-        	this.boiler.setWaterForGUI(value);
+        if (key == 2)
+        {
+            this.boiler.setWaterForGUI(value);
         }
     }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer yoursTruly) {
+    @Override
+    public boolean canInteractWith(EntityPlayer yoursTruly)
+    {
         return this.boiler.isUseableByPlayer(yoursTruly);
-	}
+    }
 
-	@Override
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer yoursTruly, int slotIndex)
     {
         ItemStack itemOutput = null;

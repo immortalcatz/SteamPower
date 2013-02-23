@@ -18,35 +18,40 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtil;
 import buildcraft.factory.TileAutoWorkbench;
 
-public class GuiAutoCrafting extends GuiBuildCraft {
+public class GuiAutoCrafting extends GuiBuildCraft
+{
+    public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile)
+    {
+        super(new ContainerAutoWorkbench(inventoryplayer, tile), tile);
+    }
 
-	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
-		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile);
-	}
+    @Override
+    public void onGuiClosed()
+    {
+        super.onGuiClosed();
 
-	@Override
-	public void onGuiClosed() {
-		super.onGuiClosed();
-		if (this.mc.thePlayer != null) {
-			inventorySlots.onCraftGuiClosed(mc.thePlayer);
-		}
-	}
+        if (this.mc.thePlayer != null)
+        {
+            inventorySlots.onCraftGuiClosed(mc.thePlayer);
+        }
+    }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.autoWorkbenchBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
-	}
+    @Override
+    protected void drawGuiContainerForegroundLayer(int par1, int par2)
+    {
+        String title = StringUtil.localize("tile.autoWorkbenchBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture("/gui/crafting.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-	}
-
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
+        int i = mc.renderEngine.getTexture("/gui/crafting.png");
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.bindTexture(i);
+        int j = (width - xSize) / 2;
+        int k = (height - ySize) / 2;
+        drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+    }
 }

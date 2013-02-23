@@ -15,26 +15,25 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-public class BptItem {
+public class BptItem
+{
+    public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements)
+    {
+    }
 
-	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
+    public void rotateLeft(BptSlotInfo slot, IBptContext context)
+    {
+    }
 
-	}
+    public void buildBlock(BptSlotInfo slot, IBptContext context)
+    {
+    }
 
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+    public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z)
+    {
+    }
 
-	}
-
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-
-	}
-
-	public void initializeFromWorld(BptSlotInfo slot, IBptContext context, int x, int y, int z) {
-
-	}
-
-	public void postProcessing(BptSlotInfo slot, IBptContext context) {
-
-	}
-
+    public void postProcessing(BptSlotInfo slot, IBptContext context)
+    {
+    }
 }

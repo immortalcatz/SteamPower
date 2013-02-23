@@ -21,120 +21,156 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.SidedInventoryAdapter;
 import buildcraft.core.utils.Utils;
 
-public class TriggerInventory extends Trigger implements ITriggerDirectional {
+public class TriggerInventory extends Trigger implements ITriggerDirectional
+{
+    public enum State
+    {
+        Empty, Contains, Space, Full
+    };
 
-	public enum State {
-		Empty, Contains, Space, Full
-	};
+    public State state;
 
-	public State state;
+    public TriggerInventory(int id, State state)
+    {
+        super(id);
+        this.state = state;
+    }
 
-	public TriggerInventory(int id, State state) {
-		super(id);
+    @Override
+    public int getIndexInTexture()
+    {
+        switch (state)
+        {
+            case Empty:
+                return 2 * 16 + 4;
 
-		this.state = state;
-	}
+            case Contains:
+                return 2 * 16 + 5;
 
-	@Override
-	public int getIndexInTexture() {
-		switch (state) {
-		case Empty:
-			return 2 * 16 + 4;
-		case Contains:
-			return 2 * 16 + 5;
-		case Space:
-			return 2 * 16 + 6;
-		default:
-			return 2 * 16 + 7;
-		}
-	}
+            case Space:
+                return 2 * 16 + 6;
 
-	@Override
-	public boolean hasParameter() {
-		if (state == State.Contains || state == State.Space)
-			return true;
-		else
-			return false;
-	}
+            default:
+                return 2 * 16 + 7;
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		switch (state) {
-		case Empty:
-			return "Inventory Empty";
-		case Contains:
-			return "Items in Inventory";
-		case Space:
-			return "Space in Inventory";
-		default:
-			return "Inventory Full";
-		}
-	}
+    @Override
+    public boolean hasParameter()
+    {
+        if (state == State.Contains || state == State.Space)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
-		ItemStack searchedStack = null;
+    @Override
+    public String getDescription()
+    {
+        switch (state)
+        {
+            case Empty:
+                return "Inventory Empty";
 
-		if (parameter != null) {
-			searchedStack = parameter.getItem();
-		}
+            case Contains:
+                return "Items in Inventory";
 
-		if (tile instanceof IInventory) {
-			IInventory inv = Utils.getInventory(((IInventory) tile));
-			if (side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory) {
-				inv = new SidedInventoryAdapter((ISidedInventory) inv, side);
-			}
+            case Space:
+                return "Space in Inventory";
 
-			int invSize = inv.getSizeInventory();
+            default:
+                return "Inventory Full";
+        }
+    }
 
-			if (invSize <= 0)
-				return false;
+    @Override
+    public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter)
+    {
+        ItemStack searchedStack = null;
 
-			boolean foundItems = false;
-			boolean foundSpace = false;
+        if (parameter != null)
+        {
+            searchedStack = parameter.getItem();
+        }
 
-			for (int i = 0; i < invSize; ++i) {
-				ItemStack stack = inv.getStackInSlot(i);
+        if (tile instanceof IInventory)
+        {
+            IInventory inv = Utils.getInventory(((IInventory) tile));
 
-				boolean slotEmpty = stack == null || stack.stackSize == 0;
+            if (side != ForgeDirection.UNKNOWN && inv instanceof ISidedInventory)
+            {
+                inv = new SidedInventoryAdapter((ISidedInventory) inv, side);
+            }
 
-				if (searchedStack == null) {
-					foundItems |= !slotEmpty;
-				} else if (!slotEmpty) {
-					foundItems |= stack.isItemEqual(searchedStack);
-				}
+            int invSize = inv.getSizeInventory();
 
-				if (slotEmpty) {
-					foundSpace = true;
-				} else if (searchedStack != null) {
-					if (stack.stackSize < stack.getMaxStackSize() && stack.isItemEqual(searchedStack)) {
-						foundSpace = true;
-					}
-				}
-			}
+            if (invSize <= 0)
+            {
+                return false;
+            }
 
-			switch (state) {
-			case Empty:
-				return !foundItems;
-			case Contains:
-				return foundItems;
-			case Space:
-				return foundSpace;
-			default:
-				return !foundSpace;
-			}
-		}
+            boolean foundItems = false;
+            boolean foundSpace = false;
 
-		return false;
-	}
+            for (int i = 0; i < invSize; ++i)
+            {
+                ItemStack stack = inv.getStackInSlot(i);
+                boolean slotEmpty = stack == null || stack.stackSize == 0;
 
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter) {
-		return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);
-	}
+                if (searchedStack == null)
+                {
+                    foundItems |= !slotEmpty;
+                }
+                else if (!slotEmpty)
+                {
+                    foundItems |= stack.isItemEqual(searchedStack);
+                }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
-	}
+                if (slotEmpty)
+                {
+                    foundSpace = true;
+                }
+                else if (searchedStack != null)
+                {
+                    if (stack.stackSize < stack.getMaxStackSize() && stack.isItemEqual(searchedStack))
+                    {
+                        foundSpace = true;
+                    }
+                }
+            }
+
+            switch (state)
+            {
+                case Empty:
+                    return !foundItems;
+
+                case Contains:
+                    return foundItems;
+
+                case Space:
+                    return foundSpace;
+
+                default:
+                    return !foundSpace;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isTriggerActive(TileEntity tile, ITriggerParameter parameter)
+    {
+        return isTriggerActive(ForgeDirection.UNKNOWN, tile, parameter);
+    }
+
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_TRIGGERS;
+    }
 }

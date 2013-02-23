@@ -28,47 +28,43 @@ public class GuiResearchTable extends GuiContainer
     }
 
     @Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2)
+    protected void drawGuiContainerForegroundLayer(int par1, int par2)
     {
         this.fontRenderer.drawString(StatCollector.translateToLocal("ResearchTable"), 60, 6, 4210752);
         this.fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-
     }
 
     @Override
-	protected void actionPerformed(GuiButton guibutton)
+    protected void actionPerformed(GuiButton guibutton)
     {
-      if(guibutton.id == 1)
-      {
-    	  ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
-          DataOutputStream outputStream = new DataOutputStream(bos);
-          try
-          {
-              outputStream.writeByte(1);
-              outputStream.writeInt(furnaceInventory.worldObj.provider.dimensionId);
-              outputStream.writeInt(furnaceInventory.xCoord);
-              outputStream.writeInt(furnaceInventory.yCoord);
-              outputStream.writeInt(furnaceInventory.zCoord);
-          }
-          catch (Exception ex)
-          {
-              ex.printStackTrace();
-          }
+        if (guibutton.id == 1)
+        {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+            DataOutputStream outputStream = new DataOutputStream(bos);
 
-          Packet250CustomPayload packet = new Packet250CustomPayload();
-          packet.channel = "SteamCraft";
-          packet.data = bos.toByteArray();
-          packet.length = bos.size();
+            try
+            {
+                outputStream.writeByte(1);
+                outputStream.writeInt(furnaceInventory.worldObj.provider.dimensionId);
+                outputStream.writeInt(furnaceInventory.xCoord);
+                outputStream.writeInt(furnaceInventory.yCoord);
+                outputStream.writeInt(furnaceInventory.zCoord);
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
 
-          PacketDispatcher.sendPacketToServer(packet);
-
-      }
-
-
+            Packet250CustomPayload packet = new Packet250CustomPayload();
+            packet.channel = "SteamCraft";
+            packet.data = bos.toByteArray();
+            packet.length = bos.size();
+            PacketDispatcher.sendPacketToServer(packet);
+        }
     }
 
     @Override
-	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
+    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3)
     {
         int var4 = this.mc.renderEngine.getTexture(SteamCraft.guiLocation + "research.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -78,14 +74,7 @@ public class GuiResearchTable extends GuiContainer
         this.drawTexturedModalRect(var5, var6, 0, 0, this.xSize, this.ySize);
         int var7;
         int var8;
-
         controlList.clear();
-        controlList.add(new GuiButton(1, var5 + 54, var6 + 24, 61,20, "Research"));
-
-
-
-
-
-
+        controlList.add(new GuiButton(1, var5 + 54, var6 + 24, 61, 20, "Research"));
     }
 }

@@ -9,14 +9,13 @@
 
 package buildcraft.core;
 
-public interface IMachine {
+public interface IMachine
+{
+    public boolean isActive();
 
-	public boolean isActive();
+    public boolean manageLiquids();
 
-	public boolean manageLiquids();
+    public boolean manageSolids();
 
-	public boolean manageSolids();
-
-	public boolean allowActions();
-
+    public boolean allowActions();
 }

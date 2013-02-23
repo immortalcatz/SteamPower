@@ -12,9 +12,10 @@ package buildcraft.energy.render;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.render.TextureLiquidsFX;
 
-public class TextureFuelFX extends TextureLiquidsFX {
-
-	public TextureFuelFX() {
-		super(150, 250, 150, 250, 0, 10, BuildCraftEnergy.fuel.getIconFromDamage(0), BuildCraftEnergy.fuel.getTextureFile());
-	}
+public class TextureFuelFX extends TextureLiquidsFX
+{
+    public TextureFuelFX()
+    {
+        super(150, 250, 150, 250, 0, 10, BuildCraftEnergy.fuel.getIconFromDamage(0), BuildCraftEnergy.fuel.getTextureFile());
+    }
 }

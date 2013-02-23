@@ -26,19 +26,22 @@ public class SlotLimiter extends Slot
         this(par2IInventory, par3, par4, par5, new ItemStack[] {stack});
     }
 
-    public SlotLimiter(TileEntityResearchTable par2TileEntityResearchTable, int i, int j, int k, Item item) {
-		this(par2TileEntityResearchTable, i, j, k, new ItemStack(item));
-	}
-
-	@Override
-	public boolean isItemValid(ItemStack item)
+    public SlotLimiter(TileEntityResearchTable par2TileEntityResearchTable, int i, int j, int k, Item item)
     {
-        for (ItemStack stack : stacks) {
-        	if (item.itemID == stack.itemID) {
-        		return true;
-        	}
-        }
-        return false;
+        this(par2TileEntityResearchTable, i, j, k, new ItemStack(item));
     }
 
+    @Override
+    public boolean isItemValid(ItemStack item)
+    {
+        for (ItemStack stack : stacks)
+        {
+            if (item.itemID == stack.itemID)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
