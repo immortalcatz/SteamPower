@@ -2,7 +2,7 @@ package steamcraft.steamcraft.block;
 
 import java.util.Random;
 
-import steamcraft.steamcraft.common.SteamCraft;
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 
 import net.minecraft.block.Block;

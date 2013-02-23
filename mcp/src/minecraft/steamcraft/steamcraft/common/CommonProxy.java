@@ -10,7 +10,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class CommonProxy
 {
-
     // Client stuff
     public void registerRenderers()
     {
@@ -18,8 +17,5 @@ public class CommonProxy
     }
     public void addRecipes()
     {
-    	
-        
     }
-    
 }

@@ -246,7 +246,7 @@ public class EntityMech extends Entity
             }
             else
             {
-            	var2 += 1.0D / (double)var1;
+                var2 += 1.0D / (double)var1;
             }
         }
 
@@ -304,14 +304,12 @@ public class EntityMech extends Entity
                 var8 = this.posY + this.motionY;
                 var26 = this.posZ + this.motionZ;
                 this.setPosition(var6, var8, var26);
-
 //                if (this.onGround)
 //                {
 //                    this.motionX *= 0.5D;
 //                    this.motionY *= 0.5D;
 //                    this.motionZ *= 0.5D;
 //                }
-
                 this.motionX *= 0.9900000095367432D;
                 this.motionY *= 0.949999988079071D;
                 this.motionZ *= 0.9900000095367432D;
@@ -378,13 +376,9 @@ public class EntityMech extends Entity
             }
 
             this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-           
-                this.motionX *= 0.9900000095367432D;
-                this.motionY *= 0.949999988079071D;
-                this.motionZ *= 0.9900000095367432D;
-            
-
+            this.motionX *= 0.9900000095367432D;
+            this.motionY *= 0.949999988079071D;
+            this.motionZ *= 0.9900000095367432D;
             this.rotationPitch = 0.0F;
             var8 = (double)this.rotationYaw;
             var26 = this.prevPosX - this.posX;

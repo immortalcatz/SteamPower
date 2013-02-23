@@ -1,7 +1,7 @@
 package steamcraft.steamcraft.item;
 
+import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.client.ClientProxy;
-import steamcraft.steamcraft.common.SteamCraft;
 import steamcraft.steamcraft.entity.EntityMusketBall;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -18,11 +18,11 @@ import net.minecraftforge.event.entity.player.ArrowNockEvent;
 
 public class ItemFirearm extends Item
 {
-public float damage;
-public int reloadTime;
-public float accuracy;
-public float knockback;
-public boolean shotgun;
+    public float damage;
+    public int reloadTime;
+    public float accuracy;
+    public float knockback;
+    public boolean shotgun;
 
     public ItemFirearm(int par1, float par2, int par3, float par4, float par5, boolean par6)
     {
@@ -47,19 +47,20 @@ public boolean shotgun;
     @Override
     public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4)
     {
-		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    	if (nbt.getBoolean("loaded")){
-        int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
-        ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
-        MinecraftForge.EVENT_BUS.post(event);
+        NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-        if (event.isCanceled())
+        if (nbt.getBoolean("loaded"))
         {
-            return;
-        }
+            int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
+            ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
+            MinecraftForge.EVENT_BUS.post(event);
 
-        var6 = event.charge;
+            if (event.isCanceled())
+            {
+                return;
+            }
 
+            var6 = event.charge;
             float var7 = (float)var6 / 20.0F;
             var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
 
@@ -73,8 +74,7 @@ public boolean shotgun;
                 var7 = 1.0F;
             }
 
-            EntityMusketBall var8 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) -var7, damage);
-
+            EntityMusketBall var8 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) - var7, damage);
 
             if (var7 == 1.0F)
             {
@@ -100,88 +100,93 @@ public boolean shotgun;
             }
 
             par1ItemStack.damageItem(1, par3EntityPlayer);
-            par2World.playSoundAtEntity(par3EntityPlayer, "random.explode", (knockback * (2F/5F)), 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + var7 * 0.5F);
-            for (int i = 1; i < 16; i++) {
-            par2World.spawnParticle("smoke", par3EntityPlayer.posX + itemRand.nextFloat() - 0.5F, par3EntityPlayer.posY + (itemRand.nextFloat()/2) - 0.25F, par3EntityPlayer.posZ + itemRand.nextFloat() - 0.5F, 0.0D, 0.01D, 0.0D);
+            par2World.playSoundAtEntity(par3EntityPlayer, "random.explode", (knockback * (2F / 5F)), 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + var7 * 0.5F);
+
+            for (int i = 1; i < 16; i++)
+            {
+                par2World.spawnParticle("smoke", par3EntityPlayer.posX + itemRand.nextFloat() - 0.5F, par3EntityPlayer.posY + (itemRand.nextFloat() / 2) - 0.25F, par3EntityPlayer.posZ + itemRand.nextFloat() - 0.5F, 0.0D, 0.01D, 0.0D);
             }
-
-
 
             if (!par2World.isRemote)
             {
-                
-                if (shotgun) {
-                	for (int i = 1; i < 21; i++) {
-                		EntityMusketBall var12 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) -var7, damage);
-                		par2World.spawnEntityInWorld(var12);
-                	}
+                if (shotgun)
+                {
+                    for (int i = 1; i < 21; i++)
+                    {
+                        EntityMusketBall var12 = new EntityMusketBall(par2World, par3EntityPlayer, 2.0F, (1.0F + accuracy) - var7, damage);
+                        par2World.spawnEntityInWorld(var12);
+                    }
                 }
                 else
                 {
-                par2World.spawnEntityInWorld(var8);
+                    par2World.spawnEntityInWorld(var8);
                 }
+
                 //par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch + 100.0F;
                 //Minecraft minecraft = Minecraft.getMinecraft();
                 //minecraft.entityRenderer.
             }
+
             nbt.setBoolean("loaded", false);
+
             if (par2World.isRemote && !par3EntityPlayer.capabilities.isCreativeMode)
             {
-	            float thiskb = this.knockback;
-	            boolean crouching = par3EntityPlayer.isSneaking();
-	            if (crouching){
-	            	thiskb = thiskb/2;
-	            }
-	            par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
-	            par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
-	            par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F/50F)));
+                float thiskb = this.knockback;
+                boolean crouching = par3EntityPlayer.isSneaking();
+
+                if (crouching)
+                {
+                    thiskb = thiskb / 2;
+                }
+
+                par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
+                par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F)));
+                par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F)));
             }
-            
-       
 
             // par3EntityPlayer.inventory.setInventorySlotContents(par3EntityPlayer.inventory.currentItem, new ItemStack(BoilerMod.musketEmpty));
         }
-    	 else
-         {
-         	if (nbt.getBoolean("done"))
-             {
-                 //done = false;
-                 //par3EntityPlayer.inventoryContainer.putStackInSlot(par3EntityPlayer.inventory.currentItem + 36, new ItemStack(BoilerMod.musket, 1));
+        else
+        {
+            if (nbt.getBoolean("done"))
+            {
+                //done = false;
+                //par3EntityPlayer.inventoryContainer.putStackInSlot(par3EntityPlayer.inventory.currentItem + 36, new ItemStack(BoilerMod.musket, 1));
                 //par3EntityPlayer.inventoryContainer.detectAndSendChanges();
-         		nbt.setBoolean("loaded", true);
-         		nbt.setBoolean("done", false);
-            
-             }
-         }
+                nbt.setBoolean("loaded", true);
+                nbt.setBoolean("done", false);
+            }
+        }
     }
 
     public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-    	NBTTagCompound nbt = par1ItemStack.getTagCompound();
+        NBTTagCompound nbt = par1ItemStack.getTagCompound();
         boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
 
         if (var5 || par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
         {
-    	if (nbt.getBoolean("done") == false)
-    	{
-            if (var5)
+            if (nbt.getBoolean("done") == false)
             {
+                if (var5)
+                {
+                }
+                else
+                {
+                    par3EntityPlayer.inventory.consumeInventoryItem(SteamCraft.musketCartridge.itemID);
+                }
+
+                nbt.setBoolean("done", true);
+                par2World.playSoundAtEntity(par3EntityPlayer, "random.click", 1F, par2World.rand.nextFloat() * 0.1F + 0.9F);
             }
-            else
-            {
-                par3EntityPlayer.inventory.consumeInventoryItem(SteamCraft.musketCartridge.itemID);
-            }
-    		nbt.setBoolean("done", true);
-    		par2World.playSoundAtEntity(par3EntityPlayer, "random.click", 1F, par2World.rand.nextFloat() * 0.1F + 0.9F);
-    	}
         }
-    	
+
         return par1ItemStack;
     }
-    
+
     public boolean isFull3D()
     {
-    return true;
+        return true;
     }
 
     /**
@@ -189,41 +194,49 @@ public boolean shotgun;
      */
     public int getMaxItemUseDuration(ItemStack par1ItemStack)
     {
-    	if(!par1ItemStack.hasTagCompound()){
-    		par1ItemStack.setTagCompound(new NBTTagCompound());
-    		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    		nbt.setBoolean("loaded", false);
-    		//nbt.setBoolean("done", false);
-    	}
-		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    	if ((nbt.getBoolean("loaded")) || (nbt.getBoolean("done"))){
-    		return 72000;
-    	}
-    	else
-    	{
-        return reloadTime;
-    	}
+        if (!par1ItemStack.hasTagCompound())
+        {
+            par1ItemStack.setTagCompound(new NBTTagCompound());
+            NBTTagCompound nbt = par1ItemStack.getTagCompound();
+            nbt.setBoolean("loaded", false);
+            //nbt.setBoolean("done", false);
+        }
+
+        NBTTagCompound nbt = par1ItemStack.getTagCompound();
+
+        if ((nbt.getBoolean("loaded")) || (nbt.getBoolean("done")))
+        {
+            return 72000;
+        }
+        else
+        {
+            return reloadTime;
+        }
     }
 
     /**
      * returns the action that specifies what animation to play when the items is being used
      */
     public EnumAction getItemUseAction(ItemStack par1ItemStack)
-    {	
-    	if(!par1ItemStack.hasTagCompound()){
-    		par1ItemStack.setTagCompound(new NBTTagCompound());
-    		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    		nbt.setBoolean("loaded", false);
-    		//nbt.setBoolean("done", false);
-    	}
-		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    	if (nbt.getBoolean("loaded")){
-    		return EnumAction.bow;
-    	}
-    	else
-    	{
-    		return EnumAction.block;
-    	}
+    {
+        if (!par1ItemStack.hasTagCompound())
+        {
+            par1ItemStack.setTagCompound(new NBTTagCompound());
+            NBTTagCompound nbt = par1ItemStack.getTagCompound();
+            nbt.setBoolean("loaded", false);
+            //nbt.setBoolean("done", false);
+        }
+
+        NBTTagCompound nbt = par1ItemStack.getTagCompound();
+
+        if (nbt.getBoolean("loaded"))
+        {
+            return EnumAction.bow;
+        }
+        else
+        {
+            return EnumAction.block;
+        }
     }
 
     /**
@@ -231,37 +244,37 @@ public boolean shotgun;
      */
     public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
-    	if(!par1ItemStack.hasTagCompound()){
-    		par1ItemStack.setTagCompound(new NBTTagCompound());
-    		NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    		nbt.setBoolean("loaded", false);
-    		nbt.setBoolean("done", false);
-    	}
-    	NBTTagCompound nbt = par1ItemStack.getTagCompound();
-    	if ( nbt.getBoolean("loaded")){
-
-        ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
-        MinecraftForge.EVENT_BUS.post(event);
-
-        if (event.isCanceled())
+        if (!par1ItemStack.hasTagCompound())
         {
-            return event.result;
+            par1ItemStack.setTagCompound(new NBTTagCompound());
+            NBTTagCompound nbt = par1ItemStack.getTagCompound();
+            nbt.setBoolean("loaded", false);
+            nbt.setBoolean("done", false);
         }
 
-       
-            par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
+        NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-    	}
-    	else
-    	{
-    	if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
-    	     {
-    			 par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
-    	     }
-    	}
+        if (nbt.getBoolean("loaded"))
+        {
+            ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
+            MinecraftForge.EVENT_BUS.post(event);
+
+            if (event.isCanceled())
+            {
+                return event.result;
+            }
+
+            par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
+        }
+        else
+        {
+            if (par3EntityPlayer.capabilities.isCreativeMode || par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
+            {
+                par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
+            }
+        }
 
         return par1ItemStack;
-    	
     }
 
     /**
