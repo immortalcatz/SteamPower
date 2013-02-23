@@ -16,91 +16,122 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 
-public class TriggerPipeSignal extends Trigger implements ITriggerPipe {
+public class TriggerPipeSignal extends Trigger implements ITriggerPipe
+{
+    boolean active;
+    IPipe.WireColor color;
 
-	boolean active;
-	IPipe.WireColor color;
+    public TriggerPipeSignal(int id, boolean active, IPipe.WireColor color)
+    {
+        super(id);
+        this.active = active;
+        this.color = color;
+    }
 
-	public TriggerPipeSignal(int id, boolean active, IPipe.WireColor color) {
-		super(id);
+    @Override
+    public int getIndexInTexture()
+    {
+        if (active)
+        {
+            switch (color)
+            {
+                case Red:
+                    return 0 * 16 + 3;
 
-		this.active = active;
-		this.color = color;
-	}
+                case Blue:
+                    return 0 * 16 + 5;
 
-	@Override
-	public int getIndexInTexture() {
-		if (active) {
-			switch (color) {
-			case Red:
-				return 0 * 16 + 3;
-			case Blue:
-				return 0 * 16 + 5;
-			case Green:
-				return 0 * 16 + 7;
-			case Yellow:
-				return 0 * 16 + 9;
-			}
-		} else {
-			switch (color) {
-			case Red:
-				return 0 * 16 + 2;
-			case Blue:
-				return 0 * 16 + 4;
-			case Green:
-				return 0 * 16 + 6;
-			case Yellow:
-				return 0 * 16 + 8;
-			}
-		}
+                case Green:
+                    return 0 * 16 + 7;
 
-		return 0;
-	}
+                case Yellow:
+                    return 0 * 16 + 9;
+            }
+        }
+        else
+        {
+            switch (color)
+            {
+                case Red:
+                    return 0 * 16 + 2;
 
-	@Override
-	public boolean hasParameter() {
-		return false;
-	}
+                case Blue:
+                    return 0 * 16 + 4;
 
-	@Override
-	public String getDescription() {
-		if (active) {
-			switch (color) {
-			case Red:
-				return "Red Pipe Signal On";
-			case Blue:
-				return "Blue Pipe Signal On";
-			case Green:
-				return "Green Pipe Signal On";
-			case Yellow:
-				return "Yellow Pipe Signal On";
-			}
-		} else {
-			switch (color) {
-			case Red:
-				return "Red Pipe Signal Off";
-			case Blue:
-				return "Blue Pipe Signal Off";
-			case Green:
-				return "Green Pipe Signal Off";
-			case Yellow:
-				return "Yellow Pipe Signal Off";
-			}
-		}
+                case Green:
+                    return 0 * 16 + 6;
 
-		return "";
-	}
+                case Yellow:
+                    return 0 * 16 + 8;
+            }
+        }
 
-	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		if (active)
-			return pipe.signalStrength[color.ordinal()] > 0;
-		else
-			return pipe.signalStrength[color.ordinal()] == 0;
-	}
+        return 0;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
-	}
+    @Override
+    public boolean hasParameter()
+    {
+        return false;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        if (active)
+        {
+            switch (color)
+            {
+                case Red:
+                    return "Red Pipe Signal On";
+
+                case Blue:
+                    return "Blue Pipe Signal On";
+
+                case Green:
+                    return "Green Pipe Signal On";
+
+                case Yellow:
+                    return "Yellow Pipe Signal On";
+            }
+        }
+        else
+        {
+            switch (color)
+            {
+                case Red:
+                    return "Red Pipe Signal Off";
+
+                case Blue:
+                    return "Blue Pipe Signal Off";
+
+                case Green:
+                    return "Green Pipe Signal Off";
+
+                case Yellow:
+                    return "Yellow Pipe Signal Off";
+            }
+        }
+
+        return "";
+    }
+
+    @Override
+    public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter)
+    {
+        if (active)
+        {
+            return pipe.signalStrength[color.ordinal()] > 0;
+        }
+        else
+        {
+            return pipe.signalStrength[color.ordinal()] == 0;
+        }
+    }
+
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_TRIGGERS;
+    }
 }

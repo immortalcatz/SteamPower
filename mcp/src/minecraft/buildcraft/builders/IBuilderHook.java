@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import buildcraft.core.blueprints.BptRootIndex;
 
-public interface IBuilderHook {
-
-	public void rootIndexInitialized(BptRootIndex rootBptIndex) throws IOException;
-
+public interface IBuilderHook
+{
+    public void rootIndexInitialized(BptRootIndex rootBptIndex) throws IOException;
 }

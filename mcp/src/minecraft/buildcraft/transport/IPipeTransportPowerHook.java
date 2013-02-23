@@ -11,9 +11,9 @@ package buildcraft.transport;
 
 import net.minecraftforge.common.ForgeDirection;
 
-public interface IPipeTransportPowerHook {
+public interface IPipeTransportPowerHook
+{
+    public void receiveEnergy(ForgeDirection from, double val);
 
-	public void receiveEnergy(ForgeDirection from, double val);
-
-	public void requestEnergy(ForgeDirection from, int i);
+    public void requestEnergy(ForgeDirection from, int i);
 }

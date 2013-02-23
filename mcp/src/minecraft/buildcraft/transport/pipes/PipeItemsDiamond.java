@@ -27,85 +27,109 @@ import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState {
+public class PipeItemsDiamond extends Pipe implements IPipeTransportItemsHook, IClientState
+{
+    public PipeItemsDiamond(int itemID)
+    {
+        super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
+    }
 
-	public PipeItemsDiamond(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicDiamond(), itemID);
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        if (direction == ForgeDirection.UNKNOWN)
+        {
+            return 1 * 16 + 5;
+        }
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return 1 * 16 + 5;
-		return BuildCraftTransport.diamondTextures[direction.ordinal()];
-	}
+        return BuildCraftTransport.diamondTextures[direction.ordinal()];
+    }
 
-	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
-		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
-		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
+    @Override
+    public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item)
+    {
+        LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
+        LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
 
-		// Filtered outputs
-		for (ForgeDirection dir : possibleOrientations) {
-			boolean foundFilter = false;
+        // Filtered outputs
+        for (ForgeDirection dir : possibleOrientations)
+        {
+            boolean foundFilter = false;
+            // NB: if there's several of the same match, the probability
+            // to use that filter is higher, this is why there are
+            // no breaks here.
+            PipeLogicDiamond diamondLogic = (PipeLogicDiamond) logic;
 
-			// NB: if there's several of the same match, the probability
-			// to use that filter is higher, this is why there are
-			// no breaks here.
-			PipeLogicDiamond diamondLogic = (PipeLogicDiamond) logic;
-			for (int slot = 0; slot < 9; ++slot) {
-				ItemStack stack = diamondLogic.getStackInSlot(dir.ordinal() * 9 + slot);
+            for (int slot = 0; slot < 9; ++slot)
+            {
+                ItemStack stack = diamondLogic.getStackInSlot(dir.ordinal() * 9 + slot);
 
-				if (stack != null) {
-					foundFilter = true;
-				}
+                if (stack != null)
+                {
+                    foundFilter = true;
+                }
 
-				if (stack != null && stack.itemID == item.getItemStack().itemID)
-					if ((Item.itemsList[item.getItemStack().itemID].isDamageable())) {
-						filteredOrientations.add(dir);
-					} else if (stack.getItemDamage() == item.getItemStack().getItemDamage()) {
-						filteredOrientations.add(dir);
-					}
-			}
-			if (!foundFilter) {
-				defaultOrientations.add(dir);
-			}
-		}
-		if (filteredOrientations.size() != 0)
-			return filteredOrientations;
-		else
-			return defaultOrientations;
-	}
+                if (stack != null && stack.itemID == item.getItemStack().itemID)
+                    if ((Item.itemsList[item.getItemStack().itemID].isDamageable()))
+                    {
+                        filteredOrientations.add(dir);
+                    }
+                    else if (stack.getItemDamage() == item.getItemStack().getItemDamage())
+                    {
+                        filteredOrientations.add(dir);
+                    }
+            }
 
-	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
+            if (!foundFilter)
+            {
+                defaultOrientations.add(dir);
+            }
+        }
 
-	}
+        if (filteredOrientations.size() != 0)
+        {
+            return filteredOrientations;
+        }
+        else
+        {
+            return defaultOrientations;
+        }
+    }
 
-	@Override
-	public void readjustSpeed(IPipedItem item) {
-		((PipeTransportItems) transport).defaultReajustSpeed(item);
-	}
+    @Override
+    public void entityEntered(IPipedItem item, ForgeDirection orientation)
+    {
+    }
 
-	// ICLIENTSTATE
-	@Override
-	public void writeData(DataOutputStream data) throws IOException {
-		NBTTagCompound nbt = new NBTTagCompound();
-		((PipeLogicDiamond) logic).writeToNBT(nbt);
-		NBTBase.writeNamedTag(nbt, data);
-	}
+    @Override
+    public void readjustSpeed(IPipedItem item)
+    {
+        ((PipeTransportItems) transport).defaultReajustSpeed(item);
+    }
 
-	@Override
-	public void readData(DataInputStream data) throws IOException {
-		NBTBase nbt = NBTBase.readNamedTag(data);
-		if (nbt instanceof NBTTagCompound) {
-			logic.readFromNBT((NBTTagCompound) nbt);
-		}
-	}
+    // ICLIENTSTATE
+    @Override
+    public void writeData(DataOutputStream data) throws IOException
+    {
+        NBTTagCompound nbt = new NBTTagCompound();
+        ((PipeLogicDiamond) logic).writeToNBT(nbt);
+        NBTBase.writeNamedTag(nbt, data);
+    }
 
+    @Override
+    public void readData(DataInputStream data) throws IOException
+    {
+        NBTBase nbt = NBTBase.readNamedTag(data);
+
+        if (nbt instanceof NBTTagCompound)
+        {
+            logic.readFromNBT((NBTTagCompound) nbt);
+        }
+    }
 }

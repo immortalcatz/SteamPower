@@ -13,38 +13,48 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsIron extends Pipe {
+public class PipeItemsIron extends Pipe
+{
+    private int baseTexture = 1 * 16 + 2;
+    private int plainTexture = 1 * 16 + 3;
 
-	private int baseTexture = 1 * 16 + 2;
-	private int plainTexture = 1 * 16 + 3;
+    public PipeItemsIron(int itemID)
+    {
+        super(new PipeTransportItems(), new PipeLogicIron(), itemID);
+        ((PipeTransportItems) transport).allowBouncing = true;
+    }
 
-	public PipeItemsIron(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicIron(), itemID);
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-		((PipeTransportItems) transport).allowBouncing = true;
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        if (direction == ForgeDirection.UNKNOWN)
+        {
+            return baseTexture;
+        }
+        else
+        {
+            int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+            if (metadata == direction.ordinal())
+            {
+                return baseTexture;
+            }
+            else
+            {
+                return plainTexture;
+            }
+        }
+    }
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN)
-			return baseTexture;
-		else {
-			int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-
-			if (metadata == direction.ordinal())
-				return baseTexture;
-			else
-				return plainTexture;
-		}
-	}
-
-	@Override
-	public boolean canConnectRedstone() {
-		return true;
-	}
+    @Override
+    public boolean canConnectRedstone()
+    {
+        return true;
+    }
 }

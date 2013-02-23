@@ -27,204 +27,238 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class BlockQuarry extends BlockMachineRoot {
+public class BlockQuarry extends BlockMachineRoot
+{
+    int textureTop;
+    int textureFront;
+    int textureSide;
 
-	int textureTop;
-	int textureFront;
-	int textureSide;
+    public BlockQuarry(int i)
+    {
+        super(i, Material.iron);
+        setHardness(1.5F);
+        setResistance(10F);
+        setStepSound(soundStoneFootstep);
+        textureSide = 2 * 16 + 9;
+        textureFront = 2 * 16 + 7;
+        textureTop = 2 * 16 + 8;
+    }
 
-	public BlockQuarry(int i) {
-		super(i, Material.iron);
+    @Override
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
+    {
+        super.onBlockPlacedBy(world, i, j, k, entityliving);
+        ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
+        world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
 
-		setHardness(1.5F);
-		setResistance(10F);
-		setStepSound(soundStoneFootstep);
+        if (entityliving instanceof EntityPlayer)
+        {
+            TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
+            tq.placedBy = (EntityPlayer) entityliving;
+        }
+    }
 
-		textureSide = 2 * 16 + 9;
-		textureFront = 2 * 16 + 7;
-		textureTop = 2 * 16 + 8;
+    @Override
+    public int getBlockTextureFromSideAndMetadata(int i, int j)
+    {
+        // If no metadata is set, then this is an icon.
+        if (j == 0 && i == 3)
+        {
+            return textureFront;
+        }
 
-	}
+        if (i == j)
+        {
+            return textureFront;
+        }
 
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving);
+        switch (i)
+        {
+            case 1:
+                return textureTop;
 
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
+            default:
+                return textureSide;
+        }
+    }
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
-		if (entityliving instanceof EntityPlayer) {
-			TileQuarry tq = (TileQuarry) world.getBlockTileEntity(i, j, k);
-			tq.placedBy = (EntityPlayer) entityliving;
-		}
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1)
+    {
+        return new TileQuarry();
+    }
 
-	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3)
-			return textureFront;
+    public void searchFrames(World world, int i, int j, int k)
+    {
+        int width2 = 1;
 
-		if (i == j)
-			return textureFront;
+        if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
+        {
+            return;
+        }
 
-		switch (i) {
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
-		}
-	}
+        int blockID = world.getBlockId(i, j, k);
 
-	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TileQuarry();
-	}
+        if (blockID != BuildCraftFactory.frameBlock.blockID)
+        {
+            return;
+        }
 
-	public void searchFrames(World world, int i, int j, int k) {
-		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2))
-			return;
+        int meta = world.getBlockMetadata(i, j, k);
 
-		int blockID = world.getBlockId(i, j, k);
+        if ((meta & 8) == 0)
+        {
+            world.setBlockMetadata(i, j, k, meta | 8);
+            ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
 
-		if (blockID != BuildCraftFactory.frameBlock.blockID)
-			return;
+            for (ForgeDirection dir : dirs)
+            {
+                switch (dir)
+                {
+                    case UP:
+                        searchFrames(world, i, j + 1, k);
 
-		int meta = world.getBlockMetadata(i, j, k);
+                    case DOWN:
+                        searchFrames(world, i, j - 1, k);
 
-		if ((meta & 8) == 0) {
-			world.setBlockMetadata(i, j, k, meta | 8);
+                    case SOUTH:
+                        searchFrames(world, i, j, k + 1);
 
-			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
+                    case NORTH:
+                        searchFrames(world, i, j, k - 1);
 
-			for (ForgeDirection dir : dirs) {
-				switch (dir) {
-				case UP:
-					searchFrames(world, i, j + 1, k);
-				case DOWN:
-					searchFrames(world, i, j - 1, k);
-				case SOUTH:
-					searchFrames(world, i, j, k + 1);
-				case NORTH:
-					searchFrames(world, i, j, k - 1);
-				case EAST:
-					searchFrames(world, i + 1, j, k);
-				case WEST:
-				default:
-					searchFrames(world, i - 1, j, k);
-				}
-			}
-		}
-	}
+                    case EAST:
+                        searchFrames(world, i + 1, j, k);
 
-	private void markFrameForDecay(World world, int x, int y, int z) {
-		if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID) {
-			world.setBlockMetadata(x, y, z, 1);
-		}
-	}
+                    case WEST:
+                    default:
+                        searchFrames(world, i - 1, j, k);
+                }
+            }
+        }
+    }
 
-	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
+    private void markFrameForDecay(World world, int x, int y, int z)
+    {
+        if (world.getBlockId(x, y, z) == BuildCraftFactory.frameBlock.blockID)
+        {
+            world.setBlockMetadata(x, y, z, 1);
+        }
+    }
 
-		if (!CoreProxy.proxy.isSimulating(world))
-			return;
+    @Override
+    public void breakBlock(World world, int i, int j, int k, int par5, int par6)
+    {
+        if (!CoreProxy.proxy.isSimulating(world))
+        {
+            return;
+        }
 
-		TileEntity tile = world.getBlockTileEntity(i, j, k);
-		if (tile instanceof TileQuarry) {
-			TileQuarry quarry = (TileQuarry) tile;
-			Box box = quarry.box;
-			if (box.isInitialized() && Integer.MAX_VALUE != box.xMax) {
-				// X - Axis
-				for (int x = box.xMin; x <= box.xMax; x++) {
-					markFrameForDecay(world, x, box.yMin, box.zMin);
-					markFrameForDecay(world, x, box.yMax, box.zMin);
-					markFrameForDecay(world, x, box.yMin, box.zMax);
-					markFrameForDecay(world, x, box.yMax, box.zMax);
-				}
+        TileEntity tile = world.getBlockTileEntity(i, j, k);
 
-				// Z - Axis
-				for (int z = box.zMin + 1; z <= box.zMax - 1; z++) {
-					markFrameForDecay(world, box.xMin, box.yMin, z);
-					markFrameForDecay(world, box.xMax, box.yMin, z);
-					markFrameForDecay(world, box.xMin, box.yMax, z);
-					markFrameForDecay(world, box.xMax, box.yMax, z);
-				}
+        if (tile instanceof TileQuarry)
+        {
+            TileQuarry quarry = (TileQuarry) tile;
+            Box box = quarry.box;
 
-				// Y - Axis
-				for (int y = box.yMin + 1; y <= box.yMax - 1; y++) {
+            if (box.isInitialized() && Integer.MAX_VALUE != box.xMax)
+            {
+                // X - Axis
+                for (int x = box.xMin; x <= box.xMax; x++)
+                {
+                    markFrameForDecay(world, x, box.yMin, box.zMin);
+                    markFrameForDecay(world, x, box.yMax, box.zMin);
+                    markFrameForDecay(world, x, box.yMin, box.zMax);
+                    markFrameForDecay(world, x, box.yMax, box.zMax);
+                }
 
-					markFrameForDecay(world, box.xMin, y, box.zMin);
-					markFrameForDecay(world, box.xMax, y, box.zMin);
-					markFrameForDecay(world, box.xMin, y, box.zMax);
-					markFrameForDecay(world, box.xMax, y, box.zMax);
-				}
-			}
-			quarry.destroy();
-		}
+                // Z - Axis
+                for (int z = box.zMin + 1; z <= box.zMax - 1; z++)
+                {
+                    markFrameForDecay(world, box.xMin, box.yMin, z);
+                    markFrameForDecay(world, box.xMax, box.yMin, z);
+                    markFrameForDecay(world, box.xMin, box.yMax, z);
+                    markFrameForDecay(world, box.xMax, box.yMax, z);
+                }
 
-		Utils.preDestroyBlock(world, i, j, k);
+                // Y - Axis
+                for (int y = box.yMin + 1; y <= box.yMax - 1; y++)
+                {
+                    markFrameForDecay(world, box.xMin, y, box.zMin);
+                    markFrameForDecay(world, box.xMax, y, box.zMin);
+                    markFrameForDecay(world, box.xMin, y, box.zMax);
+                    markFrameForDecay(world, box.xMax, y, box.zMax);
+                }
+            }
 
-		// byte width = 1;
-		// int width2 = width + 1;
-		//
-		// if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-		//
-		// boolean frameFound = false;
-		// for (int z = -width; z <= width; ++z) {
-		//
-		// for (int y = -width; y <= width; ++y) {
-		//
-		// for (int x = -width; x <= width; ++x) {
-		//
-		// int blockID = world.getBlockId(i + z, j + y, k + x);
-		//
-		// if (blockID == BuildCraftFactory.frameBlock.blockID) {
-		// searchFrames(world, i + z, j + y, k + x);
-		// frameFound = true;
-		// break;
-		// }
-		// }
-		// if (frameFound)
-		// break;
-		// }
-		// if (frameFound)
-		// break;
-		// }
-		// }
+            quarry.destroy();
+        }
 
-		super.breakBlock(world, i, j, k, par5, par6);
-	}
+        Utils.preDestroyBlock(world, i, j, k);
+        // byte width = 1;
+        // int width2 = width + 1;
+        //
+        // if (world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+        //
+        // boolean frameFound = false;
+        // for (int z = -width; z <= width; ++z) {
+        //
+        // for (int y = -width; y <= width; ++y) {
+        //
+        // for (int x = -width; x <= width; ++x) {
+        //
+        // int blockID = world.getBlockId(i + z, j + y, k + x);
+        //
+        // if (blockID == BuildCraftFactory.frameBlock.blockID) {
+        // searchFrames(world, i + z, j + y, k + x);
+        // frameFound = true;
+        // break;
+        // }
+        // }
+        // if (frameFound)
+        // break;
+        // }
+        // if (frameFound)
+        // break;
+        // }
+        // }
+        super.breakBlock(world, i, j, k, par5, par6);
+    }
 
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
+    @Override
+    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
+    {
+        TileQuarry tile = (TileQuarry) world.getBlockTileEntity(i, j, k);
 
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
-			return false;
+        // Drop through if the player is sneaking
+        if (entityplayer.isSneaking())
+        {
+            return false;
+        }
 
-		// Restart the quarry if its a wrench
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+        // Restart the quarry if its a wrench
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 
-			tile.reinitalize();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
-			return true;
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k))
+        {
+            tile.reinitalize();
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+            return true;
+        }
 
-		}
+        return false;
+    }
 
-		return false;
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
+    @SuppressWarnings( { "unchecked", "rawtypes" })
+    @Override
+    public void addCreativeItems(ArrayList itemList)
+    {
+        itemList.add(new ItemStack(this));
+    }
 }

@@ -14,52 +14,66 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 
-public class FillerFillWalls extends FillerPattern {
+public class FillerFillWalls extends FillerPattern
+{
+    @Override
+    public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace)
+    {
+        int xMin = (int) box.pMin().x;
+        int yMin = (int) box.pMin().y;
+        int zMin = (int) box.pMin().z;
+        int xMax = (int) box.pMax().x;
+        int yMax = (int) box.pMax().y;
+        int zMax = (int) box.pMax().z;
 
-	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+        if (fill(xMin, yMin, zMin, xMax, yMin, zMax, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
+        if (fill(xMin, yMin, zMin, xMin, yMax, zMax, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		if (fill(xMin, yMin, zMin, xMax, yMin, zMax, stackToPlace, tile.worldObj))
-			return false;
+        if (fill(xMin, yMin, zMin, xMax, yMax, zMin, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		if (fill(xMin, yMin, zMin, xMin, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
+        if (fill(xMax, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		if (fill(xMin, yMin, zMin, xMax, yMax, zMin, stackToPlace, tile.worldObj))
-			return false;
+        if (fill(xMin, yMin, zMax, xMax, yMax, zMax, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		if (fill(xMax, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
+        if (fill(xMin, yMax, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
+        {
+            return false;
+        }
 
-		if (fill(xMin, yMin, zMax, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
+        return true;
+    }
 
-		if (fill(xMin, yMax, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj))
-			return false;
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-		return true;
-	}
+    @Override
+    public int getTextureIndex()
+    {
+        return 4 * 16 + 6;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 6;
-	}
-
-	@Override
-	public String getName() {
-		return "Walls";
-	}
-
+    @Override
+    public String getName()
+    {
+        return "Walls";
+    }
 }

@@ -4,29 +4,37 @@ import java.util.LinkedList;
 
 import net.minecraftforge.liquids.LiquidStack;
 
-public class IronEngineCoolant {
+public class IronEngineCoolant
+{
+    public static LinkedList<IronEngineCoolant> coolants = new LinkedList<IronEngineCoolant>();
 
-	public static LinkedList<IronEngineCoolant> coolants = new LinkedList<IronEngineCoolant>();
+    public static IronEngineCoolant getCoolantForLiquid(LiquidStack liquid)
+    {
+        if (liquid == null)
+        {
+            return null;
+        }
 
-	public static IronEngineCoolant getCoolantForLiquid(LiquidStack liquid) {
-		if (liquid == null)
-			return null;
-		if (liquid.itemID <= 0)
-			return null;
+        if (liquid.itemID <= 0)
+        {
+            return null;
+        }
 
-		for (IronEngineCoolant coolant : coolants)
-			if (coolant.liquid.isLiquidEqual(liquid))
-				return coolant;
+        for (IronEngineCoolant coolant : coolants)
+            if (coolant.liquid.isLiquidEqual(liquid))
+            {
+                return coolant;
+            }
 
-		return null;
-	}
+        return null;
+    }
 
-	public final LiquidStack liquid;
-	public final float coolingPerUnit;
+    public final LiquidStack liquid;
+    public final float coolingPerUnit;
 
-	public IronEngineCoolant(LiquidStack liquid, float coolingPerUnit) {
-		this.liquid = liquid;
-		this.coolingPerUnit = coolingPerUnit;
-	}
-
+    public IronEngineCoolant(LiquidStack liquid, float coolingPerUnit)
+    {
+        this.liquid = liquid;
+        this.coolingPerUnit = coolingPerUnit;
+    }
 }

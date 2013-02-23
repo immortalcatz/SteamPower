@@ -11,71 +11,66 @@ import org.lwjgl.opengl.GL11;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 
-public class RenderLaser extends Render {
+public class RenderLaser extends Render
+{
+    protected ModelBase model = new ModelBase()
+    {
+    };
+    private ModelRenderer box;
 
-	protected ModelBase model = new ModelBase() {
-	};
-	private ModelRenderer box;
+    public RenderLaser()
+    {
+        box = new ModelRenderer(model, 0, 0);
+        box.addBox(0, -0.5F, -0.5F, 16, 1, 1);
+        box.rotationPointX = 0;
+        box.rotationPointY = 0;
+        box.rotationPointZ = 0;
+    }
 
-	public RenderLaser() {
+    @Override
+    public void doRender(Entity entity, double x, double y, double z, float f, float f1)
+    {
+        doRender((EntityLaser) entity, x, y, z, f, f1);
+        entity.setAngles(45, 180);
+    }
 
-		box = new ModelRenderer(model, 0, 0);
-		box.addBox(0, -0.5F, -0.5F, 16, 1, 1);
-		box.rotationPointX = 0;
-		box.rotationPointY = 0;
-		box.rotationPointZ = 0;
-	}
+    private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1)
+    {
+        if (!laser.isVisible() || laser.getTexture() == null)
+        {
+            return;
+        }
 
-	@Override
-	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
+        GL11.glPushMatrix();
+        GL11.glDisable(GL11.GL_LIGHTING);
+        Position offset = laser.renderOffset();
+        GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
+        GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
+        GL11.glRotatef((float) laser.angleY, 0, 0, 1);
+        ForgeHooksClient.bindTexture(laser.getTexture(), 0);
+        float factor = (float)(1.0 / 16.0);
+        float lasti = 0;
 
-		doRender((EntityLaser) entity, x, y, z, f, f1);
-		entity.setAngles(45, 180);
-	}
+        for (float i = 0; i <= laser.renderSize - 1; ++i)
+        {
+            getBox(laser).render(factor);
+            GL11.glTranslated(1, 0, 0);
+            lasti = i;
+        }
 
-	private void doRender(EntityLaser laser, double x, double y, double z, float f, float f1) {
+        lasti++;
+        GL11.glScalef(((float) laser.renderSize - lasti), 1, 1);
+        getBox(laser).render(factor);
+        iterate(laser);
+        GL11.glPopMatrix();
+    }
 
-		if (!laser.isVisible() || laser.getTexture() == null)
-			return;
+    protected void iterate(EntityLaser laser)
+    {
+    }
 
-		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
-
-		Position offset = laser.renderOffset();
-		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
-
-		GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
-		GL11.glRotatef((float) laser.angleY, 0, 0, 1);
-
-		ForgeHooksClient.bindTexture(laser.getTexture(), 0);
-
-		float factor = (float) (1.0 / 16.0);
-
-		float lasti = 0;
-
-		for (float i = 0; i <= laser.renderSize - 1; ++i) {
-			getBox(laser).render(factor);
-			GL11.glTranslated(1, 0, 0);
-			lasti = i;
-		}
-
-		lasti++;
-
-		GL11.glScalef(((float) laser.renderSize - lasti), 1, 1);
-		getBox(laser).render(factor);
-
-		iterate(laser);
-
-		GL11.glPopMatrix();
-
-	}
-
-	protected void iterate(EntityLaser laser) {
-
-	}
-
-	protected ModelRenderer getBox(EntityLaser laser) {
-		return box;
-	}
-
+    protected ModelRenderer getBox(EntityLaser laser)
+    {
+        return box;
+    }
 }

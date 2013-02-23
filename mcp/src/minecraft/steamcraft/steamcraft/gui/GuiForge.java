@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 
-
 public class GuiForge extends GuiContainer
 {
     private TileEntityForge furnaceInventory;

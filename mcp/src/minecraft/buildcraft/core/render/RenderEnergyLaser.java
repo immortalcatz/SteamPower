@@ -13,34 +13,38 @@ import net.minecraft.client.model.ModelRenderer;
 import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.EntityLaser;
 
-public class RenderEnergyLaser extends RenderLaser {
+public class RenderEnergyLaser extends RenderLaser
+{
+    private ModelRenderer box[] = new ModelRenderer[40];
 
-	private ModelRenderer box[] = new ModelRenderer[40];
+    public RenderEnergyLaser()
+    {
+        for (int i = 0; i < box.length; ++i)
+        {
+            box[i] = new ModelRenderer(model, box.length - i, 0);
+            box[i].addBox(0, -0.5F, -0.5F, 16, 1, 1);
+            box[i].rotationPointX = 0;
+            box[i].rotationPointY = 0;
+            box[i].rotationPointZ = 0;
+        }
+    }
 
-	public RenderEnergyLaser() {
-		for (int i = 0; i < box.length; ++i) {
-			box[i] = new ModelRenderer(model, box.length - i, 0);
-			box[i].addBox(0, -0.5F, -0.5F, 16, 1, 1);
-			box[i].rotationPointX = 0;
-			box[i].rotationPointY = 0;
-			box[i].rotationPointZ = 0;
-		}
-	}
+    @Override
+    protected ModelRenderer getBox(EntityLaser laser)
+    {
+        EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
+        return box[eLaser.displayStage / 10];
+    }
 
-	@Override
-	protected ModelRenderer getBox(EntityLaser laser) {
-		EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
+    @Override
+    protected void iterate(EntityLaser laser)
+    {
+        EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
+        eLaser.displayStage = eLaser.displayStage + 1;
 
-		return box[eLaser.displayStage / 10];
-	}
-
-	@Override
-	protected void iterate(EntityLaser laser) {
-		EntityEnergyLaser eLaser = (EntityEnergyLaser) laser;
-
-		eLaser.displayStage = eLaser.displayStage + 1;
-		if (eLaser.displayStage >= box.length * 10) {
-			eLaser.displayStage = 0;
-		}
-	}
+        if (eLaser.displayStage >= box.length * 10)
+        {
+            eLaser.displayStage = 0;
+        }
+    }
 }

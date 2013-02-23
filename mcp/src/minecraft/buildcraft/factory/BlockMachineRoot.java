@@ -16,27 +16,33 @@ import net.minecraft.world.IBlockAccess;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IMachine;
 
-public abstract class BlockMachineRoot extends BlockContainer {
+public abstract class BlockMachineRoot extends BlockContainer
+{
+    protected BlockMachineRoot(int i, Material material)
+    {
+        super(i, material);
+        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+    }
 
-	protected BlockMachineRoot(int i, Material material) {
-		super(i, material);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-	}
+    @Override
+    public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k)
+    {
+        for (int x = i - 1; x <= i + 1; ++x)
+        {
+            for (int y = j - 1; y <= j + 1; ++y)
+            {
+                for (int z = k - 1; z <= k + 1; ++z)
+                {
+                    TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
 
-	@Override
-	public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-		for (int x = i - 1; x <= i + 1; ++x) {
-			for (int y = j - 1; y <= j + 1; ++y) {
-				for (int z = k - 1; z <= k + 1; ++z) {
-					TileEntity tile = iblockaccess.getBlockTileEntity(x, y, z);
+                    if (tile instanceof IMachine && ((IMachine) tile).isActive())
+                    {
+                        return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
+                    }
+                }
+            }
+        }
 
-					if (tile instanceof IMachine && ((IMachine) tile).isActive())
-						return super.getBlockBrightness(iblockaccess, i, j, k) + 0.5F;
-				}
-			}
-		}
-
-		return super.getBlockBrightness(iblockaccess, i, j, k);
-	}
-
+        return super.getBlockBrightness(iblockaccess, i, j, k);
+    }
 }

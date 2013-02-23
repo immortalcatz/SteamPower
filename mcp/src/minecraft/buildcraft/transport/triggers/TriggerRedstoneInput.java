@@ -15,42 +15,58 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.ITriggerPipe;
 import buildcraft.transport.Pipe;
 
-public class TriggerRedstoneInput extends Trigger implements ITriggerPipe {
+public class TriggerRedstoneInput extends Trigger implements ITriggerPipe
+{
+    boolean active;
 
-	boolean active;
+    public TriggerRedstoneInput(int id, boolean active)
+    {
+        super(id);
+        this.active = active;
+    }
 
-	public TriggerRedstoneInput(int id, boolean active) {
-		super(id);
+    @Override
+    public int getIndexInTexture()
+    {
+        if (active)
+        {
+            return 0 * 16 + 0;
+        }
+        else
+        {
+            return 0 * 16 + 1;
+        }
+    }
 
-		this.active = active;
-	}
+    @Override
+    public String getDescription()
+    {
+        if (active)
+        {
+            return "Redstone Signal On";
+        }
+        else
+        {
+            return "Redstone Signal Off";
+        }
+    }
 
-	@Override
-	public int getIndexInTexture() {
-		if (active)
-			return 0 * 16 + 0;
-		else
-			return 0 * 16 + 1;
-	}
+    @Override
+    public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter)
+    {
+        if (active)
+        {
+            return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+        }
+        else
+        {
+            return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		if (active)
-			return "Redstone Signal On";
-		else
-			return "Redstone Signal Off";
-	}
-
-	@Override
-	public boolean isTriggerActive(Pipe pipe, ITriggerParameter parameter) {
-		if (active)
-			return pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-		else
-			return !pipe.worldObj.isBlockIndirectlyGettingPowered(pipe.xCoord, pipe.yCoord, pipe.zCoord);
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_TRIGGERS;
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_TRIGGERS;
+    }
 }

@@ -19,50 +19,56 @@ import buildcraft.transport.IPipeTransportItemsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook {
+public class PipeItemsGold extends Pipe implements IPipeTransportItemsHook
+{
+    public PipeItemsGold(int itemID)
+    {
+        super(new PipeTransportItems(), new PipeLogicGold(), itemID);
+    }
 
-	public PipeItemsGold(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicGold(), itemID);
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        return 1 * 16 + 14;
+    }
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 1 * 16 + 14;
-	}
+    // @Override
+    // public boolean isPipeConnected(TileEntity tile) {
+    // if (!super.isPipeConnected(tile))
+    // return false;
+    //
+    // Pipe pipe2 = null;
+    //
+    // if (tile instanceof TileGenericPipe)
+    // pipe2 = ((TileGenericPipe) tile).pipe;
+    //
+    // if (BuildCraftTransport.alwaysConnectPipes)
+    // return super.isPipeConnected(tile);
+    // else
+    // return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
+    // }
 
-	// @Override
-	// public boolean isPipeConnected(TileEntity tile) {
-	// if (!super.isPipeConnected(tile))
-	// return false;
-	//
-	// Pipe pipe2 = null;
-	//
-	// if (tile instanceof TileGenericPipe)
-	// pipe2 = ((TileGenericPipe) tile).pipe;
-	//
-	// if (BuildCraftTransport.alwaysConnectPipes)
-	// return super.isPipeConnected(tile);
-	// else
-	// return (pipe2 == null || !(pipe2.logic instanceof PipeLogicGold)) && super.isPipeConnected(tile);
-	// }
+    @Override
+    public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item)
+    {
+        return possibleOrientations;
+    }
 
-	@Override
-	public LinkedList<ForgeDirection> filterPossibleMovements(LinkedList<ForgeDirection> possibleOrientations, Position pos, IPipedItem item) {
-		return possibleOrientations;
-	}
+    @Override
+    public void entityEntered(IPipedItem item, ForgeDirection orientation)
+    {
+        item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
+    }
 
-	@Override
-	public void entityEntered(IPipedItem item, ForgeDirection orientation) {
-		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
-	}
-
-	@Override
-	public void readjustSpeed(IPipedItem item) {
-		item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
-	}
+    @Override
+    public void readjustSpeed(IPipedItem item)
+    {
+        item.setSpeed(Math.min(Math.max(Utils.pipeNormalSpeed, item.getSpeed()) * 2f, Utils.pipeNormalSpeed * 30F));
+    }
 }

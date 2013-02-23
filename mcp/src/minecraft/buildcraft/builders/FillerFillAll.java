@@ -14,34 +14,35 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 
-public class FillerFillAll extends FillerPattern {
+public class FillerFillAll extends FillerPattern
+{
+    @Override
+    public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace)
+    {
+        int xMin = (int) box.pMin().x;
+        int yMin = (int) box.pMin().y;
+        int zMin = (int) box.pMin().z;
+        int xMax = (int) box.pMax().x;
+        int yMax = (int) box.pMax().y;
+        int zMax = (int) box.pMax().z;
+        return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
+    }
 
-	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
+    @Override
+    public int getTextureIndex()
+    {
+        return 4 * 16 + 3;
+    }
 
-		return !fill(xMin, yMin, zMin, xMax, yMax, zMax, stackToPlace, tile.worldObj);
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 3;
-	}
-
-	@Override
-	public String getName() {
-		return "Fill";
-	}
-
+    @Override
+    public String getName()
+    {
+        return "Fill";
+    }
 }

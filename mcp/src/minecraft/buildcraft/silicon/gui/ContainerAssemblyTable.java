@@ -17,57 +17,67 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable.SelectionMessage;
 
-public class ContainerAssemblyTable extends BuildCraftContainer {
-	IInventory playerIInventory;
-	TileAssemblyTable table;
+public class ContainerAssemblyTable extends BuildCraftContainer
+{
+    IInventory playerIInventory;
+    TileAssemblyTable table;
 
-	boolean networkSynchronized = false;
+    boolean networkSynchronized = false;
 
-	public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table) {
-		super(table.getSizeInventory());
-		this.playerIInventory = playerInventory;
+    public ContainerAssemblyTable(IInventory playerInventory, TileAssemblyTable table)
+    {
+        super(table.getSizeInventory());
+        this.playerIInventory = playerInventory;
 
-		for (int l = 0; l < 4; l++) {
-			for (int k1 = 0; k1 < 3; k1++) {
-				addSlotToContainer(new Slot(table, k1 + l * 3, 8 + k1 * 18, 36 + l * 18));
-			}
+        for (int l = 0; l < 4; l++)
+        {
+            for (int k1 = 0; k1 < 3; k1++)
+            {
+                addSlotToContainer(new Slot(table, k1 + l * 3, 8 + k1 * 18, 36 + l * 18));
+            }
+        }
 
-		}
+        for (int l = 0; l < 3; l++)
+        {
+            for (int k1 = 0; k1 < 9; k1++)
+            {
+                addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+            }
+        }
 
-		for (int l = 0; l < 3; l++) {
-			for (int k1 = 0; k1 < 9; k1++) {
-				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
-			}
+        for (int i1 = 0; i1 < 9; i1++)
+        {
+            addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
+        }
 
-		}
+        this.table = table;
+    }
 
-		for (int i1 = 0; i1 < 9; i1++) {
-			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 181));
-		}
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer)
+    {
+        return table.isUseableByPlayer(entityplayer);
+    }
 
-		this.table = table;
-	}
+    public void handleSelectionMessage(SelectionMessage message)
+    {
+        table.handleSelectionMessage(message);
+    }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return table.isUseableByPlayer(entityplayer);
-	}
+    @Override
+    public void updateProgressBar(int i, int j)
+    {
+        table.getGUINetworkData(i, j);
+    }
 
-	public void handleSelectionMessage(SelectionMessage message) {
-		table.handleSelectionMessage(message);
-	}
+    @Override
+    public void detectAndSendChanges()
+    {
+        super.detectAndSendChanges();
 
-	@Override
-	public void updateProgressBar(int i, int j) {
-		table.getGUINetworkData(i, j);
-	}
-
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-
-		for (int i = 0; i < crafters.size(); i++) {
-			table.sendGUINetworkData(this, (ICrafting) crafters.get(i));
-		}
-	}
+        for (int i = 0; i < crafters.size(); i++)
+        {
+            table.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+        }
+    }
 }

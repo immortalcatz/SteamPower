@@ -14,45 +14,52 @@ import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.IMachine;
 
-public class DefaultTriggerProvider implements ITriggerProvider {
+public class DefaultTriggerProvider implements ITriggerProvider
+{
+    @Override
+    public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile)
+    {
+        if (tile instanceof IOverrideDefaultTriggers)
+        {
+            return ((IOverrideDefaultTriggers) tile).getTriggers();
+        }
 
-	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
-		if (tile instanceof IOverrideDefaultTriggers)
-			return ((IOverrideDefaultTriggers) tile).getTriggers();
+        LinkedList<ITrigger> res = new LinkedList<ITrigger>();
 
-		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
+        if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
+        {
+            res.add(BuildCraftCore.triggerEmptyInventory);
+            res.add(BuildCraftCore.triggerContainsInventory);
+            res.add(BuildCraftCore.triggerSpaceInventory);
+            res.add(BuildCraftCore.triggerFullInventory);
+        }
 
-		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
-			res.add(BuildCraftCore.triggerEmptyInventory);
-			res.add(BuildCraftCore.triggerContainsInventory);
-			res.add(BuildCraftCore.triggerSpaceInventory);
-			res.add(BuildCraftCore.triggerFullInventory);
-		}
+        if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN).length > 0)
+        {
+            res.add(BuildCraftCore.triggerEmptyLiquid);
+            res.add(BuildCraftCore.triggerContainsLiquid);
+            res.add(BuildCraftCore.triggerSpaceLiquid);
+            res.add(BuildCraftCore.triggerFullLiquid);
+        }
 
-		if (tile instanceof ITankContainer && ((ITankContainer) tile).getTanks(ForgeDirection.UNKNOWN).length > 0) {
-			res.add(BuildCraftCore.triggerEmptyLiquid);
-			res.add(BuildCraftCore.triggerContainsLiquid);
-			res.add(BuildCraftCore.triggerSpaceLiquid);
-			res.add(BuildCraftCore.triggerFullLiquid);
-		}
+        if (tile instanceof IMachine)
+        {
+            res.add(BuildCraftCore.triggerMachineActive);
+            res.add(BuildCraftCore.triggerMachineInactive);
+        }
 
-		if (tile instanceof IMachine) {
-			res.add(BuildCraftCore.triggerMachineActive);
-			res.add(BuildCraftCore.triggerMachineInactive);
-		}
+        if (block != null && block.canProvidePower())
+        {
+            // res.add(BuildCraftCore.triggerRedstoneActive);
+            // res.add(BuildCraftCore.triggerRedstoneInactive);
+        }
 
-		if (block != null && block.canProvidePower()) {
-			// res.add(BuildCraftCore.triggerRedstoneActive);
-			// res.add(BuildCraftCore.triggerRedstoneInactive);
-		}
+        return res;
+    }
 
-		return res;
-	}
-
-	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipe pipe) {
-		return null;
-	}
-
+    @Override
+    public LinkedList<ITrigger> getPipeTriggers(IPipe pipe)
+    {
+        return null;
+    }
 }

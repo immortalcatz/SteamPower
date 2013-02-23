@@ -20,198 +20,245 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 
-public class EngineStone extends Engine {
+public class EngineStone extends Engine
+{
+    int burnTime = 0;
+    int totalBurnTime = 0;
 
-	int burnTime = 0;
-	int totalBurnTime = 0;
+    private ItemStack itemInInventory;
 
-	private ItemStack itemInInventory;
+    public EngineStone(TileEngine engine)
+    {
+        super(engine);
+        maxEnergy = 10000;
+        maxEnergyExtracted = 100;
+    }
 
-	public EngineStone(TileEngine engine) {
-		super(engine);
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png";
+    }
 
-		maxEnergy = 10000;
-		maxEnergyExtracted = 100;
-	}
+    @Override
+    public int explosionRange()
+    {
+        return 4;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_PATH_BLOCKS + "/base_stone.png";
-	}
+    @Override
+    public int maxEnergyReceived()
+    {
+        return 200;
+    }
 
-	@Override
-	public int explosionRange() {
-		return 4;
-	}
+    @Override
+    public float getPistonSpeed()
+    {
+        switch (getEnergyStage())
+        {
+            case Blue:
+                return 0.02F;
 
-	@Override
-	public int maxEnergyReceived() {
-		return 200;
-	}
+            case Green:
+                return 0.04F;
 
-	@Override
-	public float getPistonSpeed() {
-		switch (getEnergyStage()) {
-		case Blue:
-			return 0.02F;
-		case Green:
-			return 0.04F;
-		case Yellow:
-			return 0.08F;
-		case Red:
-			return 0.16F;
-		default:
-			return 0;
-		}
-	}
+            case Yellow:
+                return 0.08F;
 
-	@Override
-	public boolean isBurning() {
-		return burnTime > 0;
-	}
+            case Red:
+                return 0.16F;
 
-	@Override
-	public void burn() {
-		currentOutput = 0;
-		if (burnTime > 0) {
-			burnTime--;
-			currentOutput = 1;
-			addEnergy(1);
-		}
+            default:
+                return 0;
+        }
+    }
 
-		if (burnTime == 0 && tile.isRedstonePowered) {
+    @Override
+    public boolean isBurning()
+    {
+        return burnTime > 0;
+    }
 
-			burnTime = totalBurnTime = getItemBurnTime(tile.getStackInSlot(0));
+    @Override
+    public void burn()
+    {
+        currentOutput = 0;
 
-			if (burnTime > 0) {
-				tile.setInventorySlotContents(0, Utils.consumeItem(tile.getStackInSlot(0)));
-			}
-		}
-	}
+        if (burnTime > 0)
+        {
+            burnTime--;
+            currentOutput = 1;
+            addEnergy(1);
+        }
 
-	@Override
-	public int getScaledBurnTime(int i) {
-		return (int) (((float) burnTime / (float) totalBurnTime) * i);
-	}
+        if (burnTime == 0 && tile.isRedstonePowered)
+        {
+            burnTime = totalBurnTime = getItemBurnTime(tile.getStackInSlot(0));
 
-	private int getItemBurnTime(ItemStack itemstack) {
-		if (itemstack == null)
-			return 0;
+            if (burnTime > 0)
+            {
+                tile.setInventorySlotContents(0, Utils.consumeItem(tile.getStackInSlot(0)));
+            }
+        }
+    }
 
-		return TileEntityFurnace.getItemBurnTime(itemstack);
-	}
+    @Override
+    public int getScaledBurnTime(int i)
+    {
+        return (int)(((float) burnTime / (float) totalBurnTime) * i);
+    }
 
-	/* SAVING & LOADING */
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		burnTime = nbttagcompound.getInteger("burnTime");
-		totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
+    private int getItemBurnTime(ItemStack itemstack)
+    {
+        if (itemstack == null)
+        {
+            return 0;
+        }
 
-		if (nbttagcompound.hasKey("itemInInventory")) {
-			NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
-			itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
-		}
+        return TileEntityFurnace.getItemBurnTime(itemstack);
+    }
 
-	}
+    /* SAVING & LOADING */
+    @Override
+    public void readFromNBT(NBTTagCompound nbttagcompound)
+    {
+        burnTime = nbttagcompound.getInteger("burnTime");
+        totalBurnTime = nbttagcompound.getInteger("totalBurnTime");
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		nbttagcompound.setInteger("burnTime", burnTime);
-		nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
+        if (nbttagcompound.hasKey("itemInInventory"))
+        {
+            NBTTagCompound cpt = nbttagcompound.getCompoundTag("itemInInventory");
+            itemInInventory = ItemStack.loadItemStackFromNBT(cpt);
+        }
+    }
 
-		if (itemInInventory != null) {
-			NBTTagCompound cpt = new NBTTagCompound();
-			itemInInventory.writeToNBT(cpt);
-			nbttagcompound.setTag("itemInInventory", cpt);
-		}
+    @Override
+    public void writeToNBT(NBTTagCompound nbttagcompound)
+    {
+        nbttagcompound.setInteger("burnTime", burnTime);
+        nbttagcompound.setInteger("totalBurnTime", totalBurnTime);
 
-	}
+        if (itemInInventory != null)
+        {
+            NBTTagCompound cpt = new NBTTagCompound();
+            itemInInventory.writeToNBT(cpt);
+            nbttagcompound.setTag("itemInInventory", cpt);
+        }
+    }
 
-	@Override
-	public void delete() {
-		ItemStack stack = tile.getStackInSlot(0);
-		if (stack != null) {
-			Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
-		}
-	}
+    @Override
+    public void delete()
+    {
+        ItemStack stack = tile.getStackInSlot(0);
 
-	@Override
-	public void getGUINetworkData(int i, int j) {
-		switch (i) {
-		case 0:
-			energy = j;
-			break;
-		case 1:
-			currentOutput = j;
-			break;
-		case 2:
-			burnTime = j;
-			break;
-		case 3:
-			totalBurnTime = j;
-			break;
-		}
-	}
+        if (stack != null)
+        {
+            Utils.dropItems(tile.worldObj, stack, tile.xCoord, tile.yCoord, tile.zCoord);
+        }
+    }
 
-	@Override
-	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy));
-		iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput));
-		iCrafting.sendProgressBarUpdate(containerEngine, 2, burnTime);
-		iCrafting.sendProgressBarUpdate(containerEngine, 3, totalBurnTime);
-	}
+    @Override
+    public void getGUINetworkData(int i, int j)
+    {
+        switch (i)
+        {
+            case 0:
+                energy = j;
+                break;
 
-	@Override
-	public int getHeat() {
-		return Math.round(energy);
-	}
+            case 1:
+                currentOutput = j;
+                break;
 
-	/* IINVENTORY */
-	@Override
-	public int getSizeInventory() {
-		return 1;
-	}
+            case 2:
+                burnTime = j;
+                break;
 
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return itemInInventory;
-	}
+            case 3:
+                totalBurnTime = j;
+                break;
+        }
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		itemInInventory = itemstack;
-	}
+    @Override
+    public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting)
+    {
+        iCrafting.sendProgressBarUpdate(containerEngine, 0, Math.round(energy));
+        iCrafting.sendProgressBarUpdate(containerEngine, 1, Math.round(currentOutput));
+        iCrafting.sendProgressBarUpdate(containerEngine, 2, burnTime);
+        iCrafting.sendProgressBarUpdate(containerEngine, 3, totalBurnTime);
+    }
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		if (itemInInventory != null) {
-			if (itemInInventory.stackSize <= 0) {
-				itemInInventory = null;
-				return null;
-			}
-			ItemStack newStack = itemInInventory;
-			if (amount >= newStack.stackSize) {
-				itemInInventory = null;
-			} else {
-				newStack = itemInInventory.splitStack(amount);
-			}
+    @Override
+    public int getHeat()
+    {
+        return Math.round(energy);
+    }
 
-			return newStack;
-		}
-		return null;
-	}
+    /* IINVENTORY */
+    @Override
+    public int getSizeInventory()
+    {
+        return 1;
+    }
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		if (itemInInventory == null)
-			return null;
-		ItemStack toReturn = itemInInventory;
-		itemInInventory = null;
-		return toReturn;
-	}
+    @Override
+    public ItemStack getStackInSlot(int i)
+    {
+        return itemInInventory;
+    }
 
-	@Override
-	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
-		return null;
-	}
+    @Override
+    public void setInventorySlotContents(int i, ItemStack itemstack)
+    {
+        itemInInventory = itemstack;
+    }
+
+    @Override
+    public ItemStack decrStackSize(int slot, int amount)
+    {
+        if (itemInInventory != null)
+        {
+            if (itemInInventory.stackSize <= 0)
+            {
+                itemInInventory = null;
+                return null;
+            }
+
+            ItemStack newStack = itemInInventory;
+
+            if (amount >= newStack.stackSize)
+            {
+                itemInInventory = null;
+            }
+            else
+            {
+                newStack = itemInInventory.splitStack(amount);
+            }
+
+            return newStack;
+        }
+
+        return null;
+    }
+
+    @Override
+    public ItemStack getStackInSlotOnClosing(int var1)
+    {
+        if (itemInInventory == null)
+        {
+            return null;
+        }
+
+        ItemStack toReturn = itemInInventory;
+        itemInInventory = null;
+        return toReturn;
+    }
+
+    @Override
+    public ILiquidTank getTank(ForgeDirection direction, LiquidStack type)
+    {
+        return null;
+    }
 }

@@ -20,91 +20,98 @@ import buildcraft.api.transport.IPipeEntry;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class PipeLogicIron extends PipeLogic {
+public class PipeLogicIron extends PipeLogic
+{
+    boolean lastPower = false;
 
-	boolean lastPower = false;
+    public void switchPower()
+    {
+        boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 
-	public void switchPower() {
-		boolean currentPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+        if (currentPower != lastPower)
+        {
+            switchPosition();
+            lastPower = currentPower;
+        }
+    }
 
-		if (currentPower != lastPower) {
-			switchPosition();
+    public void switchPosition()
+    {
+        int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        int nextMetadata = metadata;
 
-			lastPower = currentPower;
-		}
-	}
+        for (int l = 0; l < 6; ++l)
+        {
+            nextMetadata++;
 
-	public void switchPosition() {
-		int metadata = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+            if (nextMetadata > 5)
+            {
+                nextMetadata = 0;
+            }
 
-		int nextMetadata = metadata;
+            TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
 
-		for (int l = 0; l < 6; ++l) {
-			nextMetadata++;
+            if (tile instanceof TileGenericPipe)
+            {
+                Pipe pipe = ((TileGenericPipe) tile).pipe;
 
-			if (nextMetadata > 5) {
-				nextMetadata = 0;
-			}
+                if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone)
+                {
+                    continue;
+                }
+            }
 
-			TileEntity tile = container.getTile(ForgeDirection.values()[nextMetadata]);
+            if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe)
+            {
+                worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
+                container.scheduleRenderUpdate();
+                return;
+            }
+        }
+    }
 
-			if (tile instanceof TileGenericPipe) {
-				Pipe pipe = ((TileGenericPipe) tile).pipe;
-				if (pipe.logic instanceof PipeLogicWood || pipe instanceof PipeStructureCobblestone) {
-					continue;
-				}
-			}
+    @Override
+    public void initialize()
+    {
+        super.initialize();
+        lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+    }
 
-			if (tile instanceof IPipeEntry || tile instanceof IInventory || tile instanceof ITankContainer || tile instanceof TileGenericPipe) {
+    @Override
+    public void onBlockPlaced()
+    {
+        super.onBlockPlaced();
+        worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 1);
+        switchPosition();
+    }
 
-				worldObj.setBlockMetadata(xCoord, yCoord, zCoord, nextMetadata);
-				container.scheduleRenderUpdate();
-				return;
-			}
-		}
-	}
+    @Override
+    public boolean blockActivated(EntityPlayer entityplayer)
+    {
+        super.blockActivated(entityplayer);
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 
-	@Override
-	public void initialize() {
-		super.initialize();
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord))
+        {
+            switchPosition();
+            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
+            return true;
+        }
 
-		lastPower = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-	}
+        return false;
+    }
 
-	@Override
-	public void onBlockPlaced() {
-		super.onBlockPlaced();
+    @Override
+    public void onNeighborBlockChange(int blockId)
+    {
+        super.onNeighborBlockChange(blockId);
+        switchPower();
+    }
 
-		worldObj.setBlockMetadata(xCoord, yCoord, zCoord, 1);
-		switchPosition();
-	}
-
-	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		super.blockActivated(entityplayer);
-
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, this.xCoord, this.yCoord, this.zCoord)) {
-			switchPosition();
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, this.xCoord, this.yCoord, this.zCoord);
-
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
-
-		switchPower();
-	}
-
-	@Override
-	public boolean outputOpen(ForgeDirection to) {
-		return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-	}
-
+    @Override
+    public boolean outputOpen(ForgeDirection to)
+    {
+        return to.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+    }
 }

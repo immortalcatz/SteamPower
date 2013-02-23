@@ -9,6 +9,6 @@
 
 package buildcraft.transport.pipes;
 
-public class PipeLogicGold extends PipeLogic {
-
+public class PipeLogicGold extends PipeLogic
+{
 }

@@ -30,119 +30,141 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class BlockArchitect extends BlockContainer {
+public class BlockArchitect extends BlockContainer
+{
+    int blockTextureSides;
+    int blockTextureFront;
+    int blockTextureTopPos;
+    int blockTextureTopNeg;
+    int blockTextureTopArchitect;
 
-	int blockTextureSides;
-	int blockTextureFront;
-	int blockTextureTopPos;
-	int blockTextureTopNeg;
-	int blockTextureTopArchitect;
+    public BlockArchitect(int i)
+    {
+        super(i, Material.iron);
+        setHardness(0.5F);
+        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+        blockTextureSides = 3 * 16 + 0;
+        blockTextureTopNeg = 3 * 16 + 1;
+        blockTextureTopPos = 3 * 16 + 2;
+        blockTextureTopArchitect = 3 * 16 + 3;
+        blockTextureFront = 3 * 16 + 4;
+    }
 
-	public BlockArchitect(int i) {
-		super(i, Material.iron);
-		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-		blockTextureSides = 3 * 16 + 0;
-		blockTextureTopNeg = 3 * 16 + 1;
-		blockTextureTopPos = 3 * 16 + 2;
-		blockTextureTopArchitect = 3 * 16 + 3;
-		blockTextureFront = 3 * 16 + 4;
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1)
+    {
+        return new TileArchitect();
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World var1) {
-		return new TileArchitect();
-	}
+    @Override
+    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
+    {
+        // Drop through if the player is sneaking
+        if (entityplayer.isSneaking())
+        {
+            return false;
+        }
 
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking())
-			return false;
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k))
+        {
+            int meta = world.getBlockMetadata(i, j, k);
 
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+            switch (ForgeDirection.values()[meta])
+            {
+                case WEST:
+                    world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
+                    break;
 
-			int meta = world.getBlockMetadata(i, j, k);
+                case EAST:
+                    world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
+                    break;
 
-			switch (ForgeDirection.values()[meta]) {
-			case WEST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.SOUTH.ordinal());
-				break;
-			case EAST:
-				world.setBlockMetadata(i, j, k, ForgeDirection.NORTH.ordinal());
-				break;
-			case NORTH:
-				world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
-				break;
-			}
+                case NORTH:
+                    world.setBlockMetadata(i, j, k, ForgeDirection.WEST.ordinal());
+                    break;
 
-			world.markBlockForUpdate(i, j, k);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
-			return true;
-		} else {
+                case SOUTH:
+                default:
+                    world.setBlockMetadata(i, j, k, ForgeDirection.EAST.ordinal());
+                    break;
+            }
 
-			if (!CoreProxy.proxy.isRenderWorld(world)) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
-			}
-			return true;
+            world.markBlockForUpdate(i, j, k);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+            return true;
+        }
+        else
+        {
+            if (!CoreProxy.proxy.isRenderWorld(world))
+            {
+                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, i, j, k);
+            }
 
-		}
-	}
+            return true;
+        }
+    }
 
-	@Override
-	public void breakBlock(World world, int i, int j, int k, int par5, int par6) {
-		Utils.preDestroyBlock(world, i, j, k);
+    @Override
+    public void breakBlock(World world, int i, int j, int k, int par5, int par6)
+    {
+        Utils.preDestroyBlock(world, i, j, k);
+        super.breakBlock(world, i, j, k, par5, par6);
+    }
 
-		super.breakBlock(world, i, j, k, par5, par6);
-	}
+    @Override
+    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
+    {
+        super.onBlockPlacedBy(world, i, j, k, entityliving);
+        ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
+        world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving);
+    @SuppressWarnings( { "all" })
+    public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l)
+    {
+        int m = iblockaccess.getBlockMetadata(i, j, k);
 
-		ForgeDirection orientation = Utils.get2dOrientation(new Position(entityliving.posX, entityliving.posY, entityliving.posZ), new Position(i, j, k));
+        if (l == 1)
+        {
+            return blockTextureTopArchitect;
+        }
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal());
-	}
+        return getBlockTextureFromSideAndMetadata(l, m);
+    }
 
-	@SuppressWarnings({ "all" })
-	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		int m = iblockaccess.getBlockMetadata(i, j, k);
+    @Override
+    public int getBlockTextureFromSideAndMetadata(int i, int j)
+    {
+        if (j == 0 && i == 3)
+        {
+            return blockTextureFront;
+        }
 
-		if (l == 1)
-			return blockTextureTopArchitect;
+        if (i == 1)
+        {
+            return blockTextureTopArchitect;
+        }
 
-		return getBlockTextureFromSideAndMetadata(l, m);
-	}
+        if (i == j)
+        {
+            return blockTextureFront;
+        }
 
-	@Override
-	public int getBlockTextureFromSideAndMetadata(int i, int j) {
-		if (j == 0 && i == 3)
-			return blockTextureFront;
+        return blockTextureSides;
+    }
 
-		if (i == 1)
-			return blockTextureTopArchitect;
-
-		if (i == j)
-			return blockTextureFront;
-
-		return blockTextureSides;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public void addCreativeItems(ArrayList itemList) {
-		itemList.add(new ItemStack(this));
-	}
+    @SuppressWarnings( { "unchecked", "rawtypes" })
+    @Override
+    public void addCreativeItems(ArrayList itemList)
+    {
+        itemList.add(new ItemStack(this));
+    }
 }

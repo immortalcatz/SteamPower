@@ -4,46 +4,54 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 
-public class AssemblyRecipe {
+public class AssemblyRecipe
+{
+    public static LinkedList<AssemblyRecipe> assemblyRecipes = new LinkedList<AssemblyRecipe>();
 
-	public static LinkedList<AssemblyRecipe> assemblyRecipes = new LinkedList<AssemblyRecipe>();
+    public final ItemStack[] input;
+    public final ItemStack output;
+    public final float energy;
 
-	public final ItemStack[] input;
-	public final ItemStack output;
-	public final float energy;
+    public AssemblyRecipe(ItemStack[] input, int energy, ItemStack output)
+    {
+        this.input = input;
+        this.output = output;
+        this.energy = energy;
+    }
 
-	public AssemblyRecipe(ItemStack[] input, int energy, ItemStack output) {
-		this.input = input;
-		this.output = output;
-		this.energy = energy;
-	}
+    public boolean canBeDone(ItemStack[] items)
+    {
+        for (ItemStack in : input)
+        {
+            if (in == null)
+            {
+                continue;
+            }
 
-	public boolean canBeDone(ItemStack[] items) {
+            int found = 0; // Amount of ingredient found in inventory
 
-		for (ItemStack in : input) {
+            for (ItemStack item : items)
+            {
+                if (item == null)
+                {
+                    continue;
+                }
 
-			if (in == null) {
-				continue;
-			}
+                if (item.isItemEqual(in))
+                {
+                    found += item.stackSize; // Adds quantity of stack to amount
+                    // found
+                }
+            }
 
-			int found = 0; // Amount of ingredient found in inventory
+            if (found < in.stackSize)
+            {
+                return false;    // Return false if the amount of ingredient found
+            }
 
-			for (ItemStack item : items) {
-				if (item == null) {
-					continue;
-				}
+            // is not enough
+        }
 
-				if (item.isItemEqual(in)) {
-					found += item.stackSize; // Adds quantity of stack to amount
-												// found
-				}
-			}
-
-			if (found < in.stackSize)
-				return false; // Return false if the amount of ingredient found
-								// is not enough
-		}
-
-		return true;
-	}
+        return true;
+    }
 }

@@ -18,74 +18,89 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.BuildCraftAPI;
 
-public class BlockUtil {
+public class BlockUtil
+{
+    public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k)
+    {
+        Block block = Block.blocksList[world.getBlockId(i, j, k)];
 
-	public static List<ItemStack> getItemStackFromBlock(World world, int i, int j, int k) {
-		Block block = Block.blocksList[world.getBlockId(i, j, k)];
+        if (block == null)
+        {
+            return null;
+        }
 
-		if (block == null)
-			return null;
+        int meta = world.getBlockMetadata(i, j, k);
+        return block.getBlockDropped(world, i, j, k, meta, 0);
+    }
 
-		int meta = world.getBlockMetadata(i, j, k);
+    public static void breakBlock(World world, int x, int y, int z)
+    {
+        breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
+    }
+    public static void breakBlock(World world, int x, int y, int z, int forcedLifespan)
+    {
+        int blockId = world.getBlockId(x, y, z);
 
-		return block.getBlockDropped(world, i, j, k, meta, 0);
-	}
+        if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops"))
+        {
+            List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 
-	public static void breakBlock(World world, int x, int y, int z) {
-	    breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
-	}
-    public static void breakBlock(World world, int x, int y, int z, int forcedLifespan) {
-		int blockId = world.getBlockId(x, y, z);
+            for (ItemStack item : items)
+            {
+                float var = 0.7F;
+                double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+                double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+                double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
+                EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, item);
+                entityitem.lifespan = forcedLifespan;
+                entityitem.delayBeforeCanPickup = 10;
+                world.spawnEntityInWorld(entityitem);
+            }
+        }
 
-		if (blockId != 0 && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-			List<ItemStack> items = Block.blocksList[blockId].getBlockDropped(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+        world.setBlockWithNotify(x, y, z, 0);
+    }
 
-			for (ItemStack item : items) {
-				float var = 0.7F;
-				double dx = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				double dy = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				double dz = world.rand.nextFloat() * var + (1.0F - var) * 0.5D;
-				EntityItem entityitem = new EntityItem(world, x + dx, y + dy, z + dz, item);
+    public static boolean canChangeBlock(World world, int x, int y, int z)
+    {
+        return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
+    }
 
-				entityitem.lifespan = forcedLifespan;
-				entityitem.delayBeforeCanPickup = 10;
+    public static boolean canChangeBlock(int blockID, World world, int x, int y, int z)
+    {
+        Block block = Block.blocksList[blockID];
 
-				world.spawnEntityInWorld(entityitem);
-			}
-		}
+        if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
+        {
+            return true;
+        }
 
-		world.setBlockWithNotify(x, y, z, 0);
-	}
+        if (block.getBlockHardness(world, x, y, z) < 0)
+        {
+            return false;
+        }
 
-	public static boolean canChangeBlock(World world, int x, int y, int z) {
-		return canChangeBlock(world.getBlockId(x, y, z), world, x, y, z);
-	}
+        if (blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID)
+        {
+            return false;
+        }
 
-	public static boolean canChangeBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
+        if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)
+        {
+            return false;
+        }
 
-		if (blockID == 0 || block == null || block.isAirBlock(world, x, y, z))
-			return true;
+        return true;
+    }
 
-		if (block.getBlockHardness(world, x, y, z) < 0)
-			return false;
+    public static boolean isSoftBlock(World world, int x, int y, int z)
+    {
+        return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
+    }
 
-		if (blockID == BuildCraftEnergy.oilMoving.blockID || blockID == BuildCraftEnergy.oilStill.blockID)
-			return false;
-
-		if (blockID == Block.lavaStill.blockID || blockID == Block.lavaMoving.blockID)
-			return false;
-
-		return true;
-	}
-
-	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		return isSoftBlock(world.getBlockId(x, y, z), world, x, y, z);
-	}
-
-	public static boolean isSoftBlock(int blockID, World world, int x, int y, int z) {
-		Block block = Block.blocksList[blockID];
-
-		return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
-	}
+    public static boolean isSoftBlock(int blockID, World world, int x, int y, int z)
+    {
+        Block block = Block.blocksList[blockID];
+        return blockID == 0 || block == null || BuildCraftAPI.softBlocks[blockID] || block.isAirBlock(world, x, y, z);
+    }
 }

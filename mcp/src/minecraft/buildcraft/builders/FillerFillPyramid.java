@@ -14,62 +14,70 @@ import net.minecraft.tileentity.TileEntity;
 import buildcraft.api.core.IBox;
 import buildcraft.core.DefaultProps;
 
-public class FillerFillPyramid extends FillerPattern {
+public class FillerFillPyramid extends FillerPattern
+{
+    @Override
+    public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace)
+    {
+        int xMin = (int) box.pMin().x;
+        int yMin = (int) box.pMin().y;
+        int zMin = (int) box.pMin().z;
+        int xMax = (int) box.pMax().x;
+        int yMax = (int) box.pMax().y;
+        int zMax = (int) box.pMax().z;
+        int xSize = xMax - xMin + 1;
+        int zSize = zMax - zMin + 1;
+        int step = 0;
+        int height;
+        int stepY;
 
-	@Override
-	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
-		int xMin = (int) box.pMin().x;
-		int yMin = (int) box.pMin().y;
-		int zMin = (int) box.pMin().z;
+        if (tile.yCoord <= yMin)
+        {
+            stepY = 1;
+        }
+        else
+        {
+            stepY = -1;
+        }
 
-		int xMax = (int) box.pMax().x;
-		int yMax = (int) box.pMax().y;
-		int zMax = (int) box.pMax().z;
+        if (stepY == 1)
+        {
+            height = yMin;
+        }
+        else
+        {
+            height = yMax;
+        }
 
-		int xSize = xMax - xMin + 1;
-		int zSize = zMax - zMin + 1;
+        while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax)
+        {
+            if (fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.worldObj))
+            {
+                return false;
+            }
 
-		int step = 0;
-		int height;
+            step++;
+            height += stepY;
+        }
 
-		int stepY;
+        return true;
+    }
 
-		if (tile.yCoord <= yMin) {
-			stepY = 1;
-		} else {
-			stepY = -1;
-		}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-		if (stepY == 1) {
-			height = yMin;
-		} else {
-			height = yMax;
-		}
+    @Override
+    public int getTextureIndex()
+    {
+        return 4 * 16 + 7;
+    }
 
-		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
-			if (fill(xMin + step, height, zMin + step, xMax - step, height, zMax - step, stackToPlace, tile.worldObj))
-				return false;
-
-			step++;
-			height += stepY;
-		}
-
-		return true;
-	}
-
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
-
-	@Override
-	public int getTextureIndex() {
-		return 4 * 16 + 7;
-	}
-
-	@Override
-	public String getName() {
-		return "Pyramid";
-	}
-
+    @Override
+    public String getName()
+    {
+        return "Pyramid";
+    }
 }

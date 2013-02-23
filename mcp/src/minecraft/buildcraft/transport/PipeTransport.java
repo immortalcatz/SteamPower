@@ -15,81 +15,89 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.transport.IPipedItem;
 
-public abstract class PipeTransport {
+public abstract class PipeTransport
+{
+    public int xCoord;
+    public int yCoord;
+    public int zCoord;
+    public World worldObj;
+    public TileGenericPipe container;
 
-	public int xCoord;
-	public int yCoord;
-	public int zCoord;
-	public World worldObj;
-	public TileGenericPipe container;
+    public void setPosition(int xCoord, int yCoord, int zCoord)
+    {
+        this.xCoord = xCoord;
+        this.yCoord = yCoord;
+        this.zCoord = zCoord;
+    }
 
-	public void setPosition(int xCoord, int yCoord, int zCoord) {
-		this.xCoord = xCoord;
-		this.yCoord = yCoord;
-		this.zCoord = zCoord;
-	}
+    public void setWorld(World worldObj)
+    {
+        this.worldObj = worldObj;
+    }
 
-	public void setWorld(World worldObj) {
-		this.worldObj = worldObj;
-	}
+    public void readFromNBT(NBTTagCompound nbttagcompound)
+    {
+    }
 
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
+    public void writeToNBT(NBTTagCompound nbttagcompound)
+    {
+    }
 
-	}
+    public void updateEntity()
+    {
+    }
 
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
+    public void setTile(TileGenericPipe tile)
+    {
+        this.container = tile;
+    }
 
-	}
+    public boolean isPipeConnected(TileEntity tile, ForgeDirection side)
+    {
+        return true;
+    }
 
-	public void updateEntity() {
+    public void onNeighborBlockChange(int blockId)
+    {
+    }
 
-	}
+    public void onBlockPlaced()
+    {
+    }
 
-	public void setTile(TileGenericPipe tile) {
-		this.container = tile;
-	}
+    public void initialize()
+    {
+    }
 
-	public boolean isPipeConnected(TileEntity tile, ForgeDirection side) {
-		return true;
-	}
+    public boolean inputOpen(ForgeDirection from)
+    {
+        return true;
+    }
 
-	public void onNeighborBlockChange(int blockId) {
+    public boolean outputOpen(ForgeDirection to)
+    {
+        return true;
+    }
 
-	}
+    public boolean acceptItems()
+    {
+        return false;
+    }
 
-	public void onBlockPlaced() {
+    public void entityEntering(IPipedItem item, ForgeDirection orientation)
+    {
+    }
 
-	}
+    public void dropContents()
+    {
+    }
 
-	public void initialize() {
+    public boolean allowsConnect(PipeTransport with)
+    {
+        return false;
+    }
 
-	}
-
-	public boolean inputOpen(ForgeDirection from) {
-		return true;
-	}
-
-	public boolean outputOpen(ForgeDirection to) {
-		return true;
-	}
-
-	public boolean acceptItems() {
-		return false;
-	}
-
-	public void entityEntering(IPipedItem item, ForgeDirection orientation) {
-
-	}
-
-	public void dropContents() {
-
-	}
-
-	public boolean allowsConnect(PipeTransport with) {
-		return false;
-	}
-
-	public void sendDescriptionPacket() {
-
-	}
+    public void sendDescriptionPacket()
+    {
+    }
 }

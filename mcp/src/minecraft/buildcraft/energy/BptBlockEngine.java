@@ -17,44 +17,42 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.Version;
 
-public class BptBlockEngine extends BptBlock {
+public class BptBlockEngine extends BptBlock
+{
+    public BptBlockEngine(int blockId)
+    {
+        super(blockId);
+    }
 
-	public BptBlockEngine(int blockId) {
-		super(blockId);
-	}
+    @Override
+    public void rotateLeft(BptSlotInfo slot, IBptContext context)
+    {
+        int o = slot.cpt.getInteger("orientation");
+        o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
+        slot.cpt.setInteger("orientation", o);
+    }
 
-	@Override
-	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
-		int o = slot.cpt.getInteger("orientation");
+    @Override
+    public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z)
+    {
+        TileEngine engine = (TileEngine) context.world().getBlockTileEntity(x, y, z);
+        bptSlot.cpt.setInteger("orientation", engine.engine.orientation.ordinal());
+    }
 
-		o = ForgeDirection.values()[o].getRotation(ForgeDirection.DOWN).ordinal();
+    @Override
+    public void buildBlock(BptSlotInfo slot, IBptContext context)
+    {
+        context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
+        TileEngine engine = (TileEngine) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+        engine.orientation = slot.cpt.getInteger("orientation");
+    }
 
-		slot.cpt.setInteger("orientation", o);
-	}
-
-	@Override
-	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
-		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(x, y, z);
-
-		bptSlot.cpt.setInteger("orientation", engine.engine.orientation.ordinal());
-	}
-
-	@Override
-	public void buildBlock(BptSlotInfo slot, IBptContext context) {
-		context.world().setBlockAndMetadataWithNotify(slot.x, slot.y, slot.z, slot.blockId, slot.meta);
-
-		TileEngine engine = (TileEngine) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
-
-		engine.orientation = slot.cpt.getInteger("orientation");
-	}
-
-	@Override
-	public BlockSignature getSignature(Block block) {
-		BlockSignature sig = super.getSignature(block);
-
-		sig.mod = "BuildCraftEnergy";
-		sig.modVersion = Version.VERSION;
-
-		return sig;
-	}
+    @Override
+    public BlockSignature getSignature(Block block)
+    {
+        BlockSignature sig = super.getSignature(block);
+        sig.mod = "BuildCraftEnergy";
+        sig.modVersion = Version.VERSION;
+        return sig;
+    }
 }

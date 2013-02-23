@@ -14,63 +14,81 @@ import buildcraft.transport.pipes.PipeLogicDiamond;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.inventory.IInventory;
 
-public class GuiHandler implements IGuiHandler {
+public class GuiHandler implements IGuiHandler
+{
+    @Override
+    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        if (!world.blockExists(x, y, z))
+        {
+            return null;
+        }
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z))
-			return null;
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe))
-			return null;
+        if (!(tile instanceof TileGenericPipe))
+        {
+            return null;
+        }
 
-		TileGenericPipe pipe = (TileGenericPipe) tile;
+        TileGenericPipe pipe = (TileGenericPipe) tile;
 
-		if (pipe.pipe == null)
-			return null;
+        if (pipe.pipe == null)
+        {
+            return null;
+        }
 
-		switch (ID) {
-		case GuiIds.PIPE_DIAMOND:
-			return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
-			
-		case GuiIds.PIPE_EMERALD_ITEM:
-			return new ContainerEmeraldPipe(player.inventory, (IInventory) pipe.pipe);
+        switch (ID)
+        {
+            case GuiIds.PIPE_DIAMOND:
+                return new ContainerDiamondPipe(player.inventory, (PipeLogicDiamond) pipe.pipe.logic);
 
-		case GuiIds.GATES:
-			return new ContainerGateInterface(player.inventory, pipe.pipe);
+            case GuiIds.PIPE_EMERALD_ITEM:
+                return new ContainerEmeraldPipe(player.inventory, (IInventory) pipe.pipe);
 
-		default:
-			return null;
-		}
-	}
+            case GuiIds.GATES:
+                return new ContainerGateInterface(player.inventory, pipe.pipe);
 
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z))
-			return null;
+            default:
+                return null;
+        }
+    }
 
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
-		if (!(tile instanceof TileGenericPipe))
-			return null;
+    @Override
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        if (!world.blockExists(x, y, z))
+        {
+            return null;
+        }
 
-		TileGenericPipe pipe = (TileGenericPipe) tile;
+        TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-		if (pipe.pipe == null)
-			return null;
+        if (!(tile instanceof TileGenericPipe))
+        {
+            return null;
+        }
 
-		switch (ID) {
-		case GuiIds.PIPE_DIAMOND:
-			return new GuiDiamondPipe(player.inventory, pipe);
-			
-		case GuiIds.PIPE_EMERALD_ITEM:
-			return new GuiEmeraldPipe(player.inventory, pipe);
+        TileGenericPipe pipe = (TileGenericPipe) tile;
 
-		case GuiIds.GATES:
-			return new GuiGateInterface(player.inventory, pipe.pipe);
+        if (pipe.pipe == null)
+        {
+            return null;
+        }
 
-		default:
-			return null;
-		}
-	}
+        switch (ID)
+        {
+            case GuiIds.PIPE_DIAMOND:
+                return new GuiDiamondPipe(player.inventory, pipe);
+
+            case GuiIds.PIPE_EMERALD_ITEM:
+                return new GuiEmeraldPipe(player.inventory, pipe);
+
+            case GuiIds.GATES:
+                return new GuiGateInterface(player.inventory, pipe.pipe);
+
+            default:
+                return null;
+        }
+    }
 }

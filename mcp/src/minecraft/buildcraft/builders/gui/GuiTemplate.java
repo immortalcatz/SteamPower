@@ -24,76 +24,90 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtil;
 
-public class GuiTemplate extends GuiBuildCraft {
+public class GuiTemplate extends GuiBuildCraft
+{
+    IInventory playerInventory;
+    TileArchitect template;
 
-	IInventory playerInventory;
-	TileArchitect template;
+    boolean editMode = false;
 
-	boolean editMode = false;
+    public GuiTemplate(IInventory playerInventory, TileArchitect template)
+    {
+        super(new ContainerTemplate(playerInventory, template), template);
+        this.playerInventory = playerInventory;
+        this.template = template;
+        xSize = 175;
+        ySize = 225;
+    }
 
-	public GuiTemplate(IInventory playerInventory, TileArchitect template) {
-		super(new ContainerTemplate(playerInventory, template), template);
-		this.playerInventory = playerInventory;
-		this.template = template;
-		xSize = 175;
-		ySize = 225;
-	}
+    @Override
+    protected void drawGuiContainerForegroundLayer(int par1, int par2)
+    {
+        String title = StringUtil.localize("tile.architectBlock");
+        fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtil.localize("tile.architectBlock");
-		fontRenderer.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 152, 0x404040);
+        if (editMode && ((new Date()).getTime() / 100) % 8 >= 4)
+        {
+            fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
+        }
+        else
+        {
+            fontRenderer.drawString(template.name, 51, 62, 0x404040);
+        }
+    }
 
-		if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-			fontRenderer.drawString(template.name + "|", 51, 62, 0x404040);
-		} else {
-			fontRenderer.drawString(template.name, 51, 62, 0x404040);
-		}
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
+    {
+        int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.bindTexture(i);
+        int j = (width - xSize) / 2;
+        int k = (height - ySize) / 2;
+        drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
+        int i1 = template.getComputingProgressScaled(24);
+        drawTexturedModalRect(j + 79, k + 34, 176, 14, i1 + 1, 16);
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/template_gui.png");
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(i);
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2;
-		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-		int i1 = template.getComputingProgressScaled(24);
-		drawTexturedModalRect(j + 79, k + 34, 176, 14, i1 + 1, 16);
-	}
+    @Override
+    protected void mouseClicked(int i, int j, int k)
+    {
+        super.mouseClicked(i, j, k);
+        int xMin = (width - xSize) / 2;
+        int yMin = (height - ySize) / 2;
+        int x = i - xMin;
+        int y = j - yMin;
 
-	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
+        if (editMode)
+        {
+            editMode = false;
+        }
+        else if (x >= 50 && y >= 61 && x <= 137 && y <= 139)
+        {
+            editMode = true;
+        }
+    }
 
-		int xMin = (width - xSize) / 2;
-		int yMin = (height - ySize) / 2;
+    @Override
+    protected void keyTyped(char c, int i)
+    {
+        if (i != 1 && editMode)
+        {
+            if (c == 13)
+            {
+                editMode = false;
+                return;
+            }
 
-		int x = i - xMin;
-		int y = j - yMin;
-
-		if (editMode) {
-			editMode = false;
-		} else if (x >= 50 && y >= 61 && x <= 137 && y <= 139) {
-			editMode = true;
-		}
-	}
-
-	@Override
-	protected void keyTyped(char c, int i) {
-		if (i != 1 && editMode) {
-			if (c == 13) {
-				editMode = false;
-				return;
-			}
-			PacketPayload payload = new PacketPayload();
-			payload.intPayload = new int[] { c };
-			PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
-			CoreProxy.proxy.sendToServer(packet.getPacket());
-		} else {
-			super.keyTyped(c, i);
-		}
-	}
+            PacketPayload payload = new PacketPayload();
+            payload.intPayload = new int[] { c };
+            PacketUpdate packet = new PacketUpdate(PacketIds.ARCHITECT_NAME, template.xCoord, template.yCoord, template.zCoord, payload);
+            CoreProxy.proxy.sendToServer(packet.getPacket());
+        }
+        else
+        {
+            super.keyTyped(c, i);
+        }
+    }
 }

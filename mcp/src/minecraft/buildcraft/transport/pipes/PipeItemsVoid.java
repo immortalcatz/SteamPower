@@ -17,37 +17,42 @@ import buildcraft.transport.IItemTravelingHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsVoid extends Pipe implements IItemTravelingHook {
+public class PipeItemsVoid extends Pipe implements IItemTravelingHook
+{
+    public PipeItemsVoid(int itemID)
+    {
+        super(new PipeTransportItems(), new PipeLogicVoid(), itemID);
+        ((PipeTransportItems) transport).travelHook = this;
+    }
 
-	public PipeItemsVoid(int itemID) {
-		super(new PipeTransportItems(), new PipeLogicVoid(), itemID);
-		((PipeTransportItems) transport).travelHook = this;
-	}
+    @Override
+    public String getTextureFile()
+    {
+        return DefaultProps.TEXTURE_BLOCKS;
+    }
 
-	@Override
-	public String getTextureFile() {
-		return DefaultProps.TEXTURE_BLOCKS;
-	}
+    @Override
+    public int getTextureIndex(ForgeDirection direction)
+    {
+        return 8 * 16 + 14;
+    }
 
-	@Override
-	public int getTextureIndex(ForgeDirection direction) {
-		return 8 * 16 + 14;
-	}
+    // This is called if the void pipe is only connected to one pipe
+    @Override
+    public void drop(PipeTransportItems pipe, EntityData data)
+    {
+        data.item.getItemStack().stackSize = 0;
+    }
 
-	// This is called if the void pipe is only connected to one pipe
-	@Override
-	public void drop(PipeTransportItems pipe, EntityData data) {
-		data.item.getItemStack().stackSize = 0;
-	}
+    // This is called when the void pipe is connected to multiple pipes
+    @Override
+    public void centerReached(PipeTransportItems pipe, EntityData data)
+    {
+        ((PipeTransportItems) transport).scheduleRemoval(data.item);
+    }
 
-	// This is called when the void pipe is connected to multiple pipes
-	@Override
-	public void centerReached(PipeTransportItems pipe, EntityData data) {
-		((PipeTransportItems) transport).scheduleRemoval(data.item);
-	}
-
-	@Override
-	public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {
-	}
-
+    @Override
+    public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile)
+    {
+    }
 }

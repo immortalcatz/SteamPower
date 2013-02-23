@@ -19,79 +19,104 @@ import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.BuildCraftCore;
 
-public class ItemPipe extends ItemBuildCraft implements IItemPipe {
+public class ItemPipe extends ItemBuildCraft implements IItemPipe
+{
+    Pipe dummyPipe;
 
-	Pipe dummyPipe;
+    private int textureIndex = 0;
 
-	private int textureIndex = 0;
+    protected ItemPipe(int i)
+    {
+        super(i);
+        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+    }
 
-	protected ItemPipe(int i) {
-		super(i);
-		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-	}
-
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10) {
-		int blockID = BuildCraftTransport.genericPipeBlock.blockID;
-		Block block = BuildCraftTransport.genericPipeBlock;
-
+    @Override
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float par8, float par9, float par10)
+    {
+        int blockID = BuildCraftTransport.genericPipeBlock.blockID;
+        Block block = BuildCraftTransport.genericPipeBlock;
         int id = world.getBlockId(i, j, k);
 
-        if (id == Block.snow.blockID) {
+        if (id == Block.snow.blockID)
+        {
             side = 1;
         }
         else if (id != Block.vine.blockID && id != Block.tallGrass.blockID && id != Block.deadBush.blockID
                 && (Block.blocksList[id] == null || !Block.blocksList[id].isBlockReplaceable(world, i, j, k)))
         {
-            if (side == 0) {
+            if (side == 0)
+            {
                 j--;
             }
-            if (side == 1) {
+
+            if (side == 1)
+            {
                 j++;
             }
-            if (side == 2) {
+
+            if (side == 2)
+            {
                 k--;
             }
-            if (side == 3) {
+
+            if (side == 3)
+            {
                 k++;
             }
-            if (side == 4) {
+
+            if (side == 4)
+            {
                 i--;
             }
-            if (side == 5) {
+
+            if (side == 5)
+            {
                 i++;
             }
         }
 
-		if (itemstack.stackSize == 0)
-			return false;
-		if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer)) {
+        if (itemstack.stackSize == 0)
+        {
+            return false;
+        }
 
-			Pipe pipe = BlockGenericPipe.createPipe(itemID);
-			if (pipe == null) {
-				BuildCraftCore.bcLog.warning("Pipe failed to create during placement at "+i+","+j+","+k);
-				return true;
-			}
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0)) {
+        if (entityplayer.canCurrentToolHarvestBlock(i, j, k) && world.canPlaceEntityOnSide(blockID, i, j, k, false, side, entityplayer))
+        {
+            Pipe pipe = BlockGenericPipe.createPipe(itemID);
 
-				Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
-				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-						block.stepSound.getPlaceSound(),
-						(block.stepSound.getVolume() + 1.0F) / 2.0F,
-						block.stepSound.getPitch() * 0.8F);
-				itemstack.stackSize--;
-			}
-			return true;
-		} else
-			return false;
-	}
+            if (pipe == null)
+            {
+                BuildCraftCore.bcLog.warning("Pipe failed to create during placement at " + i + "," + j + "," + k);
+                return true;
+            }
 
-	public ItemPipe setTextureIndex(int textureIndex) {
-		this.textureIndex = textureIndex;
-		return this;
-	}
+            if (BlockGenericPipe.placePipe(pipe, world, i, j, k, blockID, 0))
+            {
+                Block.blocksList[blockID].onBlockPlacedBy(world, i, j, k, entityplayer);
+                world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+                        block.stepSound.getPlaceSound(),
+                        (block.stepSound.getVolume() + 1.0F) / 2.0F,
+                        block.stepSound.getPitch() * 0.8F);
+                itemstack.stackSize--;
+            }
 
-	public int getTextureIndex() {
-		return textureIndex;
-	}
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public ItemPipe setTextureIndex(int textureIndex)
+    {
+        this.textureIndex = textureIndex;
+        return this;
+    }
+
+    public int getTextureIndex()
+    {
+        return textureIndex;
+    }
 }
