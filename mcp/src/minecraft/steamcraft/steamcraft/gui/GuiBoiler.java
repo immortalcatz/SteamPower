@@ -15,7 +15,7 @@ import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 
 public class GuiBoiler extends GuiContainer {
 	//TODO: Cleanup class with human readable names
-	private TileEntityBoiler boilerEntity;
+	private final TileEntityBoiler boilerEntity;
 
 	public GuiBoiler(InventoryPlayer par1InventoryPlayer, TileEntityBoiler par2TileEntityBoiler) {
 		super(new ContainerBoiler(par1InventoryPlayer, par2TileEntityBoiler));

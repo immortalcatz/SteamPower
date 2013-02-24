@@ -166,7 +166,7 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
                 if (this.researchStacks[2].itemID == Item.paper.itemID && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0))
                 {
                     this.researchStacks[2].stackSize--;
-                    ItemStack stack = new ItemStack(SteamCraft.researchNotes, 1);
+                    ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
                     this.researchStacks[1] = stack;
                 }
             }
