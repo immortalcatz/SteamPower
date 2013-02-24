@@ -6,7 +6,9 @@ import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.*;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
+import steamcraft.steamcraft.packet.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
@@ -34,7 +36,8 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
 @Mod(modid = "SteamCraft", name = "SteamCraft", version = "0.0.1")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+@NetworkMod(clientSideRequired=true, serverSideRequired=false,
+channels={"SteamCraft"}, packetHandler = PacketHandler.class)
 public class SteamCraft {
 
 	// The instance of your mod that Forge uses.
@@ -47,7 +50,7 @@ public class SteamCraft {
 	public static String BLOCKS_PNG =  textureLocation+"blocks.png";
 	public static String armorLocation = textureLocation+"armor/";
 	public static String guiLocation = textureLocation+"gui/";
-	public static String modelTextureLocation = texuterLocation+"model/";
+	public static String modelTextureLocation = textureLocation+"model/";
 
 	//Blocks
 	public static Block boilerIdle;
@@ -62,6 +65,7 @@ public class SteamCraft {
 	public static Block blockForgeOn;
 	public static Block blockForgeMain;
 	public static Block steam;
+	public static Block researchTable;
 
 	//Items
 	public static Item musketBall;
@@ -74,6 +78,8 @@ public class SteamCraft {
 	public static Item musketBarrel;
 	public static Item blunderbussBarrel;
 	public static Item flintlock;
+
+	public static Item researchPaper;
 
 		//Tools
 	public static Item musket;
@@ -96,7 +102,7 @@ public class SteamCraft {
 	@SidedProxy(clientSide = "steamcraft.steamcraft.client.ClientProxy", serverSide = "steamcraft.steamcraft.common.CommonProxy")
 	public static CommonProxy proxy;
 
-	private GuiHandler guiHandler = new GuiHandler();
+	private final GuiHandler guiHandler = new GuiHandler();
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
@@ -118,6 +124,8 @@ public class SteamCraft {
 		copperOre = new BlockSteamcraftOre(152, 0).setHardness(2.75F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("copperOre").setCreativeTab(CreativeTabs.tabBlock);
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
 		steam = new BlockSteam(165).setBlockName("blockSteam");
+		researchTable = new BlockResearchTable(169).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
+
 
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
@@ -126,6 +134,8 @@ public class SteamCraft {
 		ingotZinc = (new ItemSteamcraft(7001)).setIconCoord(1, 0).setItemName("ingotZinc").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotBrass = (new ItemSteamcraft(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotCopper = (new ItemSteamcraft(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
+
+		researchPaper = (new ItemResearchNotes(7022)).setIconCoord(13, 0).setItemName("researchNotes").setCreativeTab(CreativeTabs.tabMisc);
 
 		stock = (new ItemSteamcraft(7003).setIconIndex(9).setItemName("gunStock"));
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
@@ -154,9 +164,13 @@ public class SteamCraft {
 		//Registration
 		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
 		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMech.class, "Mech", 1, SteamCraft.instance, 100, 5, true);
+
 		GameRegistry.registerWorldGenerator(new WorldGenBoiler());
 
 			//Blocks
+		GameRegistry.registerBlock(researchTable, "researchTable"); //Research Table
+		MinecraftForge.setBlockHarvestLevel(researchTable, "axe", 0);
+
 		GameRegistry.registerBlock(boilerIdle, "boilerIdle"); //Inactive Boiler
 		MinecraftForge.setBlockHarvestLevel(boilerIdle, "pickaxe", 0);
 
@@ -193,6 +207,7 @@ public class SteamCraft {
 				//Tile Entities
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "tileEntityBoiler");
 		GameRegistry.registerTileEntity(TileEntityForge.class, "tileEntityForge");
+		GameRegistry.registerTileEntity(TileEntityResearchTable.class, "tileEntityResearchTable");
 
 			//Names
 
@@ -208,6 +223,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(blockForge, "blockForge");
 		LanguageRegistry.addName(blockForgeOn, "blockForgeOn");
 		LanguageRegistry.addName(blockForgeMain, "blockForgeMain");
+		LanguageRegistry.addName(researchTable, "Allmighty Table of Research");
 
 				//Items
 		LanguageRegistry.addName(ingotCopper, "Copper Ingot");
@@ -224,6 +240,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(musketBarrel, "Musket Barrel");
 		LanguageRegistry.addName(blunderbussBarrel, "Blunderbuss Barrel");
 		LanguageRegistry.addName(flintlock, "Flintlock");
+		LanguageRegistry.addName(researchPaper, "Research");
 
 		LanguageRegistry.addName(copperHelmet, "Copper Helmet");
 		LanguageRegistry.addName(copperTorso, "Copper Chestplate");
