@@ -1,19 +1,27 @@
 package steamcraft.steamcraft.client.render;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.ForgeHooksClient;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 import java.util.Random;
 
-public class ResearchTableRender extends TileEntitySpecialRenderer
+public class ResearchTableRender extends TileEntitySpecialRenderer implements ISimpleBlockRenderingHandler
 {
     private final ModelResearchTable model;
+	public static int researchModelID = RenderingRegistry.getNextAvailableRenderId();
 
     public ResearchTableRender()
     {
@@ -60,4 +68,35 @@ public class ResearchTableRender extends TileEntitySpecialRenderer
     {
         renderAModelAt((TileEntityResearchTable) tileentity, d, d1, d2, f);
     }
+
+	@Override
+	public void renderInventoryBlock(Block block, int metadata, int modelID,
+			RenderBlocks renderer) {
+		ForgeHooksClient.bindTexture(SteamCraft.modelTextureLocation + "researchtable.png", 0);
+		GL11.glPushMatrix();
+		GL11.glTranslated(0, -0.5 + (24 / 16.0), 0);
+		GL11.glScalef(1.0F, -1F, -1F);
+		model.renderModel(0.0625F);
+		GL11.glPopMatrix();
+
+	}
+
+	@Override
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
+			Block block, int modelId, RenderBlocks renderer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean shouldRender3DInInventory() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public int getRenderId() {
+		// TODO Auto-generated method stub
+		return researchModelID;
+	}
 }
