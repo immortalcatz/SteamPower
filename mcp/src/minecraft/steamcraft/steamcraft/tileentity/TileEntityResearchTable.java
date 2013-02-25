@@ -26,6 +26,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockResearchTable;
+import steamcraft.steamcraft.item.ItemResearchNotes;
 
 public class TileEntityResearchTable extends TileEntity implements IInventory, ISidedInventory
 {
@@ -161,12 +162,48 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
     {
         if (!this.worldObj.isRemote)
         {
-            if (this.researchStacks[2] != null)
+        	ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
+        	boolean newResearch = false;
+        	if (this.researchStacks[1] != null && this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID) {
+        		stack = this.researchStacks[1];
+        		newResearch = true;
+        	}
+            if ((this.researchStacks[2] != null || newResearch) && this.researchStacks[0] != null)
             {
-                if (this.researchStacks[2].itemID == Item.paper.itemID && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0))
+                if ((newResearch || this.researchStacks[2].itemID == Item.paper.itemID)  && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0 || this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID ))
                 {
-                    this.researchStacks[2].stackSize--;
-                    ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
+                	if (!newResearch) {
+		            if (this.researchStacks[2].stackSize <= 1)
+		            {
+		            this.researchStacks[2] = null;
+		            }
+		            else
+		            {
+		            this.researchStacks[2].stackSize--;
+		            }
+                	}
+
+                    if (!stack.hasTagCompound())
+                      {
+              			stack.setTagCompound(new NBTTagCompound());
+              			NBTTagList items = new NBTTagList();
+              			stack.stackTagCompound.setTag("Contents", items);
+
+                     }
+                    NBTTagCompound addition = new NBTTagCompound();
+                    ItemStack addStack = new ItemStack(this.researchStacks[0].getItem(), 1);
+                    addStack.writeToNBT(addition);
+                    if (this.researchStacks[0].stackSize <= 1)
+                    {
+                    	this.researchStacks[0] = null;
+                    }
+                    else
+                    {
+                        this.researchStacks[0].stackSize--;
+                    }
+
+            		stack.stackTagCompound.getTagList("Contents").appendTag(addition);
+
                     this.researchStacks[1] = stack;
                 }
             }
