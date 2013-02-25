@@ -1,27 +1,41 @@
 package steamcraft.steamcraft;
 
-import steamcraft.steamcraft.block.*;
-import steamcraft.steamcraft.common.CommonProxy;
-import steamcraft.steamcraft.gui.GuiHandler;
-import steamcraft.steamcraft.item.*;
-import steamcraft.steamcraft.tileentity.TileEntityBoiler;
-import steamcraft.steamcraft.tileentity.TileEntityForge;
-import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
-import steamcraft.steamcraft.worldgen.WorldGenBoiler;
-import steamcraft.steamcraft.packet.PacketHandler;
-import thaumcraft.api.EnumTag;
-import thaumcraft.api.ObjectTags;
-import thaumcraft.api.ThaumcraftApi;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.stats.Achievement;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import steamcraft.steamcraft.block.BlockBoiler;
+import steamcraft.steamcraft.block.BlockForge;
+import steamcraft.steamcraft.block.BlockForgeMain;
+import steamcraft.steamcraft.block.BlockForgePiece;
+import steamcraft.steamcraft.block.BlockResearchTable;
+import steamcraft.steamcraft.block.BlockSteam;
+import steamcraft.steamcraft.block.BlockSteamcraftOre;
+import steamcraft.steamcraft.block.BlockSteamcraftStorage;
+import steamcraft.steamcraft.common.CommonProxy;
+import steamcraft.steamcraft.gui.GuiHandler;
+import steamcraft.steamcraft.item.ItemFirearm;
+import steamcraft.steamcraft.item.ItemMech;
+import steamcraft.steamcraft.item.ItemResearchNotes;
+import steamcraft.steamcraft.item.ItemSteamcraft;
+import steamcraft.steamcraft.item.ItemSteamcraftArmor;
+import steamcraft.steamcraft.item.ItemWrench;
+import steamcraft.steamcraft.packet.PacketHandler;
+import steamcraft.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
+import steamcraft.steamcraft.worldgen.WorldGenBoiler;
+import thaumcraft.api.EnumTag;
+import thaumcraft.api.ObjectTags;
+import thaumcraft.api.ThaumcraftApi;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -101,6 +115,11 @@ public class SteamCraft {
 	public static Item brassLegs;
 	public static Item brassBoots;
 
+		//Achievements
+	public static Achievement AchResearch;
+	public static Achievement AchBrass;
+	public static AchievementPage steamAchievementPage;
+
 	// Says where the client and server 'proxy' code is loaded.
 	@SidedProxy(clientSide = "steamcraft.steamcraft.client.ClientProxy", serverSide = "steamcraft.steamcraft.common.CommonProxy")
 	public static CommonProxy proxy;
@@ -163,6 +182,11 @@ public class SteamCraft {
 		brassTorso = (new ItemSteamcraftArmor(7016, materialBrass, 4, 1, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassTorso").setIconCoord(1, 2).setCreativeTab(CreativeTabs.tabCombat));
 		brassLegs = (new ItemSteamcraftArmor(7017,materialBrass, 4, 2, true, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
 		brassBoots = (new ItemSteamcraftArmor(7018, materialBrass, 4, 3, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
+
+		//Initialize Achievements
+		AchResearch = new Achievement(2001, "AchResearch", 1, -2, SteamCraft.researchTable, null).registerAchievement();
+		AchBrass  = new Achievement(2002, "AchBrass", 3, 0, SteamCraft.ingotBrass, AchResearch).registerAchievement();
+		steamAchievementPage = new AchievementPage("SteamCraft", AchResearch, AchBrass);
 
 		//Registration
 		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
@@ -255,6 +279,10 @@ public class SteamCraft {
 		LanguageRegistry.addName(brassLegs, "Brass Leggings");
 		LanguageRegistry.addName(brassBoots, "Brass Boots");
 
+			//Achievements
+        this.addAchievementName("AchReseach", "Time to Research");
+        this.addAchievementDesc("AchReseach", "You built a Time Machine!");
+
 			//Ore Dictionary
 		OreDictionary.registerOre("ingotCopper", new ItemStack(ingotCopper));
 		OreDictionary.registerOre("ingotBrass", new ItemStack(ingotBrass));
@@ -265,9 +293,13 @@ public class SteamCraft {
 			//Networking
 		NetworkRegistry.instance().registerGuiHandler(this, guiHandler);
 
+			//Register Achievements
+		AchievementPage.registerAchievementPage(steamAchievementPage);
+
 		proxy.registerRenderers();
 		addRecipes();
 	}
+
 
 	public void addRecipes()
 	{
@@ -290,6 +322,16 @@ public class SteamCraft {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", "  S", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", " P ", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'P', "plankWood"));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbuss, 1), "B  ", " BF", "  S", 'B', SteamCraft.blunderbussBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
+	}
+
+	private void addAchievementName(String ach, String name)
+	{
+	        LanguageRegistry.instance().addStringLocalization("achievement." + ach, "en_US", name);
+	}
+
+	private void addAchievementDesc(String ach, String desc)
+	{
+	        LanguageRegistry.instance().addStringLocalization("achievement." + ach + ".desc", "en_US", desc);
 	}
 
 	@PostInit

@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBoiler extends BlockContainer {
-	private Random boilerRand = new Random();
+	private final Random boilerRand = new Random();
 
 	private final boolean isActive;
 
