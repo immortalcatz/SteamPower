@@ -18,6 +18,7 @@ import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.client.render.ResearchTableRender;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 
 public class BlockResearchTable extends BlockContainer
@@ -37,10 +38,21 @@ public class BlockResearchTable extends BlockContainer
     }
 
     @Override
-    public int getRenderType()
+    public String getTextureFile()
     {
-        return -1;
+        return (SteamCraft.modelTextureLocation + "researchtable.png");
     }
+
+    @Override
+	public int getBlockTextureFromSide(int i) {
+		return i;
+	}
+
+	@Override
+	public int getRenderType ()
+	{
+		return ResearchTableRender.researchModelID;
+	}
 
     @Override
     public boolean isOpaqueCube()

@@ -21,6 +21,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityMusketBall.class, new RenderBoiler(4));
         RenderingRegistry.registerEntityRenderingHandler(EntityMech.class, new RenderMech());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityResearchTable.class, new ResearchTableRender());
+        RenderingRegistry.registerBlockHandler(new ResearchTableRender());
     }
 
 }

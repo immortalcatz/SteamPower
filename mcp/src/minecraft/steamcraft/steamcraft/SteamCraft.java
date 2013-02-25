@@ -9,6 +9,9 @@ import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
 import steamcraft.steamcraft.packet.PacketHandler;
+import thaumcraft.api.EnumTag;
+import thaumcraft.api.ObjectTags;
+import thaumcraft.api.ThaumcraftApi;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
@@ -291,6 +294,8 @@ public class SteamCraft {
 
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
-		// Stub Method
+		ThaumcraftApi.registerObjectTag(SteamCraft.ingotZinc.itemID, -1, (new ObjectTags()).add(EnumTag.METAL, 6).add(EnumTag.HEAL, 2));
+		ThaumcraftApi.registerObjectTag(SteamCraft.zincOre.blockID, -1, (new ObjectTags()).add(EnumTag.METAL, 5).add(EnumTag.HEAL, 1).add(EnumTag.ROCK, 2));
+
 	}
 }

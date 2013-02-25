@@ -36,7 +36,8 @@ public class ItemFirearm extends Item
         this.shotgun = par6;
     }
 
-    public String getTextureFile()
+    @Override
+	public String getTextureFile()
     {
         return SteamCraft.ITEMS_PNG;
     }
@@ -61,10 +62,10 @@ public class ItemFirearm extends Item
             }
 
             var6 = event.charge;
-            float var7 = (float)var6 / 20.0F;
+            float var7 = var6 / 20.0F;
             var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
 
-            if ((double)var7 < 0.1D)
+            if (var7 < 0.1D)
             {
                 return;
             }
@@ -84,7 +85,7 @@ public class ItemFirearm extends Item
 
             if (var9 > 0)
             {
-                var8.setDamage(var8.getDamage() + (double)var9 * 0.5D + 0.5D);
+                var8.setDamage(var8.getDamage() + var9 * 0.5D + 0.5D);
             }
 
             int var10 = EnchantmentHelper.getEnchantmentLevel(Enchantment.punch.effectId, par1ItemStack);
@@ -140,8 +141,8 @@ public class ItemFirearm extends Item
                 }
 
                 par3EntityPlayer.rotationPitch = par3EntityPlayer.rotationPitch - (thiskb * 3F);
-                par3EntityPlayer.motionZ = (double)(-MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F)));
-                par3EntityPlayer.motionX = (double)(MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F)));
+                par3EntityPlayer.motionZ = -MathHelper.cos((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F));
+                par3EntityPlayer.motionX = MathHelper.sin((par3EntityPlayer.rotationYaw) * (float)Math.PI / 180.0F) * (thiskb * (4F / 50F));
             }
 
             // par3EntityPlayer.inventory.setInventorySlotContents(par3EntityPlayer.inventory.currentItem, new ItemStack(BoilerMod.musketEmpty));
@@ -159,7 +160,8 @@ public class ItemFirearm extends Item
         }
     }
 
-    public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    @Override
+	public ItemStack onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
         boolean var5 = par3EntityPlayer.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, par1ItemStack) > 0;
@@ -184,7 +186,8 @@ public class ItemFirearm extends Item
         return par1ItemStack;
     }
 
-    public boolean isFull3D()
+    @Override
+	public boolean isFull3D()
     {
         return true;
     }
@@ -192,7 +195,8 @@ public class ItemFirearm extends Item
     /**
      * How long it takes to use or consume an item
      */
-    public int getMaxItemUseDuration(ItemStack par1ItemStack)
+    @Override
+	public int getMaxItemUseDuration(ItemStack par1ItemStack)
     {
         if (!par1ItemStack.hasTagCompound())
         {
@@ -217,7 +221,8 @@ public class ItemFirearm extends Item
     /**
      * returns the action that specifies what animation to play when the items is being used
      */
-    public EnumAction getItemUseAction(ItemStack par1ItemStack)
+    @Override
+	public EnumAction getItemUseAction(ItemStack par1ItemStack)
     {
         if (!par1ItemStack.hasTagCompound())
         {
@@ -242,7 +247,8 @@ public class ItemFirearm extends Item
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
-    public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+    @Override
+	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         if (!par1ItemStack.hasTagCompound())
         {
@@ -280,7 +286,8 @@ public class ItemFirearm extends Item
     /**
      * Return the enchantability factor of the item, most of the time is based on material.
      */
-    public int getItemEnchantability()
+    @Override
+	public int getItemEnchantability()
     {
         return 1;
     }
