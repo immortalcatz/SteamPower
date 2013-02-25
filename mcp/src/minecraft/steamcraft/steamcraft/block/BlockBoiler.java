@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockBoiler extends BlockContainer {
-	private Random boilerRand = new Random();
+	private final Random boilerRand = new Random();
 
 	private final boolean isActive;
 
@@ -30,7 +30,7 @@ public class BlockBoiler extends BlockContainer {
 	public BlockBoiler(int par1, boolean par2) {
 		super(par1, Material.rock);
 		this.isActive = par2;
-		this.blockIndexInTexture = 45;
+		this.blockIndexInTexture = 18;
 	}
 
 	@Override
@@ -78,16 +78,22 @@ public class BlockBoiler extends BlockContainer {
 	public int getBlockTexture(IBlockAccess par1IBlockAccess, int par2,
 			int par3, int par4, int par5) {
 		if (par5 == 1) {
-			return this.blockIndexInTexture + 17;
+			return this.blockIndexInTexture;
 		} else if (par5 == 0) {
-			return this.blockIndexInTexture + 17;
+			return this.blockIndexInTexture;
 		} else {
 			int var6 = par1IBlockAccess.getBlockMetadata(par2, par3, par4);
 			return par5 != var6 ? this.blockIndexInTexture
-					: (this.isActive ? this.blockIndexInTexture + 16
-							: this.blockIndexInTexture - 1);
+					: (this.isActive ? this.blockIndexInTexture + 7
+							: this.blockIndexInTexture +6);
 		}
 	}
+
+    @Override
+    public String getTextureFile()
+    {
+        return SteamCraft.BLOCKS_PNG;
+    }
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -127,9 +133,9 @@ public class BlockBoiler extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSide(int par1) {
-		return par1 == 1 ? this.blockIndexInTexture + 17
-				: (par1 == 0 ? this.blockIndexInTexture + 17
-						: (par1 == 3 ? this.blockIndexInTexture - 1
+		return par1 == 1 ? this.blockIndexInTexture
+				: (par1 == 0 ? this.blockIndexInTexture
+						: (par1 == 3 ? this.blockIndexInTexture +6
 								: this.blockIndexInTexture));
 	}
 
