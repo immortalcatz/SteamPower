@@ -22,241 +22,223 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class Box implements IBox
-{
-    public @TileNetworkData
-    int xMin, yMin, zMin, xMax, yMax, zMax;
-    public @TileNetworkData
-    boolean initialized;
+public class Box implements IBox {
 
-    private EntityBlock lasers[];
+	public @TileNetworkData
+	int xMin, yMin, zMin, xMax, yMax, zMax;
+	public @TileNetworkData
+	boolean initialized;
 
-    public Box()
-    {
-        reset();
-    }
+	private EntityBlock lasers[];
 
-    public void reset()
-    {
-        initialized = false;
-        xMin = Integer.MAX_VALUE;
-        yMin = Integer.MAX_VALUE;
-        zMin = Integer.MAX_VALUE;
-        xMax = Integer.MAX_VALUE;
-        yMax = Integer.MAX_VALUE;
-        zMax = Integer.MAX_VALUE;
-    }
+	public Box() {
+		reset();
+	}
 
-    public boolean isInitialized()
-    {
-        return initialized;
-    }
+	public void reset() {
 
-    public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax)
-    {
-        this.xMin = xMin;
-        this.yMin = yMin;
-        this.zMin = zMin;
-        this.xMax = xMax;
-        this.yMax = yMax;
-        this.zMax = zMax;
-        initialized = true;
-    }
+		initialized = false;
+		xMin = Integer.MAX_VALUE;
+		yMin = Integer.MAX_VALUE;
+		zMin = Integer.MAX_VALUE;
+		xMax = Integer.MAX_VALUE;
+		yMax = Integer.MAX_VALUE;
+		zMax = Integer.MAX_VALUE;
+	}
 
-    public void initialize(Box box)
-    {
-        initialize(box.xMin, box.yMin, box.zMin, box.xMax, box.yMax, box.zMax);
-    }
+	public boolean isInitialized() {
+		return initialized;
+	}
 
-    public void initialize(IAreaProvider a)
-    {
-        initialize(a.xMin(), a.yMin(), a.zMin(), a.xMax(), a.yMax(), a.zMax());
-    }
+	public void initialize(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
 
-    public void initialize(NBTTagCompound nbttagcompound)
-    {
-        initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger("xMax"),
-                nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
-    }
+		this.xMin = xMin;
+		this.yMin = yMin;
+		this.zMin = zMin;
+		this.xMax = xMax;
+		this.yMax = yMax;
+		this.zMax = zMax;
+		initialized = true;
+	}
 
-    public void initialize(int centerX, int centerY, int centerZ, int size)
-    {
-        initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
-    }
+	public void initialize(Box box) {
 
-    public List<BlockIndex> getBlocksInArea()
-    {
-        List<BlockIndex> blocks = new ArrayList<BlockIndex>();
+		initialize(box.xMin, box.yMin, box.zMin, box.xMax, box.yMax, box.zMax);
+	}
 
-        for (int x = xMin; x <= xMax; x++)
-        {
-            for (int y = yMin; y <= yMax; y++)
-            {
-                for (int z = zMin; z <= zMax; z++)
-                {
-                    blocks.add(new BlockIndex(x, y, z));
-                }
-            }
-        }
+	public void initialize(IAreaProvider a) {
 
-        return blocks;
-    }
+		initialize(a.xMin(), a.yMin(), a.zMin(), a.xMax(), a.yMax(), a.zMax());
+	}
 
-    @Override
-    public void expand(int amount)
-    {
-        xMin += amount;
-        yMin += amount;
-        zMin += amount;
-        xMax += amount;
-        yMax += amount;
-        zMax += amount;
-    }
+	public void initialize(NBTTagCompound nbttagcompound) {
 
-    @Override
-    public void contract(int amount)
-    {
-        expand(-amount);
-    }
+		initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger("xMax"),
+				nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
+	}
 
-    @Override
-    public boolean contains(int x, int y, int z)
-    {
-        if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax)
-        {
-            return true;
-        }
+	public void initialize(int centerX, int centerY, int centerZ, int size) {
 
-        return false;
-    }
+		initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
 
-    public boolean contains(Position p)
-    {
-        return contains((int) p.x, (int) p.y, (int) p.z);
-    }
+	}
 
-    public boolean contains(BlockIndex i)
-    {
-        return contains(i.i, i.j, i.k);
-    }
+	public List<BlockIndex> getBlocksInArea() {
 
-    @Override
-    public Position pMin()
-    {
-        return new Position(xMin, yMin, zMin);
-    }
+		List<BlockIndex> blocks = new ArrayList<BlockIndex>();
 
-    @Override
-    public Position pMax()
-    {
-        return new Position(xMax, yMax, zMax);
-    }
+		for (int x = xMin; x <= xMax; x++) {
+			for (int y = yMin; y <= yMax; y++) {
+				for (int z = zMin; z <= zMax; z++) {
+					blocks.add(new BlockIndex(x, y, z));
+				}
+			}
 
-    public int sizeX()
-    {
-        return xMax - xMin + 1;
-    }
+		}
 
-    public int sizeY()
-    {
-        return yMax - yMin + 1;
-    }
+		return blocks;
+	}
 
-    public int sizeZ()
-    {
-        return zMax - zMin + 1;
-    }
+	@Override
+	public void expand(int amount) {
 
-    public double centerX()
-    {
-        return xMin + sizeX() / 2.0;
-    }
+		xMin += amount;
+		yMin += amount;
+		zMin += amount;
+		xMax += amount;
+		yMax += amount;
+		zMax += amount;
+	}
 
-    public double centerY()
-    {
-        return yMin + sizeY() / 2.0;
-    }
+	@Override
+	public void contract(int amount) {
+		expand(-amount);
+	}
 
-    public double centerZ()
-    {
-        return zMin + sizeZ() / 2.0;
-    }
+	@Override
+	public boolean contains(int x, int y, int z) {
 
-    public Box rotateLeft()
-    {
-        Box nBox = new Box();
-        nBox.xMin = (sizeZ() - 1) - zMin;
-        nBox.yMin = yMin;
-        nBox.zMin = xMin;
-        nBox.xMax = (sizeZ() - 1) - zMax;
-        nBox.yMax = yMax;
-        nBox.zMax = xMax;
-        nBox.reorder();
-        return nBox;
-    }
+		if (x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax)
+			return true;
 
-    public void reorder()
-    {
-        int tmp;
+		return false;
+	}
 
-        if (xMin > xMax)
-        {
-            tmp = xMin;
-            xMin = xMax;
-            xMax = tmp;
-        }
+	public boolean contains(Position p) {
+		return contains((int) p.x, (int) p.y, (int) p.z);
+	}
 
-        if (yMin > yMax)
-        {
-            tmp = yMin;
-            yMin = yMax;
-            yMax = tmp;
-        }
+	public boolean contains(BlockIndex i) {
+		return contains(i.i, i.j, i.k);
+	}
 
-        if (zMin > zMax)
-        {
-            tmp = zMin;
-            zMin = zMax;
-            zMax = tmp;
-        }
-    }
+	@Override
+	public Position pMin() {
+		return new Position(xMin, yMin, zMin);
+	}
 
-    @Override
-    public void createLasers(World world, LaserKind kind)
-    {
-        if (lasers == null)
-        {
-            lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
-        }
-    }
+	@Override
+	public Position pMax() {
+		return new Position(xMax, yMax, zMax);
+	}
 
-    @Override
-    public void deleteLasers()
-    {
-        if (lasers != null)
-        {
-            for (EntityBlock b : lasers)
-            {
-                CoreProxy.proxy.removeEntity(b);
-            }
+	public int sizeX() {
+		return xMax - xMin + 1;
+	}
 
-            lasers = null;
-        }
-    }
+	public int sizeY() {
+		return yMax - yMin + 1;
+	}
 
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        nbttagcompound.setInteger("xMin", xMin);
-        nbttagcompound.setInteger("yMin", yMin);
-        nbttagcompound.setInteger("zMin", zMin);
-        nbttagcompound.setInteger("xMax", xMax);
-        nbttagcompound.setInteger("yMax", yMax);
-        nbttagcompound.setInteger("zMax", zMax);
-    }
+	public int sizeZ() {
+		return zMax - zMin + 1;
+	}
 
-    @Override
-    public String toString()
-    {
-        return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
-    }
+	public double centerX() {
+		return xMin + sizeX() / 2.0;
+	}
+
+	public double centerY() {
+		return yMin + sizeY() / 2.0;
+	}
+
+	public double centerZ() {
+		return zMin + sizeZ() / 2.0;
+	}
+
+	public Box rotateLeft() {
+
+		Box nBox = new Box();
+		nBox.xMin = (sizeZ() - 1) - zMin;
+		nBox.yMin = yMin;
+		nBox.zMin = xMin;
+
+		nBox.xMax = (sizeZ() - 1) - zMax;
+		nBox.yMax = yMax;
+		nBox.zMax = xMax;
+
+		nBox.reorder();
+
+		return nBox;
+	}
+
+	public void reorder() {
+
+		int tmp;
+
+		if (xMin > xMax) {
+			tmp = xMin;
+			xMin = xMax;
+			xMax = tmp;
+		}
+
+		if (yMin > yMax) {
+			tmp = yMin;
+			yMin = yMax;
+			yMax = tmp;
+		}
+
+		if (zMin > zMax) {
+			tmp = zMin;
+			zMin = zMax;
+			zMax = tmp;
+		}
+	}
+
+	@Override
+	public void createLasers(World world, LaserKind kind) {
+
+		if (lasers == null) {
+			lasers = Utils.createLaserBox(world, xMin, yMin, zMin, xMax, yMax, zMax, kind);
+		}
+	}
+
+	@Override
+	public void deleteLasers() {
+
+		if (lasers != null) {
+			for (EntityBlock b : lasers) {
+				CoreProxy.proxy.removeEntity(b);
+			}
+
+			lasers = null;
+		}
+	}
+
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+
+		nbttagcompound.setInteger("xMin", xMin);
+		nbttagcompound.setInteger("yMin", yMin);
+		nbttagcompound.setInteger("zMin", zMin);
+
+		nbttagcompound.setInteger("xMax", xMax);
+		nbttagcompound.setInteger("yMax", yMax);
+		nbttagcompound.setInteger("zMax", zMax);
+	}
+
+	@Override
+	public String toString() {
+		return "{" + xMin + ", " + xMax + "}, {" + yMin + ", " + yMax + "}, {" + zMin + ", " + zMax + "}";
+	}
+
 }

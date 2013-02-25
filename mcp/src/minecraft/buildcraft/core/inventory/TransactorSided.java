@@ -7,36 +7,32 @@ import net.minecraftforge.common.ISidedInventory;
 /**
  * Manages input on ISidedInventory
  */
-public class TransactorSided extends TransactorSimple
-{
-    ISidedInventory sided;
+public class TransactorSided extends TransactorSimple {
 
-    public TransactorSided(ISidedInventory inventory)
-    {
-        super(inventory);
-        this.sided = inventory;
-    }
+	ISidedInventory sided;
 
-    @Override
-    protected int getPartialSlot(ItemStack stack, ForgeDirection orientation, int skipAhead)
-    {
-        // If skipAhead is below the minimum required, we skip ahead to the first valid slot.
-        if (skipAhead < sided.getStartInventorySide(orientation))
-        {
-            skipAhead = sided.getStartInventorySide(orientation);
-        }
+	public TransactorSided(ISidedInventory inventory) {
+		super(inventory);
+		this.sided = inventory;
+	}
 
-        if (skipAhead > sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation))
-        {
-            return -1;
-        }
+	@Override
+	protected int getPartialSlot(ItemStack stack, ForgeDirection orientation, int skipAhead) {
 
-        return getPartialSlot(stack, skipAhead, sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
-    }
+		// If skipAhead is below the minimum required, we skip ahead to the first valid slot.
+		if (skipAhead < sided.getStartInventorySide(orientation)) {
+			skipAhead = sided.getStartInventorySide(orientation);
+		}
 
-    @Override
-    protected int getEmptySlot(ForgeDirection orientation)
-    {
-        return getEmptySlot(sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
-    }
+		if (skipAhead > sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation))
+			return -1;
+
+		return getPartialSlot(stack, skipAhead, sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
+	}
+
+	@Override
+	protected int getEmptySlot(ForgeDirection orientation) {
+		return getEmptySlot(sided.getStartInventorySide(orientation), sided.getStartInventorySide(orientation) + sided.getSizeInventorySide(orientation));
+	}
+
 }

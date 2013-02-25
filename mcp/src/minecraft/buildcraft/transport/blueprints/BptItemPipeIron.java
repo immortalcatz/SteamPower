@@ -17,28 +17,28 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.blueprints.BptItem;
 
-public class BptItemPipeIron extends BptItem
-{
-    public BptItemPipeIron()
-    {
-    }
+public class BptItemPipeIron extends BptItem {
 
-    @Override
-    public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements)
-    {
-    }
+	public BptItemPipeIron() {
 
-    @Override
-    public void postProcessing(BptSlotInfo slot, IBptContext context)
-    {
-        context.world().setBlockMetadata(slot.x, slot.y, slot.z, slot.meta);
-    }
+	}
 
-    @Override
-    public void rotateLeft(BptSlotInfo slot, IBptContext context)
-    {
-        int orientation = slot.meta & 7;
-        int others = slot.meta - orientation;
-        slot.meta = ForgeDirection.values()[orientation].getRotation(ForgeDirection.DOWN).ordinal() + others;
-    }
+	@Override
+	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
+
+	}
+
+	@Override
+	public void postProcessing(BptSlotInfo slot, IBptContext context) {
+		context.world().setBlockMetadata(slot.x, slot.y, slot.z, slot.meta);
+	}
+
+	@Override
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		int orientation = slot.meta & 7;
+		int others = slot.meta - orientation;
+
+		slot.meta = ForgeDirection.values()[orientation].getRotation(ForgeDirection.DOWN).ordinal() + others;
+	}
+
 }

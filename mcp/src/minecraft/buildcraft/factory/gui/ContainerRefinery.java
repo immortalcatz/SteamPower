@@ -20,86 +20,70 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 
-public class ContainerRefinery extends BuildCraftContainer
-{
-    TileRefinery refinery;
+public class ContainerRefinery extends BuildCraftContainer {
 
-    public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery)
-    {
-        super(refinery.getSizeInventory());
+	TileRefinery refinery;
 
-        for (int l = 0; l < 3; l++)
-        {
-            for (int k1 = 0; k1 < 9; k1++)
-            {
-                addSlotToContainer(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
-            }
-        }
+	public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
+		super(refinery.getSizeInventory());
 
-        for (int i1 = 0; i1 < 9; i1++)
-        {
-            addSlotToContainer(new Slot(inventory, i1, 8 + i1 * 18, 181));
-        }
+		for (int l = 0; l < 3; l++) {
+			for (int k1 = 0; k1 < 9; k1++) {
+				addSlotToContainer(new Slot(inventory, k1 + l * 9 + 9, 8 + k1 * 18, 123 + l * 18));
+			}
+		}
 
-        this.refinery = refinery;
-    }
+		for (int i1 = 0; i1 < 9; i1++) {
+			addSlotToContainer(new Slot(inventory, i1, 8 + i1 * 18, 181));
+		}
 
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer)
-    {
-        return refinery.isUseableByPlayer(entityplayer);
-    }
+		this.refinery = refinery;
+	}
 
-    /* SETTING AND GETTING FILTERS */
-    /**
-     * @param slot
-     *            @ param liquidId param liquidMeta (for future use)
-     */
-    public void setFilter(int slot, int liquidId, int liquidMeta)
-    {
-        refinery.setFilter(slot, liquidId, liquidMeta);
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return refinery.isUseableByPlayer(entityplayer);
+	}
 
-        if (CoreProxy.proxy.isRenderWorld(refinery.worldObj))
-        {
-            PacketPayload payload = new PacketPayload(3, 0, 0);
-            payload.intPayload[0] = slot;
-            payload.intPayload[1] = liquidId;
-            payload.intPayload[2] = liquidMeta;
-            CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload)
-                    .getPacket());
-        }
-    }
+	/* SETTING AND GETTING FILTERS */
+	/**
+	 * @param slot
+	 *            @ param liquidId param liquidMeta (for future use)
+	 */
+	public void setFilter(int slot, int liquidId, int liquidMeta) {
 
-    public ItemStack getFilter(int slot)
-    {
-        int liquidId = refinery.getFilter(slot);
-        int liquidMeta = refinery.getFilterMeta(slot);
+		refinery.setFilter(slot, liquidId, liquidMeta);
 
-        if (liquidId > 0)
-        {
-            return new ItemStack(liquidId, 0, liquidMeta);
-        }
-        else
-        {
-            return null;
-        }
-    }
+		if (CoreProxy.proxy.isRenderWorld(refinery.worldObj)) {
+			PacketPayload payload = new PacketPayload(3, 0, 0);
+			payload.intPayload[0] = slot;
+			payload.intPayload[1] = liquidId;
+			payload.intPayload[2] = liquidMeta;
+			CoreProxy.proxy.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload)
+					.getPacket());
+		}
+	}
 
-    /* GUI DISPLAY UPDATES */
-    // @Override Client side only
-    public void updateProgressBar(int i, int j)
-    {
-        refinery.getGUINetworkData(i, j);
-    }
+	public ItemStack getFilter(int slot) {
+		int liquidId = refinery.getFilter(slot);
+		int liquidMeta = refinery.getFilterMeta(slot);
+		if (liquidId > 0)
+			return new ItemStack(liquidId, 0, liquidMeta);
+		else
+			return null;
+	}
 
-    @Override
-    public void detectAndSendChanges()
-    {
-        super.detectAndSendChanges();
+	/* GUI DISPLAY UPDATES */
+	// @Override Client side only
+	public void updateProgressBar(int i, int j) {
+		refinery.getGUINetworkData(i, j);
+	}
 
-        for (int i = 0; i < crafters.size(); i++)
-        {
-            refinery.sendGUINetworkData(this, (ICrafting) crafters.get(i));
-        }
-    }
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+		for (int i = 0; i < crafters.size(); i++) {
+			refinery.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		}
+	}
 }

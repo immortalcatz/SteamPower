@@ -16,96 +16,79 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 
-public class FillerFlattener extends FillerPattern
-{
-    @Override
-    public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace)
-    {
-        int xMin = (int) box.pMin().x;
-        int yMin = (int) box.pMin().y;
-        int zMin = (int) box.pMin().z;
-        int xMax = (int) box.pMax().x;
-        int zMax = (int) box.pMax().z;
-        int sizeX = xMax - xMin + 1;
-        int sizeZ = zMax - zMin + 1;
-        boolean[][] blockedColumns = new boolean[sizeX][sizeZ];
+public class FillerFlattener extends FillerPattern {
 
-        for (int i = 0; i < blockedColumns.length; ++i)
-        {
-            for (int j = 0; j < blockedColumns[0].length; ++j)
-            {
-                blockedColumns[i][j] = false;
-            }
-        }
+	@Override
+	public boolean iteratePattern(TileEntity tile, IBox box, ItemStack stackToPlace) {
+		int xMin = (int) box.pMin().x;
+		int yMin = (int) box.pMin().y;
+		int zMin = (int) box.pMin().z;
 
-        boolean found = false;
-        int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
+		int xMax = (int) box.pMax().x;
+		int zMax = (int) box.pMax().z;
 
-        for (int y = yMin - 1; y >= 0; --y)
-        {
-            found = false;
+		int sizeX = xMax - xMin + 1;
+		int sizeZ = zMax - zMin + 1;
 
-            for (int x = xMin; x <= xMax; ++x)
-            {
-                for (int z = zMin; z <= zMax; ++z)
-                {
-                    if (!BlockUtil.canChangeBlock(tile.worldObj, x, y, z))
-                    {
-                        return true;
-                    }
+		boolean[][] blockedColumns = new boolean[sizeX][sizeZ];
 
-                    if (!blockedColumns[x - xMin][z - zMin])
-                    {
-                        if (!BlockUtil.isSoftBlock(tile.worldObj, x, y, z))
-                        {
-                            blockedColumns[x - xMin][z - zMin] = true;
-                        }
-                        else
-                        {
-                            found = true;
-                            lastX = x;
-                            lastY = y;
-                            lastZ = z;
-                        }
-                    }
-                }
-            }
+		for (int i = 0; i < blockedColumns.length; ++i) {
+			for (int j = 0; j < blockedColumns[0].length; ++j) {
+				blockedColumns[i][j] = false;
+			}
+		}
 
-            if (!found)
-            {
-                break;
-            }
-        }
+		boolean found = false;
+		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
-        if (lastX != Integer.MAX_VALUE && stackToPlace != null)
-        {
-            stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(tile.worldObj), tile.worldObj, lastX, lastY - 1, lastZ, 1, 0.0f,
-                    0.0f, 0.0f);
-        }
+		for (int y = yMin - 1; y >= 0; --y) {
+			found = false;
+			for (int x = xMin; x <= xMax; ++x) {
+				for (int z = zMin; z <= zMax; ++z) {
+					if (!BlockUtil.canChangeBlock(tile.worldObj, x, y, z))
+						return true;
+					if (!blockedColumns[x - xMin][z - zMin]) {
+						if (!BlockUtil.isSoftBlock(tile.worldObj, x, y, z)) {
+							blockedColumns[x - xMin][z - zMin] = true;
+						} else {
+							found = true;
+							lastX = x;
+							lastY = y;
+							lastZ = z;
+						}
+					}
+				}
+			}
 
-        if (lastX != Integer.MAX_VALUE)
-        {
-            return false;
-        }
+			if (!found) {
+				break;
+			}
+		}
 
-        return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
-    }
+		if (lastX != Integer.MAX_VALUE && stackToPlace != null) {
+			stackToPlace.getItem().onItemUse(stackToPlace, CoreProxy.proxy.getBuildCraftPlayer(tile.worldObj), tile.worldObj, lastX, lastY - 1, lastZ, 1, 0.0f,
+					0.0f, 0.0f);
+		}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+		if (lastX != Integer.MAX_VALUE)
+			return false;
 
-    @Override
-    public int getTextureIndex()
-    {
-        return 4 * 16 + 5;
-    }
+		return !empty(xMin, yMin, zMin, xMax, 64 * 4, zMax, tile.worldObj);
+	}
 
-    @Override
-    public String getName()
-    {
-        return "Flatten";
-    }
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
+	@Override
+	public int getTextureIndex() {
+		return 4 * 16 + 5;
+	}
+
+	@Override
+	public String getName() {
+		return "Flatten";
+	}
+
 }

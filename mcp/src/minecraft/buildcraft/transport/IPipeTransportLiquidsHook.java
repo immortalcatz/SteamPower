@@ -12,7 +12,7 @@ package buildcraft.transport;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.liquids.LiquidStack;
 
-public interface IPipeTransportLiquidsHook
-{
-    public int fill(ForgeDirection from, LiquidStack resource, boolean doFill);
+public interface IPipeTransportLiquidsHook {
+
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill);
 }

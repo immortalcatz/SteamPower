@@ -10,46 +10,38 @@ import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipe;
 
-public class PipeTriggerProvider implements ITriggerProvider
-{
-    @Override
-    public LinkedList<ITrigger> getPipeTriggers(IPipe iPipe)
-    {
-        if (iPipe instanceof IOverrideDefaultTriggers)
-        {
-            return ((IOverrideDefaultTriggers) iPipe).getTriggers();
-        }
+public class PipeTriggerProvider implements ITriggerProvider {
 
-        LinkedList<ITrigger> result = new LinkedList<ITrigger>();
-        Pipe pipe = (Pipe) iPipe;
+	@Override
+	public LinkedList<ITrigger> getPipeTriggers(IPipe iPipe) {
+		if (iPipe instanceof IOverrideDefaultTriggers)
+			return ((IOverrideDefaultTriggers) iPipe).getTriggers();
 
-        if (pipe.hasGate())
-        {
-            pipe.gate.addTrigger(result);
-        }
+		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 
-        if (pipe.transport instanceof PipeTransportItems)
-        {
-            result.add(BuildCraftTransport.triggerPipeEmpty);
-            result.add(BuildCraftTransport.triggerPipeItems);
-        }
-        else if (pipe.transport instanceof PipeTransportPower)
-        {
-            result.add(BuildCraftTransport.triggerPipeEmpty);
-            result.add(BuildCraftTransport.triggerPipeEnergy);
-        }
-        else if (pipe.transport instanceof PipeTransportLiquids)
-        {
-            result.add(BuildCraftTransport.triggerPipeEmpty);
-            result.add(BuildCraftTransport.triggerPipeLiquids);
-        }
+		Pipe pipe = (Pipe) iPipe;
 
-        return result;
-    }
+		if (pipe.hasGate()) {
+			pipe.gate.addTrigger(result);
+		}
 
-    @Override
-    public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile)
-    {
-        return null;
-    }
+		if (pipe.transport instanceof PipeTransportItems) {
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeItems);
+		} else if (pipe.transport instanceof PipeTransportPower) {
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeEnergy);
+		} else if (pipe.transport instanceof PipeTransportLiquids) {
+			result.add(BuildCraftTransport.triggerPipeEmpty);
+			result.add(BuildCraftTransport.triggerPipeLiquids);
+		}
+
+		return result;
+	}
+
+	@Override
+	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
+		return null;
+	}
+
 }

@@ -24,77 +24,64 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiIds;
 import buildcraft.core.proxy.CoreProxy;
 
-public class BlockBlueprintLibrary extends BlockContainer
-{
-    public BlockBlueprintLibrary(int i)
-    {
-        super(i, Material.wood);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-        setHardness(0.7F);
-    }
+public class BlockBlueprintLibrary extends BlockContainer {
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	public BlockBlueprintLibrary(int i) {
+		super(i, Material.wood);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+		setHardness(0.7F);
+	}
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
-    {
-        super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
 
-        // Drop through if the player is sneaking
-        if (entityplayer.isSneaking())
-        {
-            return false;
-        }
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
 
-        TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
+		// Drop through if the player is sneaking
+		if (entityplayer.isSneaking())
+			return false;
 
-        if (!tile.locked || entityplayer.username.equals(tile.owner))
-            if (!CoreProxy.proxy.isRenderWorld(world))
-            {
-                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
-            }
+		TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
 
-        return true;
-    }
+		if (!tile.locked || entityplayer.username.equals(tile.owner))
+			if (!CoreProxy.proxy.isRenderWorld(world)) {
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+			}
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return new TileBlueprintLibrary();
-    }
+		return true;
+	}
 
-    @Override
-    public int getBlockTextureFromSide(int i)
-    {
-        switch (i)
-        {
-            case 0:
-            case 1:
-                return 3 * 16 + 5;
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return new TileBlueprintLibrary();
+	}
 
-            default:
-                return 3 * 16 + 8;
-        }
-    }
+	@Override
+	public int getBlockTextureFromSide(int i) {
+		switch (i) {
+		case 0:
+		case 1:
+			return 3 * 16 + 5;
+		default:
+			return 3 * 16 + 8;
+		}
+	}
 
-    @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving)
-    {
-        if (CoreProxy.proxy.isSimulating(world) && entityliving instanceof EntityPlayer)
-        {
-            TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
-            tile.owner = ((EntityPlayer) entityliving).username;
-        }
-    }
+	@Override
+	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving) {
+		if (CoreProxy.proxy.isSimulating(world) && entityliving instanceof EntityPlayer) {
+			TileBlueprintLibrary tile = (TileBlueprintLibrary) world.getBlockTileEntity(i, j, k);
+			tile.owner = ((EntityPlayer) entityliving).username;
+		}
+	}
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    @Override
-    public void addCreativeItems(ArrayList itemList)
-    {
-        itemList.add(new ItemStack(this));
-    }
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
 }

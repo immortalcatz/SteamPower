@@ -15,87 +15,76 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.core.Box;
 import buildcraft.core.IBuilderInventory;
 
-public abstract class BptBuilderBase implements IAreaProvider
-{
-    public BptBase bluePrint;
-    int x, y, z;
-    public boolean done;
-    protected BptContext context;
+public abstract class BptBuilderBase implements IAreaProvider {
 
-    public BptBuilderBase(BptBase bluePrint, World world, int x, int y, int z)
-    {
-        this.bluePrint = bluePrint;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        done = false;
-        Box box = new Box();
-        box.initialize(this);
+	public BptBase bluePrint;
+	int x, y, z;
+	public boolean done;
+	protected BptContext context;
 
-        if (bluePrint instanceof BptBlueprint)
-        {
-            context = new BptContext(world, (BptBlueprint) bluePrint, box);
-        }
-        else
-        {
-            context = new BptContext(world, null, box);
-        }
-    }
+	public BptBuilderBase(BptBase bluePrint, World world, int x, int y, int z) {
+		this.bluePrint = bluePrint;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		done = false;
 
-    public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
+		Box box = new Box();
+		box.initialize(this);
 
-    @Override
-    public int xMin()
-    {
-        return x - bluePrint.anchorX;
-    }
+		if (bluePrint instanceof BptBlueprint) {
+			context = new BptContext(world, (BptBlueprint) bluePrint, box);
+		} else {
+			context = new BptContext(world, null, box);
+		}
+	}
 
-    @Override
-    public int yMin()
-    {
-        return y - bluePrint.anchorY;
-    }
+	public abstract BptSlot getNextBlock(World world, IBuilderInventory inv);
 
-    @Override
-    public int zMin()
-    {
-        return z - bluePrint.anchorZ;
-    }
+	@Override
+	public int xMin() {
+		return x - bluePrint.anchorX;
+	}
 
-    @Override
-    public int xMax()
-    {
-        return x + bluePrint.sizeX - bluePrint.anchorX - 1;
-    }
+	@Override
+	public int yMin() {
+		return y - bluePrint.anchorY;
+	}
 
-    @Override
-    public int yMax()
-    {
-        return y + bluePrint.sizeY - bluePrint.anchorY - 1;
-    }
+	@Override
+	public int zMin() {
+		return z - bluePrint.anchorZ;
+	}
 
-    @Override
-    public int zMax()
-    {
-        return z + bluePrint.sizeZ - bluePrint.anchorZ - 1;
-    }
+	@Override
+	public int xMax() {
+		return x + bluePrint.sizeX - bluePrint.anchorX - 1;
+	}
 
-    @Override
-    public void removeFromWorld()
-    {
-    }
+	@Override
+	public int yMax() {
+		return y + bluePrint.sizeY - bluePrint.anchorY - 1;
+	}
 
-    public AxisAlignedBB getBoundingBox()
-    {
-        return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
-    }
+	@Override
+	public int zMax() {
+		return z + bluePrint.sizeZ - bluePrint.anchorZ - 1;
+	}
 
-    public void postProcessing(World world)
-    {
-    }
+	@Override
+	public void removeFromWorld() {
 
-    public BptContext getContext()
-    {
-        return context;
-    }
+	}
+
+	public AxisAlignedBB getBoundingBox() {
+		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+	}
+
+	public void postProcessing(World world) {
+
+	}
+
+	public BptContext getContext() {
+		return context;
+	}
 }

@@ -14,58 +14,50 @@ import buildcraft.factory.TileRefinery;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-public class PacketHandlerFactory implements IPacketHandler
-{
-    @Override
-    public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
-    {
-        DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
+public class PacketHandlerFactory implements IPacketHandler {
 
-        try
-        {
-            int packetID = data.read();
-            PacketUpdate packetU = new PacketUpdate();
+	@Override
+	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
 
-            switch (packetID)
-            {
-                case PacketIds.REFINERY_FILTER_SET:
-                    packetU.readData(data);
-                    onRefinerySelect((EntityPlayer) player, packetU);
-                    break;
-            }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
+		try {
+			int packetID = data.read();
+			PacketUpdate packetU = new PacketUpdate();
 
-    private TileRefinery getRefinery(World world, int x, int y, int z)
-    {
-        if (!world.blockExists(x, y, z))
-        {
-            return null;
-        }
+			switch (packetID) {
 
-        TileEntity tile = world.getBlockTileEntity(x, y, z);
+			case PacketIds.REFINERY_FILTER_SET:
+				packetU.readData(data);
+				onRefinerySelect((EntityPlayer) player, packetU);
+				break;
 
-        if (!(tile instanceof TileRefinery))
-        {
-            return null;
-        }
+			}
 
-        return (TileRefinery) tile;
-    }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-    private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet)
-    {
-        TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
+	}
 
-        if (tile == null)
-        {
-            return;
-        }
+	private TileRefinery getRefinery(World world, int x, int y, int z) {
+		if (!world.blockExists(x, y, z))
+			return null;
 
-        tile.setFilter(packet.payload.intPayload[0], packet.payload.intPayload[1], packet.payload.intPayload[2]);
-    }
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (!(tile instanceof TileRefinery))
+			return null;
+
+		return (TileRefinery) tile;
+	}
+
+	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) {
+
+		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
+		if (tile == null)
+			return;
+
+		tile.setFilter(packet.payload.intPayload[0], packet.payload.intPayload[1], packet.payload.intPayload[2]);
+
+	}
+
 }

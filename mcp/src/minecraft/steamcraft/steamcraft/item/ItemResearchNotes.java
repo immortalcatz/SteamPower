@@ -6,30 +6,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.world.World;
 
-public class ItemResearchNotes extends ItemSteamcraft
-{
-    public ItemResearchNotes(int par1)
-    {
-        super(par1);
-    }
+public class ItemResearchNotes extends ItemSteamcraft {
 
-    @Override
-    public int getItemStackLimit()
-    {
-        return 1;
-    }
+	public ItemResearchNotes(int par1) {
+		super(par1);
+	}
 
-    @Override
-    public void onCreated(ItemStack notes, World planetEarth, EntityPlayer yoursTruly)
-    {
-        NBTTagList items = new NBTTagList();
-        notes.stackTagCompound.setTag("Contents", items);
-    }
+	@Override
+	public int getItemStackLimit() {
+		return 1;
+	}
 
-    public void addItem(ItemStack notes, ItemStack researched, boolean successful)
-    {
-        NBTTagCompound addition = new NBTTagCompound();
-        researched.writeToNBT(addition);
-        notes.stackTagCompound.getTagList("Contents").appendTag(addition);
-    }
+	//so dimitriye you're probably wondering where the heck this code is.
+	//it didn't work very well so go look in the research method in the tile entity
+
 }

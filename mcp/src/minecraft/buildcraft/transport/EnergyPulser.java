@@ -4,82 +4,69 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.power.IPowerReceptor;
 
-public class EnergyPulser
-{
-    private IPowerReceptor powerReceptor;
+public class EnergyPulser {
 
-    private boolean isActive = false;
-    private float progress = 0;
-    private int progressPart = 0;
-    private float pulseSpeed = 0;
-    private int maxHeat = 1000;
+	private IPowerReceptor powerReceptor;
 
-    public EnergyPulser(IPowerReceptor receptor)
-    {
-        powerReceptor = receptor;
-    }
+	private boolean isActive = false;
+	private float progress = 0;
+	private int progressPart = 0;
+	private float pulseSpeed = 0;
+	private int maxHeat = 1000;
 
-    public void update()
-    {
-        if (powerReceptor == null)
-        {
-            return;
-        }
+	public EnergyPulser(IPowerReceptor receptor) {
+		powerReceptor = receptor;
+	}
 
-        // Check if we are already running
-        if (progressPart != 0)
-        {
-            progress += getPulseSpeed();
+	public void update() {
+		if (powerReceptor == null)
+			return;
 
-            if (progress > 0.5 && progressPart == 1)
-            {
-                progressPart = 2;
-                // Give off energy pulse!
-                powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
-            }
-            else if (progress >= 1)
-            {
-                progress = 0;
-                progressPart = 0;
-            }
-        }
-        else if (isActive)
-        {
-            progressPart = 1;
-        }
-    }
+		// Check if we are already running
+		if (progressPart != 0) {
 
-    public void enablePulse()
-    {
-        isActive = true;
-    }
+			progress += getPulseSpeed();
 
-    public void disablePulse()
-    {
-        isActive = false;
-    }
+			if (progress > 0.5 && progressPart == 1) {
+				progressPart = 2;
+				// Give off energy pulse!
+				powerReceptor.getPowerProvider().receiveEnergy(1, ForgeDirection.WEST);
 
-    public boolean isActive()
-    {
-        return isActive;
-    }
+			} else if (progress >= 1) {
+				progress = 0;
+				progressPart = 0;
+			}
+		} else if (isActive) {
+			progressPart = 1;
+		}
 
-    private float getPulseSpeed()
-    {
-        return 0.1F;
-    }
+	}
 
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        nbttagcompound.setBoolean("IsActive", isActive);
-        nbttagcompound.setShort("ProgressPart", (short) progressPart);
-        nbttagcompound.setFloat("Progress", progress);
-    }
+	public void enablePulse() {
+		isActive = true;
+	}
 
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        isActive = nbttagcompound.getBoolean("IsActive");
-        progressPart = nbttagcompound.getShort("ProgressPart");
-        progress = nbttagcompound.getFloat("Progress");
-    }
+	public void disablePulse() {
+		isActive = false;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	private float getPulseSpeed() {
+		return 0.1F;
+	}
+
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound.setBoolean("IsActive", isActive);
+		nbttagcompound.setShort("ProgressPart", (short) progressPart);
+		nbttagcompound.setFloat("Progress", progress);
+	}
+
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		isActive = nbttagcompound.getBoolean("IsActive");
+		progressPart = nbttagcompound.getShort("ProgressPart");
+		progress = nbttagcompound.getFloat("Progress");
+	}
 }

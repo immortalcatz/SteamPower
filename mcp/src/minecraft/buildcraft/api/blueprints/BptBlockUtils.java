@@ -1,8 +1,8 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -16,84 +16,70 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
-public class BptBlockUtils
-{
-    public static void requestInventoryContents(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements)
-    {
-        ItemStack[] stacks = getItemStacks(slot, context);
+public class BptBlockUtils {
 
-        for (ItemStack stack : stacks)
-        {
-            if (stack != null)
-            {
-                requirements.add(stack);
-            }
-        }
-    }
+	public static void requestInventoryContents(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		ItemStack[] stacks = getItemStacks(slot, context);
 
-    public static void initializeInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory)
-    {
-        ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
+		for (ItemStack stack : stacks) {
+			if (stack != null) {
+				requirements.add(stack);
+			}
+		}
+	}
 
-        for (int i = 0; i < inventory.getSizeInventory(); ++i)
-        {
-            stacks[i] = inventory.getStackInSlot(i);
-        }
+	public static void initializeInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
+		ItemStack[] stacks = new ItemStack[inventory.getSizeInventory()];
 
-        setItemStacks(slot, context, stacks);
-    }
+		for (int i = 0; i < inventory.getSizeInventory(); ++i) {
+			stacks[i] = inventory.getStackInSlot(i);
+		}
 
-    public static void buildInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory)
-    {
-        ItemStack[] stacks = getItemStacks(slot, context);
+		setItemStacks(slot, context, stacks);
+	}
 
-        for (int i = 0; i < stacks.length; ++i)
-        {
-            inventory.setInventorySlotContents(i, stacks[i]);
-        }
-    }
+	public static void buildInventoryContents(BptSlotInfo slot, IBptContext context, IInventory inventory) {
+		ItemStack[] stacks = getItemStacks(slot, context);
 
-    public static ItemStack[] getItemStacks(BptSlotInfo slot, IBptContext context)
-    {
-        NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
+		for (int i = 0; i < stacks.length; ++i) {
+			inventory.setInventorySlotContents(i, stacks[i]);
+		}
+	}
 
-        if (list == null)
-        {
-            return new ItemStack[0];
-        }
+	public static ItemStack[] getItemStacks(BptSlotInfo slot, IBptContext context) {
+		NBTTagList list = (NBTTagList) slot.cpt.getTag("inv");
 
-        ItemStack stacks[] = new ItemStack[list.tagCount()];
+		if (list == null)
+			return new ItemStack[0];
 
-        for (int i = 0; i < list.tagCount(); ++i)
-        {
-            ItemStack stack = ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
+		ItemStack stacks[] = new ItemStack[list.tagCount()];
 
-            if (stack != null && stack.itemID != 0 && stack.stackSize > 0)
-            {
-                stacks[i] = context.mapItemStack(stack);
-            }
-        }
+		for (int i = 0; i < list.tagCount(); ++i) {
+			ItemStack stack = ItemStack.loadItemStackFromNBT((NBTTagCompound) list.tagAt(i));
 
-        return stacks;
-    }
+			if (stack != null && stack.itemID != 0 && stack.stackSize > 0) {
+				stacks[i] = context.mapItemStack(stack);
+			}
+		}
 
-    public static void setItemStacks(BptSlotInfo slot, IBptContext context, ItemStack[] stacks)
-    {
-        NBTTagList nbttaglist = new NBTTagList();
+		return stacks;
+	}
 
-        for (int i = 0; i < stacks.length; ++i)
-        {
-            NBTTagCompound cpt = new NBTTagCompound();
-            nbttaglist.appendTag(cpt);
-            ItemStack stack = stacks[i];
+	public static void setItemStacks(BptSlotInfo slot, IBptContext context, ItemStack[] stacks) {
+		NBTTagList nbttaglist = new NBTTagList();
 
-            if (stack != null && stack.stackSize != 0)
-            {
-                stack.writeToNBT(cpt);
-                context.storeId(stack.itemID);
-            }
-        }
+		for (int i = 0; i < stacks.length; ++i) {
+			NBTTagCompound cpt = new NBTTagCompound();
+			nbttaglist.appendTag(cpt);
+			ItemStack stack = stacks[i];
 
-        slot.cpt.setTag("inv", nbttaglist);
-    }
+			if (stack != null && stack.stackSize != 0) {
+				stack.writeToNBT(cpt);
+				context.storeId(stack.itemID);
+			}
+		}
+
+		slot.cpt.setTag("inv", nbttaglist);
+	}
+
 }

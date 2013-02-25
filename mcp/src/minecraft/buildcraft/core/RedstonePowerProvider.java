@@ -15,72 +15,61 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerProvider;
 
-public class RedstonePowerProvider extends PowerProvider
-{
-    private boolean lastPower = false;
+public class RedstonePowerProvider extends PowerProvider {
 
-    public RedstonePowerProvider()
-    {
-        this.powerLoss = 0;
-        this.powerLossRegularity = 0;
-    }
+	private boolean lastPower = false;
 
-    @Override
-    public boolean preConditions(IPowerReceptor receptor)
-    {
-        TileEntity tile = (TileEntity) receptor;
-        boolean currentPower = tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
+	public RedstonePowerProvider() {
+		this.powerLoss = 0;
+		this.powerLossRegularity = 0;
+	}
 
-        if (BuildCraftCore.continuousCurrentModel)
-        {
-            if (currentPower)
-            {
-                return true;
-            }
-        }
-        else if (currentPower != lastPower)
-        {
-            lastPower = currentPower;
+	@Override
+	public boolean preConditions(IPowerReceptor receptor) {
+		TileEntity tile = (TileEntity) receptor;
 
-            if (currentPower)
-            {
-                return true;
-            }
-        }
+		boolean currentPower = tile.worldObj.isBlockIndirectlyGettingPowered(tile.xCoord, tile.yCoord, tile.zCoord);
 
-        return false;
-    }
+		if (BuildCraftCore.continuousCurrentModel) {
+			if (currentPower)
+				return true;
+		} else if (currentPower != lastPower) {
+			lastPower = currentPower;
 
-    @Override
-    public float useEnergy(float min, float max, boolean doUse)
-    {
-        return min;
-    }
+			if (currentPower)
+				return true;
+		}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        lastPower = nbttagcompound.getBoolean("lastPower");
-    }
+		return false;
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        nbttagcompound.setBoolean("lastPower", lastPower);
-    }
+	@Override
+	public float useEnergy(float min, float max, boolean doUse) {
+		return min;
+	}
 
-    @Override
-    public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy)
-    {
-        super.configure(latency, minEnergyReceived, maxEnergyReceived, minActivationEnergy, maxStoredEnergy);
-        this.minActivationEnergy = 0;
-        this.energyStored = 1;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		lastPower = nbttagcompound.getBoolean("lastPower");
+	}
 
-    @Override
-    public void configurePowerPerdition(int powerLoss, int powerLossRegularity)
-    {
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		nbttagcompound.setBoolean("lastPower", lastPower);
+	}
+
+	@Override
+	public void configure(int latency, int minEnergyReceived, int maxEnergyReceived, int minActivationEnergy, int maxStoredEnergy) {
+		super.configure(latency, minEnergyReceived, maxEnergyReceived, minActivationEnergy, maxStoredEnergy);
+
+		this.minActivationEnergy = 0;
+		this.energyStored = 1;
+	}
+
+	@Override
+	public void configurePowerPerdition(int powerLoss, int powerLossRegularity) {
+
+	}
 }

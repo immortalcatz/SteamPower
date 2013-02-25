@@ -29,277 +29,245 @@ import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderEntityBlock.BlockInterface;
 import buildcraft.factory.TileRefinery;
 
-public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer
-{
-    static final float factor = (float)(1.0 / 16.0);
+public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-    private ModelRenderer tank;
-    private ModelRenderer magnet[] = new ModelRenderer[4];
+	static final float factor = (float) (1.0 / 16.0);
 
-    private ModelBase model = new ModelBase()
-    {
-    };
+	private ModelRenderer tank;
+	private ModelRenderer magnet[] = new ModelRenderer[4];
 
-    public RenderRefinery()
-    {
-        // constructor:
-        tank = new ModelRenderer(model, 0, 0);
-        tank.addBox(-4F, -8F, -4F, 8, 16, 8);
-        tank.rotationPointX = 8;
-        tank.rotationPointY = 8;
-        tank.rotationPointZ = 8;
+	private ModelBase model = new ModelBase() {
+	};
 
-        // constructor:
+	public RenderRefinery() {
 
-        for (int i = 0; i < 4; ++i)
-        {
-            magnet[i] = new ModelRenderer(model, 32, i * 8);
-            magnet[i].addBox(0, -8F, -8F, 8, 4, 4);
-            magnet[i].rotationPointX = 8;
-            magnet[i].rotationPointY = 8;
-            magnet[i].rotationPointZ = 8;
-        }
-    }
+		// constructor:
+		tank = new ModelRenderer(model, 0, 0);
+		tank.addBox(-4F, -8F, -4F, 8, 16, 8);
+		tank.rotationPointX = 8;
+		tank.rotationPointY = 8;
+		tank.rotationPointZ = 8;
 
-    final static private int displayStages = 100;
+		// constructor:
 
-    private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
+		for (int i = 0; i < 4; ++i) {
+			magnet[i] = new ModelRenderer(model, 32, i * 8);
+			magnet[i].addBox(0, -8F, -8F, 8, 4, 4);
+			magnet[i].rotationPointX = 8;
+			magnet[i].rotationPointY = 8;
+			magnet[i].rotationPointZ = 8;
 
-    private int[] getDisplayLists(int liquidId, int damage, World world)
-    {
-        if (stage.containsKey(liquidId))
-        {
-            HashMap<Integer, int[]> x = stage.get(liquidId);
+		}
 
-            if (x.containsKey(damage))
-            {
-                return x.get(damage);
-            }
-        }
-        else
-        {
-            stage.put(liquidId, new HashMap<Integer, int[]>());
-        }
+	}
 
-        int[] d = new int[displayStages];
-        stage.get(liquidId).put(damage, d);
-        BlockInterface block = new BlockInterface();
+	final static private int displayStages = 100;
 
-        // Retrieve the texture depending on type of item.
-        if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-        {
-            block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
-        }
-        else if (Item.itemsList[liquidId] != null)
-        {
-            block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
-        }
-        else
-        {
-            return null;
-        }
+	private HashMap<Integer, HashMap<Integer, int[]>> stage = new HashMap<Integer, HashMap<Integer, int[]>>();
 
-        for (int s = 0; s < displayStages; ++s)
-        {
-            d[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(d[s], GL11.GL_COMPILE);
-            block.minX = 0.5 - 4F * factor + 0.01;
-            block.minY = 0;
-            block.minZ = 0.5 - 4F * factor + 0.01;
-            block.maxX = 0.5 + 4F * factor - 0.01;
-            block.maxY = (float) s / (float) displayStages;
-            block.maxZ = 0.5 + 4F * factor - 0.01;
-            RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
-            GL11.glEndList();
-        }
+	private int[] getDisplayLists(int liquidId, int damage, World world) {
 
-        return d;
-    }
+		if (stage.containsKey(liquidId)) {
+			HashMap<Integer, int[]> x = stage.get(liquidId);
+			if (x.containsKey(damage))
+				return x.get(damage);
+		} else {
+			stage.put(liquidId, new HashMap<Integer, int[]>());
+		}
 
-    public RenderRefinery(String baseTexture)
-    {
-        this();
-    }
+		int[] d = new int[displayStages];
+		stage.get(liquidId).put(damage, d);
 
-    @Override
-    public void inventoryRender(double x, double y, double z, float f, float f1)
-    {
-        render(null, x, y, z);
-    }
+		BlockInterface block = new BlockInterface();
 
-    @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f)
-    {
-        render((TileRefinery) tileentity, x, y, z);
-    }
+		// Retrieve the texture depending on type of item.
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
+			block.texture = Block.blocksList[liquidId].getBlockTextureFromSideAndMetadata(0, damage);
+		} else if (Item.itemsList[liquidId] != null) {
+			block.texture = Item.itemsList[liquidId].getIconFromDamage(damage);
+		} else
+			return null;
 
-    private void render(TileRefinery tile, double x, double y, double z)
-    {
-        int liquid1 = 0, liquid2 = 0, liquid3 = 0;
-        int liquidMeta1 = 0, liquidMeta2 = 0, liquidMeta3 = 0;
-        int qty1 = 0, qty2 = 0, qty3 = 0;
-        float anim = 0;
-        int angle = 0;
-        ModelRenderer theMagnet = magnet[0];
+		for (int s = 0; s < displayStages; ++s) {
+			d[s] = GLAllocation.generateDisplayLists(1);
+			GL11.glNewList(d[s], 4864 /* GL_COMPILE */);
 
-        if (tile != null)
-        {
-            if (tile.ingredient1.getLiquid() != null)
-            {
-                liquid1 = tile.ingredient1.getLiquid().itemID;
-                liquidMeta1 = tile.ingredient1.getLiquid().itemMeta;
-                qty1 = tile.ingredient1.getLiquid().amount;
-            }
+			block.minX = 0.5 - 4F * factor + 0.01;
+			block.minY = 0;
+			block.minZ = 0.5 - 4F * factor + 0.01;
 
-            if (tile.ingredient2.getLiquid() != null)
-            {
-                liquid2 = tile.ingredient2.getLiquid().itemID;
-                liquidMeta2 = tile.ingredient2.getLiquid().itemMeta;
-                qty2 = tile.ingredient2.getLiquid().amount;
-            }
+			block.maxX = 0.5 + 4F * factor - 0.01;
+			block.maxY = (float) s / (float) displayStages;
+			block.maxZ = 0.5 + 4F * factor - 0.01;
 
-            if (tile.result.getLiquid() != null)
-            {
-                liquid3 = tile.result.getLiquid().itemID;
-                liquidMeta3 = tile.result.getLiquid().itemMeta;
-                qty3 = tile.result.getLiquid().amount;
-            }
+			RenderEntityBlock.renderBlock(block, world, 0, 0, 0, false, true);
 
-            anim = tile.getAnimationStage();
+			GL11.glEndList();
+		}
 
-            switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord))
-            {
-                case 2:
-                    angle = 90;
-                    break;
+		return d;
+	}
 
-                case 3:
-                    angle = 270;
-                    break;
+	public RenderRefinery(String baseTexture) {
+		this();
+	}
 
-                case 4:
-                    angle = 180;
-                    break;
+	@Override
+	public void inventoryRender(double x, double y, double z, float f, float f1) {
+		render(null, x, y, z);
+	}
 
-                case 5:
-                    angle = 0;
-                    break;
-            }
+	@Override
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-            if (tile.animationSpeed <= 1)
-            {
-                theMagnet = magnet[0];
-            }
-            else if (tile.animationSpeed <= 2.5)
-            {
-                theMagnet = magnet[1];
-            }
-            else if (tile.animationSpeed <= 4.5)
-            {
-                theMagnet = magnet[2];
-            }
-            else
-            {
-                theMagnet = magnet[3];
-            }
-        }
+		render((TileRefinery) tileentity, x, y, z);
+	}
 
-        GL11.glPushMatrix();
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-        GL11.glRotatef(angle, 0, 1, 0);
-        GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-        ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png", 0);
-        GL11.glTranslatef(-4F * factor, 0, -4F * factor);
-        tank.render(factor);
-        GL11.glTranslatef(4F * factor, 0, 4F * factor);
-        GL11.glTranslatef(-4F * factor, 0, 4F * factor);
-        tank.render(factor);
-        GL11.glTranslatef(4F * factor, 0, -4F * factor);
-        GL11.glTranslatef(4F * factor, 0, 0);
-        tank.render(factor);
-        GL11.glTranslatef(-4F * factor, 0, 0);
-        float trans1, trans2;
+	private void render(TileRefinery tile, double x, double y, double z) {
 
-        if (anim <= 100)
-        {
-            trans1 = 12F * factor * anim / 100F;
-            trans2 = 0;
-        }
-        else if (anim <= 200)
-        {
-            trans1 = 12F * factor - (12F * factor * (anim - 100F) / 100F);
-            trans2 = 12F * factor * (anim - 100F) / 100F;
-        }
-        else
-        {
-            trans1 = 12F * factor * (anim - 200F) / 100F;
-            trans2 = 12F * factor - (12F * factor * (anim - 200F) / 100F);
-        }
+		int liquid1 = 0, liquid2 = 0, liquid3 = 0;
+		int liquidMeta1 = 0, liquidMeta2 = 0, liquidMeta3 = 0;
+		int qty1 = 0, qty2 = 0, qty3 = 0;
+		float anim = 0;
+		int angle = 0;
+		ModelRenderer theMagnet = magnet[0];
 
-        GL11.glTranslatef(0, trans1, 0);
-        theMagnet.render(factor);
-        GL11.glTranslatef(0, -trans1, 0);
-        GL11.glTranslatef(0, trans2, 12F * factor);
-        theMagnet.render(factor);
-        GL11.glTranslatef(0, -trans2, -12F * factor);
-        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-        GL11.glTranslatef(-4F * factor, 0, -4F * factor);
+		if (tile != null) {
+			if (tile.ingredient1.getLiquid() != null) {
+				liquid1 = tile.ingredient1.getLiquid().itemID;
+				liquidMeta1 = tile.ingredient1.getLiquid().itemMeta;
+				qty1 = tile.ingredient1.getLiquid().amount;
+			}
 
-        if (qty1 > 0)
-        {
-            int[] list1 = getDisplayLists(liquid1, liquidMeta1, tile.worldObj);
+			if (tile.ingredient2.getLiquid() != null) {
+				liquid2 = tile.ingredient2.getLiquid().itemID;
+				liquidMeta2 = tile.ingredient2.getLiquid().itemMeta;
+				qty2 = tile.ingredient2.getLiquid().amount;
+			}
 
-            if (list1 != null)
-            {
-                setTextureFor(liquid1);
-                GL11.glCallList(list1[(int)((float) qty1 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
-            }
-        }
+			if (tile.result.getLiquid() != null) {
+				liquid3 = tile.result.getLiquid().itemID;
+				liquidMeta3 = tile.result.getLiquid().itemMeta;
+				qty3 = tile.result.getLiquid().amount;
+			}
 
-        GL11.glTranslatef(4F * factor, 0, 4F * factor);
-        GL11.glTranslatef(-4F * factor, 0, 4F * factor);
+			anim = tile.getAnimationStage();
 
-        if (qty2 > 0)
-        {
-            int[] list2 = getDisplayLists(liquid2, liquidMeta2, tile.worldObj);
+			switch (tile.worldObj.getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
+			case 2:
+				angle = 90;
+				break;
+			case 3:
+				angle = 270;
+				break;
+			case 4:
+				angle = 180;
+				break;
+			case 5:
+				angle = 0;
+				break;
+			}
 
-            if (list2 != null)
-            {
-                setTextureFor(liquid2);
-                GL11.glCallList(list2[(int)((float) qty2 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
-            }
-        }
+			if (tile.animationSpeed <= 1) {
+				theMagnet = magnet[0];
+			} else if (tile.animationSpeed <= 2.5) {
+				theMagnet = magnet[1];
+			} else if (tile.animationSpeed <= 4.5) {
+				theMagnet = magnet[2];
+			} else {
+				theMagnet = magnet[3];
+			}
 
-        GL11.glTranslatef(4F * factor, 0, -4F * factor);
-        GL11.glTranslatef(4F * factor, 0, 0);
+		}
 
-        if (qty3 > 0)
-        {
-            int[] list3 = getDisplayLists(liquid3, liquidMeta3, tile.worldObj);
+		GL11.glPushMatrix();
+		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-            if (list3 != null)
-            {
-                setTextureFor(liquid3);
-                GL11.glCallList(list3[(int)((float) qty3 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
-            }
-        }
+		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-        GL11.glTranslatef(-4F * factor, 0, 0);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glPopMatrix();
-    }
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+		GL11.glRotatef(angle, 0, 1, 0);
+		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-    public void setTextureFor(int liquidId)
-    {
-        if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null)
-        {
-            ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
-        }
-        else
-        {
-            ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
-        }
-    }
+		ForgeHooksClient.bindTexture(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png", 0);
+		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
+		tank.render(factor);
+		GL11.glTranslatef(4F * factor, 0, 4F * factor);
+
+		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
+		tank.render(factor);
+		GL11.glTranslatef(4F * factor, 0, -4F * factor);
+
+		GL11.glTranslatef(4F * factor, 0, 0);
+		tank.render(factor);
+		GL11.glTranslatef(-4F * factor, 0, 0);
+
+		float trans1, trans2;
+
+		if (anim <= 100) {
+			trans1 = 12F * factor * anim / 100F;
+			trans2 = 0;
+		} else if (anim <= 200) {
+			trans1 = 12F * factor - (12F * factor * (anim - 100F) / 100F);
+			trans2 = 12F * factor * (anim - 100F) / 100F;
+		} else {
+			trans1 = 12F * factor * (anim - 200F) / 100F;
+			trans2 = 12F * factor - (12F * factor * (anim - 200F) / 100F);
+		}
+
+		GL11.glTranslatef(0, trans1, 0);
+		theMagnet.render(factor);
+		GL11.glTranslatef(0, -trans1, 0);
+
+		GL11.glTranslatef(0, trans2, 12F * factor);
+		theMagnet.render(factor);
+		GL11.glTranslatef(0, -trans2, -12F * factor);
+
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+
+		GL11.glTranslatef(-4F * factor, 0, -4F * factor);
+		if (qty1 > 0) {
+			int[] list1 = getDisplayLists(liquid1, liquidMeta1, tile.worldObj);
+
+			if (list1 != null) {
+				setTextureFor(liquid1);
+				GL11.glCallList(list1[(int) ((float) qty1 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+			}
+		}
+		GL11.glTranslatef(4F * factor, 0, 4F * factor);
+
+		GL11.glTranslatef(-4F * factor, 0, 4F * factor);
+		if (qty2 > 0) {
+			int[] list2 = getDisplayLists(liquid2, liquidMeta2, tile.worldObj);
+
+			if (list2 != null) {
+				setTextureFor(liquid2);
+				GL11.glCallList(list2[(int) ((float) qty2 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+			}
+		}
+		GL11.glTranslatef(4F * factor, 0, -4F * factor);
+
+		GL11.glTranslatef(4F * factor, 0, 0);
+		if (qty3 > 0) {
+			int[] list3 = getDisplayLists(liquid3, liquidMeta3, tile.worldObj);
+
+			if (list3 != null) {
+				setTextureFor(liquid3);
+				GL11.glCallList(list3[(int) ((float) qty3 / (float) TileRefinery.LIQUID_PER_SLOT * (displayStages - 1))]);
+			}
+		}
+		GL11.glTranslatef(-4F * factor, 0, 0);
+
+		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glPopMatrix();
+	}
+
+	public void setTextureFor(int liquidId) {
+		if (liquidId < Block.blocksList.length && Block.blocksList[liquidId] != null) {
+			ForgeHooksClient.bindTexture(Block.blocksList[liquidId].getTextureFile(), 0);
+		} else {
+			ForgeHooksClient.bindTexture(Item.itemsList[liquidId].getTextureFile(), 0);
+		}
+
+	}
 }

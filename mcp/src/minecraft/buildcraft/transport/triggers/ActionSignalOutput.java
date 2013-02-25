@@ -13,61 +13,50 @@ import buildcraft.api.gates.Action;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.DefaultProps;
 
-public class ActionSignalOutput extends Action
-{
-    public IPipe.WireColor color;
+public class ActionSignalOutput extends Action {
 
-    public ActionSignalOutput(int id, IPipe.WireColor color)
-    {
-        super(id);
-        this.color = color;
-    }
+	public IPipe.WireColor color;
 
-    @Override
-    public int getIndexInTexture()
-    {
-        switch (color)
-        {
-            case Red:
-                return 0 * 16 + 3;
+	public ActionSignalOutput(int id, IPipe.WireColor color) {
+		super(id);
 
-            case Blue:
-                return 0 * 16 + 5;
+		this.color = color;
+	}
 
-            case Green:
-                return 0 * 16 + 7;
+	@Override
+	public int getIndexInTexture() {
+		switch (color) {
+		case Red:
+			return 0 * 16 + 3;
+		case Blue:
+			return 0 * 16 + 5;
+		case Green:
+			return 0 * 16 + 7;
+		case Yellow:
+			return 0 * 16 + 9;
+		}
 
-            case Yellow:
-                return 0 * 16 + 9;
-        }
+		return 0;
+	}
 
-        return 0;
-    }
+	@Override
+	public String getDescription() {
+		switch (color) {
+		case Red:
+			return "Red Pipe Signal";
+		case Blue:
+			return "Blue Pipe Signal";
+		case Green:
+			return "Green Pipe Signal";
+		case Yellow:
+			return "Yellow Pipe Signal";
+		}
 
-    @Override
-    public String getDescription()
-    {
-        switch (color)
-        {
-            case Red:
-                return "Red Pipe Signal";
+		return "";
+	}
 
-            case Blue:
-                return "Blue Pipe Signal";
-
-            case Green:
-                return "Green Pipe Signal";
-
-            case Yellow:
-                return "Yellow Pipe Signal";
-        }
-
-        return "";
-    }
-
-    @Override
-    public String getTexture()
-    {
-        return DefaultProps.TEXTURE_TRIGGERS;
-    }
+	@Override
+	public String getTexture() {
+		return DefaultProps.TEXTURE_TRIGGERS;
+	}
 }

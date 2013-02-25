@@ -19,57 +19,46 @@ import buildcraft.api.blueprints.BptBlock;
 import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 
-public class BptBlockSign extends BptBlock
-{
-    boolean isWall;
+public class BptBlockSign extends BptBlock {
 
-    public BptBlockSign(int blockId, boolean isWall)
-    {
-        super(blockId);
-        this.isWall = isWall;
-    }
+	boolean isWall;
 
-    @Override
-    public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements)
-    {
-        requirements.add(new ItemStack(Item.sign));
-    }
+	public BptBlockSign(int blockId, boolean isWall) {
+		super(blockId);
 
-    @Override
-    public void rotateLeft(BptSlotInfo slot, IBptContext context)
-    {
-        if (!isWall)
-        {
-            double angle = ((slot.meta) * 360.0) / 16.0;
-            angle += 90.0;
+		this.isWall = isWall;
+	}
 
-            if (angle >= 360)
-            {
-                angle -= 360;
-            }
+	@Override
+	public void addRequirements(BptSlotInfo slot, IBptContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Item.sign));
+	}
 
-            slot.meta = (int)(angle / 360.0 * 16.0);
-        }
-        else
-        {
-            // slot.meta = ForgeDirection.values()[slot.meta].rotateLeft().ordinal();
-        }
-    }
+	@Override
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		if (!isWall) {
+			double angle = ((slot.meta) * 360.0) / 16.0;
+			angle += 90.0;
+			if (angle >= 360) {
+				angle -= 360;
+			}
+			slot.meta = (int) (angle / 360.0 * 16.0);
+		} else {
+			// slot.meta = ForgeDirection.values()[slot.meta].rotateLeft().ordinal();
+		}
+	}
 
-    @Override
-    public BlockSignature getSignature(Block block)
-    {
-        BlockSignature sig = super.getSignature(block);
+	@Override
+	public BlockSignature getSignature(Block block) {
+		BlockSignature sig = super.getSignature(block);
 
-        if (isWall)
-        {
-            sig.customField = "wall";
-        }
-        else
-        {
-            sig.customField = "floor";
-        }
+		if (isWall) {
+			sig.customField = "wall";
+		} else {
+			sig.customField = "floor";
+		}
 
-        return sig;
-    }
+		return sig;
+	}
+
 }

@@ -34,241 +34,202 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class CoreProxy
-{
-    @SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
-    public static CoreProxy proxy;
+public class CoreProxy {
 
-    public String getMinecraftVersion()
-    {
-        return Loader.instance().getMinecraftModContainer().getVersion();
-    }
+	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
+	public static CoreProxy proxy;
 
-    /* INSTANCES */
-    public Object getClient()
-    {
-        return null;
-    }
+	public String getMinecraftVersion() {
+		return Loader.instance().getMinecraftModContainer().getVersion();
+	}
 
-    public World getClientWorld()
-    {
-        return null;
-    }
+	/* INSTANCES */
+	public Object getClient() {
+		return null;
+	}
 
-    /* SIMULATION */
-    public boolean isSimulating(World world)
-    {
-        return !world.isRemote;
-    }
+	public World getClientWorld() {
+		return null;
+	}
 
-    public boolean isRenderWorld(World world)
-    {
-        return world.isRemote;
-    }
+	/* SIMULATION */
+	public boolean isSimulating(World world) {
+		return !world.isRemote;
+	}
 
-    public String getCurrentLanguage()
-    {
-        return null;
-    }
+	public boolean isRenderWorld(World world) {
+		return world.isRemote;
+	}
 
-    /* ENTITY HANDLING */
-    public void removeEntity(Entity entity)
-    {
-        entity.worldObj.removeEntity(entity);
-    }
+	public String getCurrentLanguage() {
+		return null;
+	}
 
-    /* WRAPPER */
-    public void feedSubBlocks(int id, CreativeTabs tab, List itemList)
-    {
-    }
+	/* ENTITY HANDLING */
+	public void removeEntity(Entity entity) {
+		entity.worldObj.removeEntity(entity);
+	}
 
-    /* LOCALIZATION */
-    public void addName(Object obj, String s)
-    {
-    }
+	/* WRAPPER */
+	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+	}
 
-    public void addLocalization(String s1, String string)
-    {
-    }
+	/* LOCALIZATION */
+	public void addName(Object obj, String s) {
+	}
 
-    public String getItemDisplayName(ItemStack newStack)
-    {
-        return "";
-    }
+	public void addLocalization(String s1, String string) {
+	}
 
-    /* GFX */
-    public void obsidianPipePickup(World world, EntityItem item, TileEntity tile)
-    {
-    }
+	public String getItemDisplayName(ItemStack newStack) {
+		return "";
+	}
 
-    public void initializeRendering()
-    {
-    }
+	/* GFX */
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
+	}
 
-    public void initializeEntityRendering()
-    {
-    }
+	public void initializeRendering() {
+	}
 
-    /* REGISTRATION */
-    public void registerBlock(Block block)
-    {
-        Item.itemsList[block.blockID] = null;
-        Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
-    }
+	public void initializeEntityRendering() {
+	}
 
-    public void registerTileEntity(Class clas, String ident)
-    {
-        GameRegistry.registerTileEntity(clas, ident);
-    }
+	/* REGISTRATION */
+	public void registerBlock(Block block) {
+		Item.itemsList[block.blockID] = null;
+		Item.itemsList[block.blockID] = new ItemBlockBuildCraft(block.blockID - 256, block.getBlockName());
+	}
 
-    public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack)
-    {
-        stack.onCrafting(world, player, stack.stackSize);
-    }
+	public void registerTileEntity(Class clas, String ident) {
+		GameRegistry.registerTileEntity(clas, ident);
+	}
 
-    public void addCraftingRecipe(ItemStack result, Object[] recipe)
-    {
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
-        //GameRegistry.addRecipe(result, recipe);
-    }
+	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
+		stack.onCrafting(world, player, stack.stackSize);
+	}
 
-    public void addShapelessRecipe(ItemStack result, Object[] recipe)
-    {
-        GameRegistry.addShapelessRecipe(result, recipe);
-    }
+	public void addCraftingRecipe(ItemStack result, Object[] recipe) {
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+		//GameRegistry.addRecipe(result, recipe);
+	}
 
-    public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance)
-    {
-        if (packet != null)
-        {
-            for (int j = 0; j < world.playerEntities.size(); j++)
-            {
-                EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(j);
+	public void addShapelessRecipe(ItemStack result, Object[] recipe) {
+		GameRegistry.addShapelessRecipe(result, recipe);
+	}
 
-                if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance && Math.abs(player.posZ - z) <= maxDistance)
-                {
-                    player.playerNetServerHandler.sendPacketToPlayer(packet);
-                }
-            }
-        }
-    }
+	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
+		if (packet != null) {
+			for (int j = 0; j < world.playerEntities.size(); j++) {
+				EntityPlayerMP player = (EntityPlayerMP) world.playerEntities.get(j);
 
-    public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet)
-    {
-        EntityPlayerMP player = (EntityPlayerMP) entityplayer;
-        player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
-    }
+				if (Math.abs(player.posX - x) <= maxDistance && Math.abs(player.posY - y) <= maxDistance && Math.abs(player.posZ - z) <= maxDistance) {
+					player.playerNetServerHandler.sendPacketToPlayer(packet);
+				}
+			}
+		}
+	}
 
-    public void sendToServer(Packet packet)
-    {
-    }
+	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
+		EntityPlayerMP player = (EntityPlayerMP) entityplayer;
+		player.playerNetServerHandler.sendPacketToPlayer(packet.getPacket());
+	}
 
-    /* FILE SYSTEM */
-    public File getBuildCraftBase()
-    {
-        return new File("./");
-    }
+	public void sendToServer(Packet packet) {
+	}
 
-    public int addCustomTexture(String pathToTexture)
-    {
-        return 0;
-    }
+	/* FILE SYSTEM */
+	public File getBuildCraftBase() {
+		return new File("./");
+	}
 
-    public void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix)
-    {
-        GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
-    }
+	public int addCustomTexture(String pathToTexture) {
+		return 0;
+	}
 
-    public Random createNewRandom(World world)
-    {
-        return new Random(world.getSeed());
-    }
+	public void TakenFromCrafting(EntityPlayer thePlayer, ItemStack itemstack, IInventory craftMatrix) {
+		GameRegistry.onItemCrafted(thePlayer, itemstack, craftMatrix);
+	}
 
-    /* BUILDCRAFT PLAYER */
-    protected static EntityPlayer buildCraftPlayer;
+	public Random createNewRandom(World world) {
+		return new Random(world.getSeed());
+	}
 
-    public String playerName()
-    {
-        return "";
-    }
+	/* BUILDCRAFT PLAYER */
+	protected static EntityPlayer buildCraftPlayer;
 
-    private EntityPlayer createNewPlayer(World world)
-    {
-        EntityPlayer player = new EntityPlayer(world)
-        {
-            @Override
-            public void sendChatToPlayer(String var1)
-            {
-            }
-            @Override
-            public boolean canCommandSenderUseCommand(int var1, String var2)
-            {
-                return false;
-            }
-            @Override
-            public ChunkCoordinates getPlayerCoordinates()
-            {
-                return null;
-            }
-        };
-        player.username = "[BuildCraft]";
-        return player;
-    }
+	public String playerName() {
+		return "";
+	}
 
-    private EntityPlayer createNewPlayer(World world, int x, int y, int z)
-    {
-        EntityPlayer player = new EntityPlayer(world)
-        {
-            @Override
-            public void sendChatToPlayer(String var1)
-            {
-            }
-            @Override
-            public boolean canCommandSenderUseCommand(int var1, String var2)
-            {
-                return false;
-            }
-            @Override
-            public ChunkCoordinates getPlayerCoordinates()
-            {
-                return null;
-            }
-        };
-        player.username = "[BuildCraft]";
-        player.posX = x;
-        player.posY = y;
-        player.posZ = z;
-        return player;
-    }
+	private EntityPlayer createNewPlayer(World world) {
+		EntityPlayer player = new EntityPlayer(world) {
 
-    public EntityPlayer getBuildCraftPlayer(World world)
-    {
-        if (CoreProxy.buildCraftPlayer == null)
-        {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world);
-        }
-        else
-        {
-            CoreProxy.buildCraftPlayer.worldObj = world;
-        }
+			@Override
+			public void sendChatToPlayer(String var1) {
+			}
 
-        return CoreProxy.buildCraftPlayer;
-    }
+			@Override
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
+				return false;
+			}
 
-    public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z)
-    {
-        if (CoreProxy.buildCraftPlayer == null)
-        {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
-        }
-        else
-        {
-            CoreProxy.buildCraftPlayer.worldObj = world;
-            CoreProxy.buildCraftPlayer.posX = x;
-            CoreProxy.buildCraftPlayer.posY = y;
-            CoreProxy.buildCraftPlayer.posZ = z;
-        }
+			@Override
+			public ChunkCoordinates getPlayerCoordinates() {
+				return null;
+			}
 
-        return CoreProxy.buildCraftPlayer;
-    }
+		};
+		player.username = "[BuildCraft]";
+		return player;
+	}
+
+	private EntityPlayer createNewPlayer(World world, int x, int y, int z) {
+		EntityPlayer player = new EntityPlayer(world) {
+
+			@Override
+			public void sendChatToPlayer(String var1) {
+			}
+
+			@Override
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
+				return false;
+			}
+
+			@Override
+			public ChunkCoordinates getPlayerCoordinates() {
+				return null;
+			}
+
+		};
+		player.username = "[BuildCraft]";
+		player.posX = x;
+		player.posY = y;
+		player.posZ = z;
+		return player;
+	}
+
+	public EntityPlayer getBuildCraftPlayer(World world) {
+		if (CoreProxy.buildCraftPlayer == null) {
+			CoreProxy.buildCraftPlayer = createNewPlayer(world);
+		} else {
+			CoreProxy.buildCraftPlayer.worldObj = world;
+		}
+
+		return CoreProxy.buildCraftPlayer;
+	}
+
+	public EntityPlayer getBuildCraftPlayer(World world, int x, int y, int z) {
+		if (CoreProxy.buildCraftPlayer == null) {
+			CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
+		} else {
+			CoreProxy.buildCraftPlayer.worldObj = world;
+			CoreProxy.buildCraftPlayer.posX = x;
+			CoreProxy.buildCraftPlayer.posY = y;
+			CoreProxy.buildCraftPlayer.posZ = z;
+		}
+
+		return CoreProxy.buildCraftPlayer;
+	}
+
 }

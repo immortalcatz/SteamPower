@@ -4,61 +4,54 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TransactorRoundRobin extends TransactorSimple
-{
-    public TransactorRoundRobin(IInventory inventory)
-    {
-        super(inventory);
-    }
+public class TransactorRoundRobin extends TransactorSimple {
 
-    @Override
-    public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd)
-    {
-        int oneLessThanStackSize = stack.stackSize - 1;
-        int added = 0;
+	public TransactorRoundRobin(IInventory inventory) {
+		super(inventory);
+	}
 
-        for (int itemLoop = 0; itemLoop < stack.stackSize; ++itemLoop)   // add 1 item n times.
-        {
-            int minSimilar = Integer.MAX_VALUE;
-            int minSlot = -1;
+	@Override
+	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
 
-            for (int j = 0; j < inventory.getSizeInventory() && minSimilar > 1; ++j)
-            {
-                ItemStack stackInInventory = inventory.getStackInSlot(j);
+		int oneLessThanStackSize = stack.stackSize - 1;
+		int added = 0;
 
-                if (stackInInventory == null)
-                {
-                    continue;
-                }
+		for (int itemLoop = 0; itemLoop < stack.stackSize; ++itemLoop) { // add 1 item n times.
 
-                if (stackInInventory.stackSize >= stackInInventory.getMaxStackSize())
-                {
-                    continue;
-                }
+			int minSimilar = Integer.MAX_VALUE;
+			int minSlot = -1;
 
-                if (stackInInventory.stackSize >= inventory.getInventoryStackLimit())
-                {
-                    continue;
-                }
+			for (int j = 0; j < inventory.getSizeInventory() && minSimilar > 1; ++j) {
+				ItemStack stackInInventory = inventory.getStackInSlot(j);
 
-                if (stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID && stackInInventory.getItemDamage() == stack.getItemDamage()
-                        && stackInInventory.stackSize < minSimilar)
-                {
-                    minSimilar = stackInInventory.stackSize;
-                    minSlot = j;
-                }
-            }
+				if (stackInInventory == null) {
+					continue;
+				}
 
-            if (minSlot != -1)
-            {
-                added += addToSlot(minSlot, stack, oneLessThanStackSize, doAdd); // add 1 item n times, into the selected slot
-            }
-            else
-            {
-                break;
-            }
-        }
+				if (stackInInventory.stackSize >= stackInInventory.getMaxStackSize()) {
+					continue;
+				}
 
-        return added;
-    }
+				if (stackInInventory.stackSize >= inventory.getInventoryStackLimit()) {
+					continue;
+				}
+
+				if (stackInInventory.stackSize > 0 && stackInInventory.itemID == stack.itemID && stackInInventory.getItemDamage() == stack.getItemDamage()
+						&& stackInInventory.stackSize < minSimilar) {
+					minSimilar = stackInInventory.stackSize;
+					minSlot = j;
+				}
+			}
+
+			if (minSlot != -1) {
+				added += addToSlot(minSlot, stack, oneLessThanStackSize, doAdd); // add 1 item n times, into the selected slot
+			} else {
+				break;
+			}
+
+		}
+
+		return added;
+	}
+
 }

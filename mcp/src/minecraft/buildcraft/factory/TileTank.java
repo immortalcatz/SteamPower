@@ -25,304 +25,236 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.item.Item;
 
-public class TileTank extends TileBuildCraft implements ITankContainer
-{
-    public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16);
-    public boolean hasUpdate = false;
-    public SafeTimeTracker tracker = new SafeTimeTracker();
+public class TileTank extends TileBuildCraft implements ITankContainer {
 
-    /* UPDATING */
-    @Override
-    public void updateEntity()
-    {
-        if (CoreProxy.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor))
-        {
-            sendNetworkUpdate();
-            hasUpdate = false;
-        }
+	public final LiquidTank tank = new LiquidTank(LiquidContainerRegistry.BUCKET_VOLUME * 16);
+	public boolean hasUpdate = false;
+	public SafeTimeTracker tracker = new SafeTimeTracker();
 
-        if (CoreProxy.proxy.isRenderWorld(worldObj))
-        {
-            return;
-        }
+	/* UPDATING */
+	@Override
+	public void updateEntity() {
+		if (CoreProxy.proxy.isSimulating(worldObj) && hasUpdate && tracker.markTimeIfDelay(worldObj, 2 * BuildCraftCore.updateFactor)) {
+			sendNetworkUpdate();
+			hasUpdate = false;
+		}
 
-        // Have liquid flow down into tanks below if any.
-        if (tank.getLiquid() != null)
-        {
-            moveLiquidBelow();
-        }
-    }
+		if (CoreProxy.proxy.isRenderWorld(worldObj)) {
+			return;
+		}
 
-    /* NETWORK */
-    @Override
-    public PacketPayload getPacketPayload()
-    {
-        PacketPayload payload = new PacketPayload(3, 0, 0);
+		// Have liquid flow down into tanks below if any.
+		if (tank.getLiquid() != null) {
+			moveLiquidBelow();
+		}
+	}
 
-        if (tank.getLiquid() != null)
-        {
-            payload.intPayload[0] = tank.getLiquid().itemID;
-            payload.intPayload[1] = tank.getLiquid().itemMeta;
-            payload.intPayload[2] = tank.getLiquid().amount;
-        }
-        else
-        {
-            payload.intPayload[0] = 0;
-            payload.intPayload[1] = 0;
-            payload.intPayload[2] = 0;
-        }
+	/* NETWORK */
+	@Override
+	public PacketPayload getPacketPayload() {
+		PacketPayload payload = new PacketPayload(3, 0, 0);
+		if (tank.getLiquid() != null) {
+			payload.intPayload[0] = tank.getLiquid().itemID;
+			payload.intPayload[1] = tank.getLiquid().itemMeta;
+			payload.intPayload[2] = tank.getLiquid().amount;
+		} else {
+			payload.intPayload[0] = 0;
+			payload.intPayload[1] = 0;
+			payload.intPayload[2] = 0;
+		}
+		return payload;
+	}
 
-        return payload;
-    }
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) {
+		if (packet.payload.intPayload[0] > 0) {
+			LiquidStack liquid = new LiquidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]);
+			tank.setLiquid(liquid);
+		} else {
+			tank.setLiquid(null);
+		}
+	}
 
-    @Override
-    public void handleUpdatePacket(PacketUpdate packet)
-    {
-        if (packet.payload.intPayload[0] > 0)
-        {
-            LiquidStack liquid = new LiquidStack(packet.payload.intPayload[0], packet.payload.intPayload[2], packet.payload.intPayload[1]);
-            tank.setLiquid(liquid);
-        }
-        else
-        {
-            tank.setLiquid(null);
-        }
-    }
+	/* SAVING & LOADING */
+	@Override
+	public void readFromNBT(NBTTagCompound data) {
+		super.readFromNBT(data);
 
-    /* SAVING & LOADING */
-    @Override
-    public void readFromNBT(NBTTagCompound data)
-    {
-        super.readFromNBT(data);
+		if (data.hasKey("stored") && data.hasKey("liquidId")) {
+			LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
+			tank.setLiquid(liquid);
+		} else {
+			LiquidStack liquid = new LiquidStack(0, 0, 0);
+			liquid.readFromNBT(data.getCompoundTag("tank"));
+			if (Item.itemsList[liquid.itemID] != null && liquid.amount > 0) {
+				tank.setLiquid(liquid);
+			}
+		}
+	}
 
-        if (data.hasKey("stored") && data.hasKey("liquidId"))
-        {
-            LiquidStack liquid = new LiquidStack(data.getInteger("liquidId"), data.getInteger("stored"), 0);
-            tank.setLiquid(liquid);
-        }
-        else
-        {
-            LiquidStack liquid = new LiquidStack(0, 0, 0);
-            liquid.readFromNBT(data.getCompoundTag("tank"));
+	@Override
+	public void writeToNBT(NBTTagCompound data) {
+		super.writeToNBT(data);
+		if (tank.getLiquid() != null) {
+			data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
+		}
+	}
 
-            if (Item.itemsList[liquid.itemID] != null && liquid.amount > 0)
-            {
-                tank.setLiquid(liquid);
-            }
-        }
-    }
+	/* HELPER FUNCTIONS */
+	/**
+	 * @return Last tank block below this one or this one if it is the last.
+	 */
+	public TileTank getBottomTank() {
 
-    @Override
-    public void writeToNBT(NBTTagCompound data)
-    {
-        super.writeToNBT(data);
+		TileTank lastTank = this;
 
-        if (tank.getLiquid() != null)
-        {
-            data.setTag("tank", tank.getLiquid().writeToNBT(new NBTTagCompound()));
-        }
-    }
+		while (true) {
+			TileTank below = getTankBelow(lastTank);
+			if (below != null) {
+				lastTank = below;
+			} else {
+				break;
+			}
+		}
 
-    /* HELPER FUNCTIONS */
-    /**
-     * @return Last tank block below this one or this one if it is the last.
-     */
-    public TileTank getBottomTank()
-    {
-        TileTank lastTank = this;
+		return lastTank;
+	}
 
-        while (true)
-        {
-            TileTank below = getTankBelow(lastTank);
+	public TileTank getTopTank() {
 
-            if (below != null)
-            {
-                lastTank = below;
-            }
-            else
-            {
-                break;
-            }
-        }
+		TileTank lastTank = this;
 
-        return lastTank;
-    }
+		while (true) {
+			TileTank above = getTankAbove(lastTank);
+			if (above != null) {
+				lastTank = above;
+			} else {
+				break;
+			}
+		}
 
-    public TileTank getTopTank()
-    {
-        TileTank lastTank = this;
+		return lastTank;
+	}
 
-        while (true)
-        {
-            TileTank above = getTankAbove(lastTank);
+	public static TileTank getTankBelow(TileTank tile) {
+		TileEntity below = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		if (below instanceof TileTank) {
+			return (TileTank) below;
+		} else {
+			return null;
+		}
+	}
 
-            if (above != null)
-            {
-                lastTank = above;
-            }
-            else
-            {
-                break;
-            }
-        }
+	public static TileTank getTankAbove(TileTank tile) {
+		TileEntity above = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+		if (above instanceof TileTank) {
+			return (TileTank) above;
+		} else {
+			return null;
+		}
+	}
 
-        return lastTank;
-    }
+	public void moveLiquidBelow() {
+		TileTank below = getTankBelow(this);
+		if (below == null) {
+			return;
+		}
 
-    public static TileTank getTankBelow(TileTank tile)
-    {
-        TileEntity below = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		int used = below.tank.fill(tank.getLiquid(), true);
+		if (used > 0) {
+			hasUpdate = true; // not redundant because tank.drain operates on an ILiquidTank, not a tile
+			below.hasUpdate = true; // redundant because below.fill sets hasUpdate
 
-        if (below instanceof TileTank)
-        {
-            return (TileTank) below;
-        }
-        else
-        {
-            return null;
-        }
-    }
+			tank.drain(used, true);
+		}
+	}
 
-    public static TileTank getTankAbove(TileTank tile)
-    {
-        TileEntity above = tile.worldObj.getBlockTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+	/* ITANKCONTAINER */
+	@Override
+	public int fill(ForgeDirection from, LiquidStack resource, boolean doFill) {
+		return fill(0, resource, doFill);
+	}
 
-        if (above instanceof TileTank)
-        {
-            return (TileTank) above;
-        }
-        else
-        {
-            return null;
-        }
-    }
+	@Override
+	public int fill(int tankIndex, LiquidStack resource, boolean doFill) {
+		if (tankIndex != 0 || resource == null) {
+			return 0;
+		}
 
-    public void moveLiquidBelow()
-    {
-        TileTank below = getTankBelow(this);
+		resource = resource.copy();
+		int totalUsed = 0;
+		TileTank tankToFill = getBottomTank();
+		
+		LiquidStack liquid = tankToFill.tank.getLiquid();
+		if (liquid != null && liquid.amount > 0 && !liquid.isLiquidEqual(resource)) {
+			return 0;
+		}
 
-        if (below == null)
-        {
-            return;
-        }
+		while (tankToFill != null && resource.amount > 0) {
+			int used = tankToFill.tank.fill(resource, doFill);
+			resource.amount -= used;
+			if (used > 0) {
+				tankToFill.hasUpdate = true;
+			}
 
-        int used = below.tank.fill(tank.getLiquid(), true);
+			totalUsed += used;
+			tankToFill = getTankAbove(tankToFill);
+		}
+		return totalUsed;
+	}
 
-        if (used > 0)
-        {
-            hasUpdate = true; // not redundant because tank.drain operates on an ILiquidTank, not a tile
-            below.hasUpdate = true; // redundant because below.fill sets hasUpdate
-            tank.drain(used, true);
-        }
-    }
+	@Override
+	public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+		return drain(0, maxEmpty, doDrain);
+	}
 
-    /* ITANKCONTAINER */
-    @Override
-    public int fill(ForgeDirection from, LiquidStack resource, boolean doFill)
-    {
-        return fill(0, resource, doFill);
-    }
+	@Override
+	public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain) {
+		TileTank bottom = getBottomTank();
+		bottom.hasUpdate = true;
+		return bottom.tank.drain(maxEmpty, doDrain);
+	}
 
-    @Override
-    public int fill(int tankIndex, LiquidStack resource, boolean doFill)
-    {
-        if (tankIndex != 0 || resource == null)
-        {
-            return 0;
-        }
+	@Override
+	public ILiquidTank[] getTanks(ForgeDirection direction) {
+		LiquidTank compositeTank = new LiquidTank(tank.getCapacity());
 
-        resource = resource.copy();
-        int totalUsed = 0;
-        TileTank tankToFill = getBottomTank();
-        LiquidStack liquid = tankToFill.tank.getLiquid();
+		TileTank tile = getBottomTank();
 
-        if (liquid != null && liquid.amount > 0 && !liquid.isLiquidEqual(resource))
-        {
-            return 0;
-        }
+		int capacity = tank.getCapacity();
 
-        while (tankToFill != null && resource.amount > 0)
-        {
-            int used = tankToFill.tank.fill(resource, doFill);
-            resource.amount -= used;
+		if (tile != null && tile.tank.getLiquid() != null) {
+			compositeTank.setLiquid(tile.tank.getLiquid().copy());
+		} else {
+			return new ILiquidTank[]{compositeTank};
+		}
 
-            if (used > 0)
-            {
-                tankToFill.hasUpdate = true;
-            }
+		tile = getTankAbove(tile);
 
-            totalUsed += used;
-            tankToFill = getTankAbove(tankToFill);
-        }
+		while (tile != null) {
 
-        return totalUsed;
-    }
+			LiquidStack liquid = tile.tank.getLiquid();
+			if (liquid == null || liquid.amount == 0) {
+				// NOOP
+			} else if (!compositeTank.getLiquid().isLiquidEqual(liquid)) {
+				break;
+			} else {
+				compositeTank.getLiquid().amount += liquid.amount;
+			}
 
-    @Override
-    public LiquidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain)
-    {
-        return drain(0, maxEmpty, doDrain);
-    }
+			capacity += tile.tank.getCapacity();
+			tile = getTankAbove(tile);
+		}
 
-    @Override
-    public LiquidStack drain(int tankIndex, int maxEmpty, boolean doDrain)
-    {
-        TileTank bottom = getBottomTank();
-        bottom.hasUpdate = true;
-        return bottom.tank.drain(maxEmpty, doDrain);
-    }
+		compositeTank.setCapacity(capacity);
+		return new ILiquidTank[]{compositeTank};
+	}
 
-    @Override
-    public ILiquidTank[] getTanks(ForgeDirection direction)
-    {
-        LiquidTank compositeTank = new LiquidTank(tank.getCapacity());
-        TileTank tile = getBottomTank();
-        int capacity = tank.getCapacity();
-
-        if (tile != null && tile.tank.getLiquid() != null)
-        {
-            compositeTank.setLiquid(tile.tank.getLiquid().copy());
-        }
-        else
-        {
-            return new ILiquidTank[] {compositeTank};
-        }
-
-        tile = getTankAbove(tile);
-
-        while (tile != null)
-        {
-            LiquidStack liquid = tile.tank.getLiquid();
-
-            if (liquid == null || liquid.amount == 0)
-            {
-                // NOOP
-            }
-            else if (!compositeTank.getLiquid().isLiquidEqual(liquid))
-            {
-                break;
-            }
-            else
-            {
-                compositeTank.getLiquid().amount += liquid.amount;
-            }
-
-            capacity += tile.tank.getCapacity();
-            tile = getTankAbove(tile);
-        }
-
-        compositeTank.setCapacity(capacity);
-        return new ILiquidTank[] {compositeTank};
-    }
-
-    @Override
-    public ILiquidTank getTank(ForgeDirection direction, LiquidStack type)
-    {
-        if (direction == DOWN && worldObj != null && worldObj.getBlockId(xCoord, yCoord - 1, zCoord) != BuildCraftFactory.tankBlock.blockID)
-        {
-            return tank;
-        }
-
-        return null;
-    }
+	@Override
+	public ILiquidTank getTank(ForgeDirection direction, LiquidStack type) {
+		if (direction == DOWN && worldObj != null && worldObj.getBlockId(xCoord, yCoord - 1, zCoord) != BuildCraftFactory.tankBlock.blockID) {
+			return tank;
+		}
+		return null;
+	}
 }

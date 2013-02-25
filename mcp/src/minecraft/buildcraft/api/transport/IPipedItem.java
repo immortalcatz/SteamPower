@@ -9,101 +9,102 @@ import net.minecraftforge.common.ForgeDirection;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 
-public interface IPipedItem
-{
-    public abstract void remove();
+public interface IPipedItem {
 
-    /* GETTING & SETTING */
-    public abstract void setWorld(World world);
+	public abstract void remove();
 
-    public abstract Position getPosition();
+	/* GETTING & SETTING */
+	public abstract void setWorld(World world);
 
-    public abstract void setPosition(double x, double y, double z);
+	public abstract Position getPosition();
 
-    /**
-     * @return the speed
-     */
-    public abstract float getSpeed();
+	public abstract void setPosition(double x, double y, double z);
 
-    /**
-     * @param speed
-     *            the speed to set
-     */
-    public abstract void setSpeed(float speed);
+	/**
+	 * @return the speed
+	 */
+	public abstract float getSpeed();
 
-    /**
-     * @return the item
-     */
-    public abstract ItemStack getItemStack();
+	/**
+	 * @param speed
+	 *            the speed to set
+	 */
+	public abstract void setSpeed(float speed);
 
-    /**
-     * @param item
-     *            the item to set
-     */
-    public abstract void setItemStack(ItemStack item);
+	/**
+	 * @return the item
+	 */
+	public abstract ItemStack getItemStack();
 
-    /**
-     * @return the container
-     */
-    public abstract TileEntity getContainer();
+	/**
+	 * @param item
+	 *            the item to set
+	 */
+	public abstract void setItemStack(ItemStack item);
 
-    /**
-     * @param container
-     *            the container to set
-     */
-    public abstract void setContainer(TileEntity container);
+	/**
+	 * @return the container
+	 */
+	public abstract TileEntity getContainer();
 
-    /**
-     * @return the synchroTracker
-     */
-    @Deprecated
-    public abstract SafeTimeTracker getSynchroTracker();
+	/**
+	 * @param container
+	 *            the container to set
+	 */
+	public abstract void setContainer(TileEntity container);
 
-    /**
-     * @param synchroTracker
-     *            the synchroTracker to set
-     */
-    @Deprecated
-    public abstract void setSynchroTracker(SafeTimeTracker synchroTracker);
+	/**
+	 * @return the synchroTracker
+	 */
+	@Deprecated
+	public abstract SafeTimeTracker getSynchroTracker();
 
-    /**
-     * @return the deterministicRandomization
-     */
-    @Deprecated
-    public abstract int getDeterministicRandomization();
+	/**
+	 * @param synchroTracker
+	 *            the synchroTracker to set
+	 */
+	@Deprecated
+	public abstract void setSynchroTracker(SafeTimeTracker synchroTracker);
 
-    /**
-     * @param deterministicRandomization
-     *            the deterministicRandomization to set
-     */
-    @Deprecated
-    public abstract void setDeterministicRandomization(int deterministicRandomization);
+	/**
+	 * @return the deterministicRandomization
+	 */
+	@Deprecated
+	public abstract int getDeterministicRandomization();
 
-    /**
-     * @return the entityId
-     */
-    public abstract int getEntityId();
+	/**
+	 * @param deterministicRandomization
+	 *            the deterministicRandomization to set
+	 */
+	@Deprecated
+	public abstract void setDeterministicRandomization(int deterministicRandomization);
 
-    /**
-     * @param entityId
-     *            the entityId to set
-     */
-    public abstract void setEntityId(int entityId);
+	/**
+	 * @return the entityId
+	 */
+	public abstract int getEntityId();
 
-    /* SAVING & LOADING */
-    public abstract void readFromNBT(NBTTagCompound nbttagcompound);
+	/**
+	 * @param entityId
+	 *            the entityId to set
+	 */
+	public abstract void setEntityId(int entityId);
 
-    public abstract void writeToNBT(NBTTagCompound nbttagcompound);
+	/* SAVING & LOADING */
+	public abstract void readFromNBT(NBTTagCompound nbttagcompound);
 
-    public abstract EntityItem toEntityItem(ForgeDirection dir);
+	public abstract void writeToNBT(NBTTagCompound nbttagcompound);
 
-    public abstract float getEntityBrightness(float f);
+	public abstract EntityItem toEntityItem(ForgeDirection dir);
 
-    public abstract boolean isCorrupted();
+	public abstract float getEntityBrightness(float f);
 
-    public abstract void addContribution(String key, IPassiveItemContribution contribution);
+	public abstract boolean isCorrupted();
 
-    public abstract IPassiveItemContribution getContribution(String key);
+	public abstract void addContribution(String key, IPassiveItemContribution contribution);
 
-    public abstract boolean hasContributions();
+	public abstract IPassiveItemContribution getContribution(String key);
+
+	public abstract boolean hasContributions();
+
 }

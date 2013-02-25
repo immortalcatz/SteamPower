@@ -12,122 +12,97 @@ import java.util.TreeMap;
 
 import buildcraft.core.proxy.CoreProxy;
 
-public class BptPlayerIndex
-{
-    private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
+public class BptPlayerIndex {
 
-    private File baseDir;
-    private File file;
+	private TreeMap<String, File> bluePrintsFile = new TreeMap<String, File>();
 
-    public BptPlayerIndex(String filename, BptRootIndex rootIndex) throws IOException
-    {
-        baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
-        file = new File(baseDir, filename);
-        baseDir.mkdir();
+	private File baseDir;
+	private File file;
 
-        if (!file.exists())
-        {
-            file.createNewFile();
+	public BptPlayerIndex(String filename, BptRootIndex rootIndex) throws IOException {
+		baseDir = new File(CoreProxy.proxy.getBuildCraftBase(), "blueprints/");
+		file = new File(baseDir, filename);
+		baseDir.mkdir();
 
-            for (String file : rootIndex.filesSet.keySet())
-            {
-                bluePrintsFile.put(file, new File(baseDir, file));
-            }
+		if (!file.exists()) {
+			file.createNewFile();
 
-            saveIndex();
-        }
-        else
-        {
-            loadIndex();
-        }
-    }
+			for (String file : rootIndex.filesSet.keySet()) {
+				bluePrintsFile.put(file, new File(baseDir, file));
+			}
 
-    public void loadIndex() throws IOException
-    {
-        FileInputStream input = new FileInputStream(file);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
+			saveIndex();
+		} else {
+			loadIndex();
+		}
+	}
 
-        while (true)
-        {
-            String line = reader.readLine();
+	public void loadIndex() throws IOException {
+		FileInputStream input = new FileInputStream(file);
 
-            if (line == null)
-            {
-                break;
-            }
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "8859_1"));
 
-            line = line.replaceAll("\\n", "");
-            File bptFile = new File(baseDir, line);
-            bluePrintsFile.put(line, bptFile);
-        }
+		while (true) {
+			String line = reader.readLine();
 
-        input.close();
-    }
+			if (line == null) {
+				break;
+			}
 
-    public void addBlueprint(File file) throws IOException
-    {
-        bluePrintsFile.put(file.getName(), file);
-        saveIndex();
-    }
+			line = line.replaceAll("\\n", "");
 
-    public void saveIndex() throws IOException
-    {
-        FileOutputStream output = new FileOutputStream(file);
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
+			File bptFile = new File(baseDir, line);
 
-        for (String line : bluePrintsFile.keySet())
-        {
-            writer.write(line);
-            writer.newLine();
-        }
+			bluePrintsFile.put(line, bptFile);
+		}
 
-        writer.flush();
-        output.close();
-    }
+		input.close();
+	}
 
-    public void deleteBluePrint(String fileName)
-    {
-        bluePrintsFile.remove(fileName);
+	public void addBlueprint(File file) throws IOException {
+		bluePrintsFile.put(file.getName(), file);
 
-        try
-        {
-            saveIndex();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
+		saveIndex();
+	}
 
-    public String nextBpt(String name)
-    {
-        if (bluePrintsFile.size() == 0)
-        {
-            return null;
-        }
-        else if (name == null)
-        {
-            return bluePrintsFile.firstKey();
-        }
-        else
-        {
-            return bluePrintsFile.higherKey(name);
-        }
-    }
+	public void saveIndex() throws IOException {
+		FileOutputStream output = new FileOutputStream(file);
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "8859_1"));
 
-    public String prevBpt(String name)
-    {
-        if (bluePrintsFile.size() == 0)
-        {
-            return null;
-        }
-        else if (name == null)
-        {
-            return bluePrintsFile.lastKey();
-        }
-        else
-        {
-            return bluePrintsFile.lowerKey(name);
-        }
-    }
+		for (String line : bluePrintsFile.keySet()) {
+			writer.write(line);
+			writer.newLine();
+		}
+
+		writer.flush();
+		output.close();
+	}
+
+	public void deleteBluePrint(String fileName) {
+		bluePrintsFile.remove(fileName);
+
+		try {
+			saveIndex();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String nextBpt(String name) {
+		if (bluePrintsFile.size() == 0)
+			return null;
+		else if (name == null)
+			return bluePrintsFile.firstKey();
+		else
+			return bluePrintsFile.higherKey(name);
+	}
+
+	public String prevBpt(String name) {
+		if (bluePrintsFile.size() == 0)
+			return null;
+		else if (name == null)
+			return bluePrintsFile.lastKey();
+		else
+			return bluePrintsFile.lowerKey(name);
+	}
 }

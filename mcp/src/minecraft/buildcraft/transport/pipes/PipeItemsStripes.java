@@ -36,6 +36,7 @@ package buildcraft.transport.pipes;
  import net.minecraft.tileentity.TileEntity;
 
  public class PipeItemsStripes extends Pipe implements IItemTravelingHook, IPowerReceptor {
+
  private IPowerProvider powerProvider;
 
  public PipeItemsStripes(int itemID) {
@@ -57,6 +58,7 @@ package buildcraft.transport.pipes;
  public int getTextureIndex(ForgeDirection direction) {
  return 16 * 7 + 14;
  }
+
 
  @Override
  public void doWork() {
@@ -82,6 +84,7 @@ package buildcraft.transport.pipes;
  worldObj.setBlock((int) p.x, (int) p.y, (int) p.z, 0);
  }
  }
+
  }
 
  @Override
@@ -107,9 +110,11 @@ package buildcraft.transport.pipes;
 
  @SuppressWarnings("unchecked")
  public boolean convertPipe(PipeTransportItems pipe, EntityData data) {
+
  if (data.item.getItemStack().getItem() instanceof ItemPipe)
 
  if (!(data.item.getItemStack().itemID == BuildCraftTransport.pipeItemsStipes.shiftedIndex)) {
+
  Pipe newPipe = BlockGenericPipe.createPipe(data.item.getItemStack().itemID);
  newPipe.setTile(this.container);
  this.container.pipe = newPipe;
@@ -146,6 +151,7 @@ package buildcraft.transport.pipes;
 
  @Override
  public void endReached(PipeTransportItems pipe, EntityData data, TileEntity tile) {
+
  }
  }
  */

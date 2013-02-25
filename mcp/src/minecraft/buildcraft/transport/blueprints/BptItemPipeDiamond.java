@@ -19,55 +19,50 @@ import buildcraft.api.blueprints.BptSlotInfo;
 import buildcraft.api.blueprints.IBptContext;
 import buildcraft.core.blueprints.BptItem;
 
-public class BptItemPipeDiamond extends BptItem
-{
-    public BptItemPipeDiamond()
-    {
-    }
+public class BptItemPipeDiamond extends BptItem {
 
-    @Override
-    public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements)
-    {
-    }
+	public BptItemPipeDiamond() {
+	}
 
-    @Override
-    public void rotateLeft(BptSlotInfo slot, IBptContext context)
-    {
-        ItemStack inv[] = BptBlockUtils.getItemStacks(slot, context);
-        ItemStack newInv[] = new ItemStack[54];
+	@Override
+	public void addRequirements(BptSlotInfo slot, LinkedList<ItemStack> requirements) {
 
-        for (int dir = 0; dir <= 1; ++dir)
-        {
-            for (int s = 0; s < 9; ++s)
-            {
-                newInv[dir * 9 + s] = inv[dir * 9 + s];
-            }
-        }
+	}
 
-        for (int dir = 2; dir <= 5; ++dir)
-        {
-            ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.DOWN);
+	@Override
+	public void rotateLeft(BptSlotInfo slot, IBptContext context) {
+		ItemStack inv[] = BptBlockUtils.getItemStacks(slot, context);
+		ItemStack newInv[] = new ItemStack[54];
 
-            for (int s = 0; s < 9; ++s)
-            {
-                newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];
-            }
-        }
+		for (int dir = 0; dir <= 1; ++dir) {
+			for (int s = 0; s < 9; ++s) {
+				newInv[dir * 9 + s] = inv[dir * 9 + s];
+			}
+		}
 
-        BptBlockUtils.setItemStacks(slot, context, newInv);
-    }
+		for (int dir = 2; dir <= 5; ++dir) {
+			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.DOWN);
 
-    @Override
-    public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z)
-    {
-        IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
-        BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
-    }
+			for (int s = 0; s < 9; ++s) {
+				newInv[r.ordinal() * 9 + s] = inv[dir * 9 + s];
+			}
+		}
 
-    @Override
-    public void buildBlock(BptSlotInfo slot, IBptContext context)
-    {
-        IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
-        BptBlockUtils.buildInventoryContents(slot, context, inventory);
-    }
+		BptBlockUtils.setItemStacks(slot, context, newInv);
+	}
+
+	@Override
+	public void initializeFromWorld(BptSlotInfo bptSlot, IBptContext context, int x, int y, int z) {
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(x, y, z);
+
+		BptBlockUtils.initializeInventoryContents(bptSlot, context, inventory);
+	}
+
+	@Override
+	public void buildBlock(BptSlotInfo slot, IBptContext context) {
+		IInventory inventory = (IInventory) context.world().getBlockTileEntity(slot.x, slot.y, slot.z);
+
+		BptBlockUtils.buildInventoryContents(slot, context, inventory);
+	}
+
 }

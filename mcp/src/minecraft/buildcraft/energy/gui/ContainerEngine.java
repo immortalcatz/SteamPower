@@ -1,8 +1,8 @@
-/**
+/** 
  * Copyright (c) SpaceToad, 2011
  * http://www.mod-buildcraft.com
- *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
+ * 
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public 
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
@@ -17,66 +17,55 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.energy.EngineStone;
 import buildcraft.energy.TileEngine;
 
-public class ContainerEngine extends BuildCraftContainer
-{
-    protected TileEngine engine;
+public class ContainerEngine extends BuildCraftContainer {
 
-    public ContainerEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine)
-    {
-        super(tileEngine.getSizeInventory());
-        engine = tileEngine;
+	protected TileEngine engine;
 
-        if (tileEngine.engine instanceof EngineStone)
-        {
-            addSlotToContainer(new Slot(tileEngine, 0, 80, 41));
-        }
-        else
-        {
-            addSlotToContainer(new Slot(tileEngine, 0, 52, 41));
-        }
+	public ContainerEngine(InventoryPlayer inventoryplayer, TileEngine tileEngine) {
+		super(tileEngine.getSizeInventory());
 
-        for (int i = 0; i < 3; i++)
-        {
-            for (int k = 0; k < 9; k++)
-            {
-                addSlotToContainer(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
-            }
-        }
+		engine = tileEngine;
 
-        for (int j = 0; j < 9; j++)
-        {
-            addSlotToContainer(new Slot(inventoryplayer, j, 8 + j * 18, 142));
-        }
-    }
+		if (tileEngine.engine instanceof EngineStone) {
+			addSlotToContainer(new Slot(tileEngine, 0, 80, 41));
+		} else {
+			addSlotToContainer(new Slot(tileEngine, 0, 52, 41));
+		}
 
-    @Override
-    public void detectAndSendChanges()
-    {
-        super.detectAndSendChanges();
+		for (int i = 0; i < 3; i++) {
+			for (int k = 0; k < 9; k++) {
+				addSlotToContainer(new Slot(inventoryplayer, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
+			}
 
-        for (int i = 0; i < crafters.size(); i++)
-        {
-            engine.engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
-        }
-    }
+		}
 
-    @Override
-    public void updateProgressBar(int i, int j)
-    {
-        if (engine.engine != null)
-        {
-            engine.engine.getGUINetworkData(i, j);
-        }
-    }
+		for (int j = 0; j < 9; j++) {
+			addSlotToContainer(new Slot(inventoryplayer, j, 8 + j * 18, 142));
+		}
+	}
 
-    public boolean isUsableByPlayer(EntityPlayer entityplayer)
-    {
-        return engine.isUseableByPlayer(entityplayer);
-    }
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
 
-    @Override
-    public boolean canInteractWith(EntityPlayer entityplayer)
-    {
-        return engine.isUseableByPlayer(entityplayer);
-    }
+		for (int i = 0; i < crafters.size(); i++) {
+			engine.engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		}
+	}
+
+	@Override
+	public void updateProgressBar(int i, int j) {
+		if (engine.engine != null) {
+			engine.engine.getGUINetworkData(i, j);
+		}
+	}
+
+	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+		return engine.isUseableByPlayer(entityplayer);
+	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer entityplayer) {
+		return engine.isUseableByPlayer(entityplayer);
+	}
 }

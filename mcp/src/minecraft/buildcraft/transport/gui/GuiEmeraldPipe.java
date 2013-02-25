@@ -23,83 +23,78 @@ import buildcraft.core.utils.StringUtil;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
-public class GuiEmeraldPipe extends GuiAdvancedInterface
-{
-    IInventory playerInventory;
-    PipeItemsEmerald filterInventory;
+public class GuiEmeraldPipe extends GuiAdvancedInterface {
 
-    public GuiEmeraldPipe(IInventory playerInventory, TileGenericPipe tile)
-    {
-        super(new ContainerEmeraldPipe(playerInventory, (IInventory) tile.pipe), (IInventory) tile.pipe);
-        this.playerInventory = playerInventory;
-        this.filterInventory = (PipeItemsEmerald) tile.pipe;
-        xSize = 175;
-        ySize = 132;
-        slots = new AdvancedSlot[9];
+	IInventory playerInventory;
+	PipeItemsEmerald filterInventory;
 
-        for (int i = 0; i < 9; i++)
-        {
-            slots[i] = new IInventorySlot(8 + i * 18, 18, filterInventory, i);
-        }
-    }
+	public GuiEmeraldPipe(IInventory playerInventory, TileGenericPipe tile) {
+		super(new ContainerEmeraldPipe(playerInventory, (IInventory) tile.pipe), (IInventory) tile.pipe);
+		this.playerInventory = playerInventory;
+		this.filterInventory = (PipeItemsEmerald) tile.pipe;
+		xSize = 175;
+		ySize = 132;
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(int par1, int par2)
-    {
-        fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
-        fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 93, 0x404040);
-        drawForegroundSelection(par1, par2);
-    }
+		slots = new AdvancedSlot[9];
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
-        int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/filter_2.png");
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(i);
-        int j = (width - xSize) / 2;
-        int k = (height - ySize) / 2;
-        drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
-        drawBackgroundSlots();
-    }
+		for (int i = 0; i < 9; i++) {
+			slots[i] = new IInventorySlot(8 + i * 18, 18, filterInventory, i);
+		}
+	}
 
-    @Override
-    protected void mouseClicked(int i, int j, int k)
-    {
-        super.mouseClicked(i, j, k);
-        int cornerX = (width - xSize) / 2;
-        int cornerY = (height - ySize) / 2;
-        int position = getSlotAtLocation(i - cornerX, j - cornerY);
-        IInventorySlot slot = null;
+	@Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		fontRenderer.drawString(filterInventory.getInvName(), getCenteredOffset(filterInventory.getInvName()), 6, 0x404040);
+		fontRenderer.drawString(StringUtil.localize("gui.inventory"), 8, ySize - 93, 0x404040);
 
-        if (position != -1)
-        {
-            slot = (IInventorySlot) slots[position];
-        }
+		drawForegroundSelection(par1, par2);
+	}
 
-        if (slot != null)
-        {
-            ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
-            ItemStack newStack;
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+		int i = mc.renderEngine.getTexture(DefaultProps.TEXTURE_PATH_GUI + "/filter_2.png");
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.renderEngine.bindTexture(i);
+		int j = (width - xSize) / 2;
+		int k = (height - ySize) / 2;
+		drawTexturedModalRect(j, k, 0, 0, xSize, ySize);
 
-            if (playerStack != null)
-            {
-                newStack = playerStack.copy();
-                newStack.stackSize = 1;
-            }
-            else
-            {
-                newStack = null;
-            }
+		drawBackgroundSlots();
+	}
 
-            filterInventory.setInventorySlotContents(position, newStack);
+	@Override
+	protected void mouseClicked(int i, int j, int k) {
+		super.mouseClicked(i, j, k);
 
-            if (CoreProxy.proxy.isRenderWorld(filterInventory.worldObj))
-            {
-                PacketSlotChange packet = new PacketSlotChange(PacketIds.EMERALD_PIPE_SELECT, filterInventory.xCoord, filterInventory.yCoord,
-                        filterInventory.zCoord, position, newStack);
-                CoreProxy.proxy.sendToServer(packet.getPacket());
-            }
-        }
-    }
+		int cornerX = (width - xSize) / 2;
+		int cornerY = (height - ySize) / 2;
+
+		int position = getSlotAtLocation(i - cornerX, j - cornerY);
+
+		IInventorySlot slot = null;
+
+		if (position != -1) {
+			slot = (IInventorySlot) slots[position];
+		}
+
+		if (slot != null) {
+			ItemStack playerStack = mc.thePlayer.inventory.getItemStack();
+
+			ItemStack newStack;
+			if (playerStack != null) {
+				newStack = playerStack.copy();
+				newStack.stackSize = 1;
+			} else {
+				newStack = null;
+			}
+
+			filterInventory.setInventorySlotContents(position, newStack);
+
+			if (CoreProxy.proxy.isRenderWorld(filterInventory.worldObj)) {
+				PacketSlotChange packet = new PacketSlotChange(PacketIds.EMERALD_PIPE_SELECT, filterInventory.xCoord, filterInventory.yCoord,
+						filterInventory.zCoord, position, newStack);
+				CoreProxy.proxy.sendToServer(packet.getPacket());
+			}
+		}
+	}
 }

@@ -12,87 +12,66 @@ import buildcraft.factory.gui.GuiHopper;
 import buildcraft.factory.gui.GuiRefinery;
 import cpw.mods.fml.common.network.IGuiHandler;
 
-public class GuiHandler implements IGuiHandler
-{
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
-    {
-        if (!world.blockExists(x, y, z))
-        {
-            return null;
-        }
+public class GuiHandler implements IGuiHandler {
 
-        TileEntity tile = world.getBlockTileEntity(x, y, z);
+	@Override
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 
-        switch (ID)
-        {
-            case GuiIds.AUTO_CRAFTING_TABLE:
-                if (!(tile instanceof TileAutoWorkbench))
-                {
-                    return null;
-                }
+		if (!world.blockExists(x, y, z))
+			return null;
 
-                return new GuiAutoCrafting(player.inventory, world, (TileAutoWorkbench) tile);
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-            case GuiIds.REFINERY:
-                if (!(tile instanceof TileRefinery))
-                {
-                    return null;
-                }
+		switch (ID) {
 
-                return new GuiRefinery(player.inventory, (TileRefinery) tile);
+		case GuiIds.AUTO_CRAFTING_TABLE:
+			if (!(tile instanceof TileAutoWorkbench))
+				return null;
+			return new GuiAutoCrafting(player.inventory, world, (TileAutoWorkbench) tile);
 
-            case GuiIds.HOPPER:
-                if (!(tile instanceof TileHopper))
-                {
-                    return null;
-                }
+		case GuiIds.REFINERY:
+			if (!(tile instanceof TileRefinery))
+				return null;
+			return new GuiRefinery(player.inventory, (TileRefinery) tile);
 
-                return new GuiHopper(player.inventory, (TileHopper) tile);
+		case GuiIds.HOPPER:
+			if (!(tile instanceof TileHopper))
+				return null;
+			return new GuiHopper(player.inventory, (TileHopper) tile);
 
-            default:
-                return null;
-        }
-    }
+		default:
+			return null;
+		}
+	}
 
-    @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
-    {
-        if (!world.blockExists(x, y, z))
-        {
-            return null;
-        }
+	@Override
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 
-        TileEntity tile = world.getBlockTileEntity(x, y, z);
+		if (!world.blockExists(x, y, z))
+			return null;
 
-        switch (ID)
-        {
-            case GuiIds.AUTO_CRAFTING_TABLE:
-                if (!(tile instanceof TileAutoWorkbench))
-                {
-                    return null;
-                }
+		TileEntity tile = world.getBlockTileEntity(x, y, z);
 
-                return new ContainerAutoWorkbench(player.inventory, (TileAutoWorkbench) tile);
+		switch (ID) {
 
-            case GuiIds.REFINERY:
-                if (!(tile instanceof TileRefinery))
-                {
-                    return null;
-                }
+		case GuiIds.AUTO_CRAFTING_TABLE:
+			if (!(tile instanceof TileAutoWorkbench))
+				return null;
+			return new ContainerAutoWorkbench(player.inventory, (TileAutoWorkbench) tile);
 
-                return new ContainerRefinery(player.inventory, (TileRefinery) tile);
+		case GuiIds.REFINERY:
+			if (!(tile instanceof TileRefinery))
+				return null;
+			return new ContainerRefinery(player.inventory, (TileRefinery) tile);
 
-            case GuiIds.HOPPER:
-                if (!(tile instanceof TileHopper))
-                {
-                    return null;
-                }
+		case GuiIds.HOPPER:
+			if (!(tile instanceof TileHopper))
+				return null;
+			return new ContainerHopper(player.inventory, (TileHopper) tile);
 
-                return new ContainerHopper(player.inventory, (TileHopper) tile);
+		default:
+			return null;
+		}
+	}
 
-            default:
-                return null;
-        }
-    }
 }

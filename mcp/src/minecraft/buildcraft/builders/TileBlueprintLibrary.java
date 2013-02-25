@@ -15,343 +15,272 @@ import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class TileBlueprintLibrary extends TileBuildCraft implements IInventory
-{
-    public static final int COMMAND_NEXT = 1, COMMAND_PREV = 2, COMMAND_LOCK_UPDATE = 3, COMMAND_DELETE = 4;
+public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
+	public static final int COMMAND_NEXT = 1, COMMAND_PREV = 2, COMMAND_LOCK_UPDATE = 3, COMMAND_DELETE = 4;
 
-    public ItemStack[] stack = new ItemStack[4];
+	public ItemStack[] stack = new ItemStack[4];
 
-    public int progressIn = 0;
-    public int progressOut = 0;
+	public int progressIn = 0;
+	public int progressOut = 0;
 
-    public String owner = "";
+	public String owner = "";
 
-    private ArrayList<BptBase> currentPage;
+	private ArrayList<BptBase> currentPage;
 
-    public @TileNetworkData(staticSize = BuildCraftBuilders.LIBRARY_PAGE_SIZE)
-    String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
-    public @TileNetworkData
-    int selected = -1;
+	public @TileNetworkData(staticSize = BuildCraftBuilders.LIBRARY_PAGE_SIZE)
+	String[] currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+	public @TileNetworkData
+	int selected = -1;
 
-    public @TileNetworkData
-    boolean locked = false;
+	public @TileNetworkData
+	boolean locked = false;
 
-    public TileBlueprintLibrary()
-    {
-        for (int i = 0; i < currentNames.length; i++)
-        {
-            currentNames[i] = "";
-        }
-    }
+	public TileBlueprintLibrary() {
+		for (int i = 0; i < currentNames.length; i++) {
+			currentNames[i] = "";
+		}
+	}
 
-    @Override
-    public void initialize()
-    {
-        super.initialize();
+	@Override
+	public void initialize() {
+		super.initialize();
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
+			setCurrentPage(getNextPage(null));
+		}
+	}
 
-        if (CoreProxy.proxy.isSimulating(worldObj))
-        {
-            setCurrentPage(getNextPage(null));
-        }
-    }
+	public ArrayList<BptBase> getNextPage(String after) {
+		ArrayList<BptBase> result = new ArrayList<BptBase>();
 
-    public ArrayList<BptBase> getNextPage(String after)
-    {
-        ArrayList<BptBase> result = new ArrayList<BptBase>();
-        BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-        String it = after;
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
-        while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE)
-        {
-            it = index.nextBpt(it);
+		String it = after;
 
-            if (it == null)
-            {
-                break;
-            }
+		while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE) {
+			it = index.nextBpt(it);
 
-            BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
+			if (it == null) {
+				break;
+			}
 
-            if (bpt != null)
-            {
-                result.add(bpt);
-            }
-        }
+			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
 
-        return result;
-    }
+			if (bpt != null) {
+				result.add(bpt);
+			}
+		}
 
-    public ArrayList<BptBase> getPrevPage(String before)
-    {
-        ArrayList<BptBase> result = new ArrayList<BptBase>();
-        BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-        String it = before;
+		return result;
+	}
 
-        while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE)
-        {
-            it = index.prevBpt(it);
+	public ArrayList<BptBase> getPrevPage(String before) {
+		ArrayList<BptBase> result = new ArrayList<BptBase>();
 
-            if (it == null)
-            {
-                break;
-            }
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
-            BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
+		String it = before;
 
-            if (bpt != null)
-            {
-                result.add(bpt);
-            }
-        }
+		while (result.size() < BuildCraftBuilders.LIBRARY_PAGE_SIZE) {
+			it = index.prevBpt(it);
 
-        return result;
-    }
+			if (it == null) {
+				break;
+			}
 
-    public void updateCurrentNames()
-    {
-        currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(it);
 
-        for (int i = 0; i < currentPage.size(); i++)
-        {
-            currentNames[i] = currentPage.get(i).getName();
-        }
+			if (bpt != null) {
+				result.add(bpt);
+			}
+		}
 
-        for (int i = currentPage.size(); i < currentNames.length; i++)
-        {
-            currentNames[i] = "";
-        }
+		return result;
+	}
 
-        sendNetworkUpdate();
-    }
+	public void updateCurrentNames() {
+		currentNames = new String[BuildCraftBuilders.LIBRARY_PAGE_SIZE];
+		for (int i = 0; i < currentPage.size(); i++) {
+			currentNames[i] = currentPage.get(i).getName();
+		}
+		for (int i = currentPage.size(); i < currentNames.length; i++) {
+			currentNames[i] = "";
+		}
+		sendNetworkUpdate();
+	}
 
-    public ArrayList<BptBase> getCurrentPage()
-    {
-        return currentPage;
-    }
+	public ArrayList<BptBase> getCurrentPage() {
+		return currentPage;
+	}
 
-    public void setCurrentPage(ArrayList<BptBase> newPage)
-    {
-        currentPage = newPage;
-        selected = -1;
-        updateCurrentNames();
-    }
+	public void setCurrentPage(ArrayList<BptBase> newPage) {
+		currentPage = newPage;
+		selected = -1;
+		updateCurrentNames();
+	}
 
-    public void setCurrentPage(boolean nextPage)
-    {
-        int index = 0;
+	public void setCurrentPage(boolean nextPage) {
+		int index = 0;
+		if (nextPage) {
+			index = currentPage.size() - 1;
+		}
+		if (currentPage.size() > 0) {
+			setCurrentPage(getNextPage(currentPage.get(index).file.getName()));
+		} else {
+			setCurrentPage(getNextPage(null));
+		}
+	}
 
-        if (nextPage)
-        {
-            index = currentPage.size() - 1;
-        }
+	public void deleteSelectedBpt() {
+		BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+		if (selected > -1 && selected < currentPage.size()) {
+			index.deleteBluePrint(currentPage.get(selected).file.getName());
+			if (currentPage.size() > 0) {
+				currentPage = getNextPage(index.prevBpt(currentPage.get(0).file.getName()));
+			} else {
+				currentPage = getNextPage(null);
+			}
+			selected = -1;
+			updateCurrentNames();
+		}
+	}
 
-        if (currentPage.size() > 0)
-        {
-            setCurrentPage(getNextPage(currentPage.get(index).file.getName()));
-        }
-        else
-        {
-            setCurrentPage(getNextPage(null));
-        }
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-    public void deleteSelectedBpt()
-    {
-        BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
+		owner = nbttagcompound.getString("owner");
+		locked = nbttagcompound.getBoolean("locked");
 
-        if (selected > -1 && selected < currentPage.size())
-        {
-            index.deleteBluePrint(currentPage.get(selected).file.getName());
+		Utils.readStacksFromNBT(nbttagcompound, "stack", stack);
+	}
 
-            if (currentPage.size() > 0)
-            {
-                currentPage = getNextPage(index.prevBpt(currentPage.get(0).file.getName()));
-            }
-            else
-            {
-                currentPage = getNextPage(null);
-            }
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
-            selected = -1;
-            updateCurrentNames();
-        }
-    }
+		nbttagcompound.setString("owner", owner);
+		nbttagcompound.setBoolean("locked", locked);
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        owner = nbttagcompound.getString("owner");
-        locked = nbttagcompound.getBoolean("locked");
-        Utils.readStacksFromNBT(nbttagcompound, "stack", stack);
-    }
+		Utils.writeStacksToNBT(nbttagcompound, "stack", stack);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        nbttagcompound.setString("owner", owner);
-        nbttagcompound.setBoolean("locked", locked);
-        Utils.writeStacksToNBT(nbttagcompound, "stack", stack);
-    }
+	@Override
+	public int getSizeInventory() {
+		return 4;
+	}
 
-    @Override
-    public int getSizeInventory()
-    {
-        return 4;
-    }
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return stack[i];
+	}
 
-    @Override
-    public ItemStack getStackInSlot(int i)
-    {
-        return stack[i];
-    }
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		if (stack[i] == null)
+			return null;
 
-    @Override
-    public ItemStack decrStackSize(int i, int j)
-    {
-        if (stack[i] == null)
-        {
-            return null;
-        }
+		ItemStack res = stack[i].splitStack(j);
 
-        ItemStack res = stack[i].splitStack(j);
+		if (stack[i].stackSize == 0) {
+			stack[i] = null;
+		}
 
-        if (stack[i].stackSize == 0)
-        {
-            stack[i] = null;
-        }
+		return res;
+	}
 
-        return res;
-    }
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		stack[i] = itemstack;
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        stack[i] = itemstack;
+		if (i == 0) {
+			if (stack[0] != null && stack[0].getItem() instanceof ItemBptBase) {
+				progressIn = 1;
+			} else {
+				progressIn = 0;
+			}
+		}
 
-        if (i == 0)
-        {
-            if (stack[0] != null && stack[0].getItem() instanceof ItemBptBase)
-            {
-                progressIn = 1;
-            }
-            else
-            {
-                progressIn = 0;
-            }
-        }
+		if (i == 2) {
+			if (stack[2] != null && stack[2].getItem() instanceof ItemBptBase) {
+				progressOut = 1;
+			} else {
+				progressOut = 0;
+			}
+		}
+	}
 
-        if (i == 2)
-        {
-            if (stack[2] != null && stack[2].getItem() instanceof ItemBptBase)
-            {
-                progressOut = 1;
-            }
-            else
-            {
-                progressOut = 0;
-            }
-        }
-    }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (stack[slot] == null)
+			return null;
+		ItemStack toReturn = stack[slot];
+		stack[slot] = null;
+		return toReturn;
+	}
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
-        if (stack[slot] == null)
-        {
-            return null;
-        }
+	@Override
+	public String getInvName() {
+		return "";
+	}
 
-        ItemStack toReturn = stack[slot];
-        stack[slot] = null;
-        return toReturn;
-    }
+	@Override
+	public int getInventoryStackLimit() {
+		return 64;
+	}
 
-    @Override
-    public String getInvName()
-    {
-        return "";
-    }
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+	}
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
+	@Override
+	public void openChest() {
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
-        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
-    }
+	@Override
+	public void closeChest() {
+	}
 
-    @Override
-    public void openChest()
-    {
-    }
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
 
-    @Override
-    public void closeChest()
-    {
-    }
+		if (progressIn > 0 && progressIn < 100) {
+			progressIn++;
+		}
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
+		if (progressOut > 0 && progressOut < 100) {
+			progressOut++;
+		}
 
-        if (CoreProxy.proxy.isRenderWorld(worldObj))
-        {
-            return;
-        }
+		if (progressIn == 100 && stack[1] == null) {
+			setInventorySlotContents(1, stack[0]);
+			setInventorySlotContents(0, null);
+			BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(stack[1].getItemDamage());
 
-        if (progressIn > 0 && progressIn < 100)
-        {
-            progressIn++;
-        }
+			if (bpt != null) {
+				BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
 
-        if (progressOut > 0 && progressOut < 100)
-        {
-            progressOut++;
-        }
+				try {
+					index.addBlueprint(bpt.file);
+					setCurrentPage(true);
+					setCurrentPage(false);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-        if (progressIn == 100 && stack[1] == null)
-        {
-            setInventorySlotContents(1, stack[0]);
-            setInventorySlotContents(0, null);
-            BptBase bpt = BuildCraftBuilders.getBptRootIndex().getBluePrint(stack[1].getItemDamage());
-
-            if (bpt != null)
-            {
-                BptPlayerIndex index = BuildCraftBuilders.getPlayerIndex(BuildersProxy.getOwner(this));
-
-                try
-                {
-                    index.addBlueprint(bpt.file);
-                    setCurrentPage(true);
-                    setCurrentPage(false);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (progressOut == 100 && stack[3] == null)
-        {
-            if (selected > -1 && selected < currentPage.size())
-            {
-                BptBase bpt = currentPage.get(selected);
-                setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
-            }
-            else
-            {
-                setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
-            }
-
-            setInventorySlotContents(2, null);
-        }
-    }
+		if (progressOut == 100 && stack[3] == null) {
+			if (selected > -1 && selected < currentPage.size()) {
+				BptBase bpt = currentPage.get(selected);
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, bpt.position, bpt.getName()));
+			} else {
+				setInventorySlotContents(3, BuildCraftBuilders.getBptItemStack(stack[2].itemID, 0, null));
+			}
+			setInventorySlotContents(2, null);
+		}
+	}
 }

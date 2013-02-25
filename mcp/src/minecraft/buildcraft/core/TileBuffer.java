@@ -14,79 +14,65 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.api.core.SafeTimeTracker;
 
-public class TileBuffer
-{
-    private int blockID = 0;
-    private TileEntity tile;
-    private SafeTimeTracker tracker = new SafeTimeTracker();
-    private World world;
-    int x, y, z;
+public class TileBuffer {
 
-    public void initialize(World world, int x, int y, int z)
-    {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        refresh();
-    }
+	private int blockID = 0;
+	private TileEntity tile;
+	private SafeTimeTracker tracker = new SafeTimeTracker();
+	private World world;
+	int x, y, z;
 
-    public void refresh()
-    {
-        tile = null;
-        blockID = world.getBlockId(this.x, this.y, this.z);
-        Block block = Block.blocksList[blockID];
+	public void initialize(World world, int x, int y, int z) {
+		this.world = world;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 
-        if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z)))
-        {
-            tile = world.getBlockTileEntity(this.x, this.y, this.z);
-        }
-    }
+		refresh();
+	}
 
-    public void set(int blockID, TileEntity tile)
-    {
-        this.blockID = blockID;
-        this.tile = tile;
-        tracker.markTime(world);
-    }
+	public void refresh() {
+		tile = null;
+		blockID = world.getBlockId(this.x, this.y, this.z);
 
-    public int getBlockID()
-    {
-        if (tile != null && !tile.isInvalid())
-        {
-            return blockID;
-        }
+		Block block = Block.blocksList[blockID];
+		if (block != null && block.hasTileEntity(world.getBlockMetadata(this.x, this.y, this.z))) {
+			tile = world.getBlockTileEntity(this.x, this.y, this.z);
+		}
+	}
 
-        if (tracker.markTimeIfDelay(world, 20))
-        {
-            refresh();
+	public void set(int blockID, TileEntity tile) {
+		this.blockID = blockID;
+		this.tile = tile;
+		tracker.markTime(world);
+	}
 
-            if (tile != null && !tile.isInvalid())
-            {
-                return blockID;
-            }
-        }
+	public int getBlockID() {
+		if (tile != null && !tile.isInvalid())
+			return blockID;
 
-        return 0;
-    }
+		if (tracker.markTimeIfDelay(world, 20)) {
+			refresh();
 
-    public TileEntity getTile()
-    {
-        if (tile != null && !tile.isInvalid())
-        {
-            return tile;
-        }
+			if (tile != null && !tile.isInvalid())
+				return blockID;
+		}
 
-        if (tracker.markTimeIfDelay(world, 20))
-        {
-            refresh();
+		return 0;
+	}
 
-            if (tile != null && !tile.isInvalid())
-            {
-                return tile;
-            }
-        }
+	public TileEntity getTile() {
+		if (tile != null && !tile.isInvalid())
+			return tile;
 
-        return null;
-    }
+		if (tracker.markTimeIfDelay(world, 20)) {
+			refresh();
+
+			if (tile != null && !tile.isInvalid())
+				return tile;
+		}
+
+		return null;
+	}
+
 }

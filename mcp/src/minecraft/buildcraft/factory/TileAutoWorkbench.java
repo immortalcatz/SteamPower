@@ -28,413 +28,355 @@ import buildcraft.core.inventory.TransactorRoundRobin;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.Utils;
 
-public class TileAutoWorkbench extends TileEntity implements ISpecialInventory
-{
-    private ItemStack stackList[] = new ItemStack[9];
+public class TileAutoWorkbench extends TileEntity implements ISpecialInventory {
 
-    class LocalInventoryCrafting extends InventoryCrafting
-    {
-        public LocalInventoryCrafting()
-        {
-            super(new Container()
-            {
-                @SuppressWarnings("all")
-                public boolean isUsableByPlayer(EntityPlayer entityplayer)
-                {
-                    return false;
-                }
-                @SuppressWarnings("all")
-                public boolean canInteractWith(EntityPlayer entityplayer)
-                {
-                    // TODO Auto-generated method stub
-                    return false;
-                }
-            }, 3, 3);
-            // TODO Auto-generated constructor stub
-        }
-    }
+	private ItemStack stackList[] = new ItemStack[9];
 
-    @Override
-    public int getSizeInventory()
-    {
-        return stackList.length;
-    }
+	class LocalInventoryCrafting extends InventoryCrafting {
 
-    @Override
-    public ItemStack getStackInSlot(int i)
-    {
-        return stackList[i];
-    }
+		public LocalInventoryCrafting() {
+			super(new Container() {
 
-    @Override
-    public ItemStack decrStackSize(int slotId, int count)
-    {
-        if (stackList[slotId] == null)
-        {
-            return null;
-        }
+				@SuppressWarnings("all")
+				public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+					return false;
+				}
 
-        if (stackList[slotId].stackSize > count)
-        {
-            return stackList[slotId].splitStack(count);
-        }
+				@SuppressWarnings("all")
+				public boolean canInteractWith(EntityPlayer entityplayer) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+			}, 3, 3);
+			// TODO Auto-generated constructor stub
+		}
 
-        ItemStack stack = stackList[slotId];
-        stackList[slotId] = null;
-        return stack;
-    }
+	}
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        stackList[i] = itemstack;
-    }
+	@Override
+	public int getSizeInventory() {
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int slot)
-    {
-        if (this.stackList[slot] == null)
-        {
-            return null;
-        }
+		return stackList.length;
+	}
 
-        ItemStack stackToTake = this.stackList[slot];
-        this.stackList[slot] = null;
-        return stackToTake;
-    }
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return stackList[i];
+	}
 
-    @Override
-    public String getInvName()
-    {
-        return "";
-    }
+	@Override
+	public ItemStack decrStackSize(int slotId, int count) {
+		if (stackList[slotId] == null)
+			return null;
+		if (stackList[slotId].stackSize > count)
+			return stackList[slotId].splitStack(count);
+		ItemStack stack = stackList[slotId];
+		stackList[slotId] = null;
+		return stack;
+	}
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return 64;
-    }
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+		stackList[i] = itemstack;
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer)
-    {
-        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
-    }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		if (this.stackList[slot] == null)
+			return null;
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        Utils.readStacksFromNBT(nbttagcompound, "stackList", stackList);
-    }
+		ItemStack stackToTake = this.stackList[slot];
+		this.stackList[slot] = null;
+		return stackToTake;
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        Utils.writeStacksToNBT(nbttagcompound, "stackList", stackList);
-    }
+	@Override
+	public String getInvName() {
 
-    class StackPointer
-    {
-        IInventory inventory;
-        int index;
-        ItemStack item;
-    }
+		return "";
+	}
 
-    public ItemStack findRecipe()
-    {
-        InventoryCrafting craftMatrix = new LocalInventoryCrafting();
+	@Override
+	public int getInventoryStackLimit() {
 
-        for (int i = 0; i < getSizeInventory(); ++i)
-        {
-            ItemStack stack = getStackInSlot(i);
-            craftMatrix.setInventorySlotContents(i, stack);
-        }
+		return 64;
+	}
 
-        ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
-        return recipe;
-    }
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+	}
 
-    public ItemStack extractItem(boolean doRemove, boolean removeRecipe)
-    {
-        InventoryCrafting craftMatrix = new LocalInventoryCrafting();
-        LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
-        int itemsToLeave = (removeRecipe ? 0 : 1);
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-        for (int i = 0; i < getSizeInventory(); ++i)
-        {
-            ItemStack stack = getStackInSlot(i);
+		Utils.readStacksFromNBT(nbttagcompound, "stackList", stackList);
+	}
 
-            if (stack != null)
-            {
-                if (stack.stackSize <= itemsToLeave)
-                {
-                    StackPointer pointer = getNearbyItem(stack);
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
 
-                    if (pointer == null)
-                    {
-                        resetPointers(pointerList);
-                        return null;
-                    }
-                    else
-                    {
-                        pointerList.add(pointer);
-                    }
-                }
-                else
-                {
-                    StackPointer pointer = new StackPointer();
-                    pointer.inventory = this;
-                    pointer.item = this.decrStackSize(i, 1);
-                    pointer.index = i;
-                    stack = pointer.item;
-                    pointerList.add(pointer);
-                }
-            }
+		Utils.writeStacksToNBT(nbttagcompound, "stackList", stackList);
+	}
 
-            craftMatrix.setInventorySlotContents(i, stack);
-        }
+	class StackPointer {
 
-        ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
+		IInventory inventory;
+		int index;
+		ItemStack item;
+	}
 
-        if (resultStack == null || !doRemove)
-        {
-            resetPointers(pointerList);
-        }
-        else
-        {
-            for (StackPointer p : pointerList)
-            {
-                // replace with the container where appropriate
-                if (p.item.getItem().getContainerItem() != null)
-                {
-                    ItemStack newStack = p.item.getItem().getContainerItemStack(p.item);
+	public ItemStack findRecipe() {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();
 
-                    if (p.item.isItemStackDamageable())
-                    {
-                        if (newStack.getItemDamage() >= p.item.getMaxDamage())
-                        {
-                            MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord),
-                                    newStack));
-                            this.worldObj.playSoundAtEntity(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord), "random.break", 0.8F,
-                                    0.8F + this.worldObj.rand.nextFloat() * 0.4F);
-                            newStack = null;
-                        }
-                    }
+		for (int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
 
-                    p.inventory.setInventorySlotContents(p.index, newStack);
-                }
-            }
-        }
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
 
-        return resultStack;
-    }
+		ItemStack recipe = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
 
-    public void resetPointers(LinkedList<StackPointer> pointers)
-    {
-        for (StackPointer p : pointers)
-        {
-            ItemStack item = p.inventory.getStackInSlot(p.index);
+		return recipe;
+	}
 
-            if (item == null)
-            {
-                p.inventory.setInventorySlotContents(p.index, p.item);
-            }
-            else
-            {
-                p.inventory.getStackInSlot(p.index).stackSize++;
-            }
-        }
-    }
+	public ItemStack extractItem(boolean doRemove, boolean removeRecipe) {
+		InventoryCrafting craftMatrix = new LocalInventoryCrafting();
 
-    public StackPointer getNearbyItem(ItemStack stack)
-    {
-        StackPointer pointer = null;
+		LinkedList<StackPointer> pointerList = new LinkedList<StackPointer>();
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.WEST);
-        }
+		int itemsToLeave = (removeRecipe ? 0 : 1);
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.EAST);
-        }
+		for (int i = 0; i < getSizeInventory(); ++i) {
+			ItemStack stack = getStackInSlot(i);
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.DOWN);
-        }
+			if (stack != null) {
+				if (stack.stackSize <= itemsToLeave) {
+					StackPointer pointer = getNearbyItem(stack);
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UP);
-        }
+					if (pointer == null) {
+						resetPointers(pointerList);
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.NORTH);
-        }
+						return null;
+					} else {
+						pointerList.add(pointer);
+					}
+				} else {
+					StackPointer pointer = new StackPointer();
+					pointer.inventory = this;
+					pointer.item = this.decrStackSize(i, 1);
+					pointer.index = i;
+					stack = pointer.item;
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.SOUTH);
-        }
+					pointerList.add(pointer);
+				}
+			}
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UNKNOWN);
-        }
+			craftMatrix.setInventorySlotContents(i, stack);
+		}
 
-        return pointer;
-    }
+		ItemStack resultStack = CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj);
 
-    public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction)
-    {
-        TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+		if (resultStack == null || !doRemove) {
+			resetPointers(pointerList);
+		} else {
+			for (StackPointer p : pointerList) {
+				// replace with the container where appropriate
 
-        if (tile instanceof ISpecialInventory)
-        {
-            // Don't get stuff out of ISpecialInventory for now / we wouldn't
-            // know how to put it back... And it's not clear if we want to
-            // have workbenches automatically getting things from one another.
-        }
-        else if (tile instanceof IInventory)
-        {
-            IInventory inventory = Utils.getInventory((IInventory) tile);
+				if (p.item.getItem().getContainerItem() != null) {
+					ItemStack newStack = p.item.getItem().getContainerItemStack(p.item);
 
-            for (int j = 0; j < inventory.getSizeInventory(); ++j)
-            {
-                ItemStack stack = inventory.getStackInSlot(j);
+					if (p.item.isItemStackDamageable()) {
+						if (newStack.getItemDamage() >= p.item.getMaxDamage()) {
+							MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord),
+									newStack));
+							this.worldObj.playSoundAtEntity(CoreProxy.proxy.getBuildCraftPlayer(worldObj, xCoord, yCoord, zCoord), "random.break", 0.8F,
+									0.8F + this.worldObj.rand.nextFloat() * 0.4F);
+							newStack = null;
+						}
+					}
 
-                if (stack != null)
-                {
-                    if (stack.stackSize > 0)
-                    {
-                        if (stack.itemID == itemStack.itemID)
-                        {
-                            if (!stack.isItemStackDamageable())
-                            {
-                                if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage())
-                                {
-                                    inventory.decrStackSize(j, 1);
-                                    StackPointer result = new StackPointer();
-                                    result.inventory = inventory;
-                                    result.index = j;
-                                    result.item = stack;
-                                    return result;
-                                }
-                            }
-                            else
-                            {
-                                if (stack.itemID == itemStack.itemID)
-                                {
-                                    inventory.decrStackSize(j, 1);
-                                    StackPointer result = new StackPointer();
-                                    result.inventory = inventory;
-                                    result.index = j;
-                                    result.item = stack;
-                                    return result;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+					p.inventory.setInventorySlotContents(p.index, newStack);
+				}
+			}
+		}
 
-        return null;
-    }
+		return resultStack;
+	}
 
-    public StackPointer getNearbyItem(int itemId, int damage)
-    {
-        StackPointer pointer = null;
-        pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.WEST);
+	public void resetPointers(LinkedList<StackPointer> pointers) {
+		for (StackPointer p : pointers) {
+			ItemStack item = p.inventory.getStackInSlot(p.index);
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.EAST);
-        }
+			if (item == null) {
+				p.inventory.setInventorySlotContents(p.index, p.item);
+			} else {
+				p.inventory.getStackInSlot(p.index).stackSize++;
+			}
+		}
+	}
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.DOWN);
-        }
+	public StackPointer getNearbyItem(ItemStack stack) {
+		StackPointer pointer = null;
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.UP);
-        }
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.WEST);
+		}
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.NORTH);
-        }
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.EAST);
+		}
 
-        if (pointer == null)
-        {
-            pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.SOUTH);
-        }
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.DOWN);
+		}
 
-        return pointer;
-    }
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UP);
+		}
 
-    public StackPointer getNearbyItemFromOrientation(int itemId, int damage, ForgeDirection orientation)
-    {
-        Position p = new Position(xCoord, yCoord, zCoord, orientation);
-        p.moveForwards(1.0);
-        TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.NORTH);
+		}
 
-        if (tile instanceof ISpecialInventory)
-        {
-            // Don't get stuff out of ISpecialInventory for now / we wouldn't
-            // know how to put it back... And it's not clear if we want to
-            // have workbenches automatically getting things from one another.
-        }
-        else if (tile instanceof IInventory)
-        {
-            IInventory inventory = Utils.getInventory((IInventory) tile);
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.SOUTH);
+		}
 
-            for (int j = 0; j < inventory.getSizeInventory(); ++j)
-            {
-                ItemStack stack = inventory.getStackInSlot(j);
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(stack, ForgeDirection.UNKNOWN);
+		}
 
-                if (stack != null && stack.stackSize > 0 && stack.itemID == itemId && stack.getItemDamage() == damage)
-                {
-                    inventory.decrStackSize(j, 1);
-                    StackPointer result = new StackPointer();
-                    result.inventory = inventory;
-                    result.index = j;
-                    result.item = stack;
-                    return result;
-                }
-            }
-        }
+		return pointer;
+	}
 
-        return null;
-    }
+	public StackPointer getNearbyItemFromOrientation(ItemStack itemStack, ForgeDirection direction) {
+		TileEntity tile = worldObj.getBlockTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
 
-    @Override
-    public void openChest()
-    {
-    }
+		if (tile instanceof ISpecialInventory) {
+			// Don't get stuff out of ISpecialInventory for now / we wouldn't
+			// know how to put it back... And it's not clear if we want to
+			// have workbenches automatically getting things from one another.
+		} else if (tile instanceof IInventory) {
+			IInventory inventory = Utils.getInventory((IInventory) tile);
 
-    @Override
-    public void closeChest()
-    {
-    }
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				ItemStack stack = inventory.getStackInSlot(j);
 
-    /* ISPECIALINVENTORY */
-    @Override
-    public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from)
-    {
-        return new TransactorRoundRobin(this).add(stack, from, doAdd).stackSize;
-    }
+				if (stack != null) {
+					if (stack.stackSize > 0) {
+						if (stack.itemID == itemStack.itemID) {
+							if (!stack.isItemStackDamageable()) {
+								if (stack.itemID == itemStack.itemID && stack.getItemDamage() == itemStack.getItemDamage()) {
+									inventory.decrStackSize(j, 1);
 
-    @Override
-    public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
-    {
-        return new ItemStack[] { extractItem(doRemove, false) };
-    }
+									StackPointer result = new StackPointer();
+									result.inventory = inventory;
+									result.index = j;
+									result.item = stack;
+
+									return result;
+								}
+							} else {
+								if (stack.itemID == itemStack.itemID) {
+									inventory.decrStackSize(j, 1);
+
+									StackPointer result = new StackPointer();
+									result.inventory = inventory;
+									result.index = j;
+									result.item = stack;
+
+									return result;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public StackPointer getNearbyItem(int itemId, int damage) {
+		StackPointer pointer = null;
+
+		pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.WEST);
+
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.EAST);
+		}
+
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.DOWN);
+		}
+
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.UP);
+		}
+
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.NORTH);
+		}
+
+		if (pointer == null) {
+			pointer = getNearbyItemFromOrientation(itemId, damage, ForgeDirection.SOUTH);
+		}
+
+		return pointer;
+	}
+
+	public StackPointer getNearbyItemFromOrientation(int itemId, int damage, ForgeDirection orientation) {
+		Position p = new Position(xCoord, yCoord, zCoord, orientation);
+		p.moveForwards(1.0);
+
+		TileEntity tile = worldObj.getBlockTileEntity((int) p.x, (int) p.y, (int) p.z);
+
+		if (tile instanceof ISpecialInventory) {
+			// Don't get stuff out of ISpecialInventory for now / we wouldn't
+			// know how to put it back... And it's not clear if we want to
+			// have workbenches automatically getting things from one another.
+		} else if (tile instanceof IInventory) {
+			IInventory inventory = Utils.getInventory((IInventory) tile);
+
+			for (int j = 0; j < inventory.getSizeInventory(); ++j) {
+				ItemStack stack = inventory.getStackInSlot(j);
+
+				if (stack != null && stack.stackSize > 0 && stack.itemID == itemId && stack.getItemDamage() == damage) {
+					inventory.decrStackSize(j, 1);
+
+					StackPointer result = new StackPointer();
+					result.inventory = inventory;
+					result.index = j;
+					result.item = stack;
+
+					return result;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public void openChest() {
+	}
+
+	@Override
+	public void closeChest() {
+	}
+
+	/* ISPECIALINVENTORY */
+	@Override
+	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
+		return new TransactorRoundRobin(this).add(stack, from, doAdd).stackSize;
+	}
+
+	@Override
+	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
+		return new ItemStack[] { extractItem(doRemove, false) };
+	}
+
 }

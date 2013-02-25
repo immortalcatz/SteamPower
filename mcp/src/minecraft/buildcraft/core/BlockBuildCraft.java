@@ -7,28 +7,26 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import buildcraft.core.utils.Utils;
 
-public abstract class BlockBuildCraft extends BlockContainer
-{
-    protected static boolean keepInventory = false;
-    protected Random rand;
+public abstract class BlockBuildCraft extends BlockContainer {
 
-    protected BlockBuildCraft(int id, Material material)
-    {
-        super(id, material);
-        this.rand = new Random();
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+	protected static boolean keepInventory = false;
+	protected Random rand;
 
-    @Override
-    public void breakBlock(World world, int x, int y, int z, int par5, int par6)
-    {
-        Utils.preDestroyBlock(world, x, y, z);
-        super.breakBlock(world, x, y, z, par5, par6);
-    }
+	protected BlockBuildCraft(int id, Material material) {
+		super(id, material);
+		this.rand = new Random();
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	@Override
+	public void breakBlock(World world, int x, int y, int z, int par5, int par6) {
+		Utils.preDestroyBlock(world, x, y, z);
+		super.breakBlock(world, x, y, z, par5, par6);
+	}
+
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
+
 }

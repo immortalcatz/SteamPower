@@ -24,290 +24,250 @@ import buildcraft.core.EntityEnergyLaser;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileLaser extends TileBuildCraft implements IPowerReceptor
-{
-    private EntityEnergyLaser laser = null;
+public class TileLaser extends TileBuildCraft implements IPowerReceptor {
 
-    private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
-    private final SafeTimeTracker searchTracker = new SafeTimeTracker();
-    private final SafeTimeTracker networkTracker = new SafeTimeTracker();
+	private EntityEnergyLaser laser = null;
 
-    private ILaserTarget laserTarget;
+	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker();
+	private final SafeTimeTracker searchTracker = new SafeTimeTracker();
+	private final SafeTimeTracker networkTracker = new SafeTimeTracker();
 
-    public IPowerProvider powerProvider;
+	private ILaserTarget laserTarget;
 
-    private int nextNetworkUpdate = 3;
-    private int nextLaserUpdate = 10;
-    private int nextLaserSearch = 10;
+	public IPowerProvider powerProvider;
 
-    public TileLaser()
-    {
-        powerProvider = PowerFramework.currentFramework.createPowerProvider();
-        powerProvider.configure(20, 25, 25, 25, 1000);
-    }
+	private int nextNetworkUpdate = 3;
+	private int nextLaserUpdate = 10;
+	private int nextLaserSearch = 10;
 
-    @Override
-    public void updateEntity()
-    {
-        if (!CoreProxy.proxy.isSimulating(worldObj))
-        {
-            return;
-        }
+	public TileLaser() {
+		powerProvider = PowerFramework.currentFramework.createPowerProvider();
+		powerProvider.configure(20, 25, 25, 25, 1000);
+	}
 
-        // Disable the laser and do nothing if no energy is available.
-        if (powerProvider.getEnergyStored() == 0)
-        {
-            removeLaser();
-            return;
-        }
+	@Override
+	public void updateEntity() {
 
-        // Check for available tables if none is linked to this laser.
-        if (!isValidTable())
-            if (canFindTable())
-            {
-                findTable();
-            }
+		if (!CoreProxy.proxy.isSimulating(worldObj))
+			return;
 
-        // If we still don't have a valid table or the existing has
-        // become invalid, we disable the laser and do nothing.
-        if (!isValidTable())
-        {
-            removeLaser();
-            return;
-        }
+		// Disable the laser and do nothing if no energy is available.
+		if (powerProvider.getEnergyStored() == 0) {
+			removeLaser();
+			return;
+		}
 
-        // We have a table and can work, so we create a laser if
-        // necessary.
-        if (laser == null)
-        {
-            createLaser();
-        }
+		// Check for available tables if none is linked to this laser.
+		if (!isValidTable())
+			if (canFindTable()) {
+				findTable();
+			}
 
-        // We have a laser and may update it
-        if (laser != null && canUpdateLaser())
-        {
-            updateLaser();
-        }
+		// If we still don't have a valid table or the existing has
+		// become invalid, we disable the laser and do nothing.
+		if (!isValidTable()) {
+			removeLaser();
+			return;
+		}
 
-        // Consume power and transfer it to the table.
-        float power = powerProvider.useEnergy(0, 4, true);
-        laserTarget.receiveLaserEnergy(power);
+		// We have a table and can work, so we create a laser if
+		// necessary.
+		if (laser == null) {
+			createLaser();
+		}
 
-        if (laser != null)
-        {
-            laser.pushPower(power);
-        }
+		// We have a laser and may update it
+		if (laser != null && canUpdateLaser()) {
+			updateLaser();
+		}
 
-        sendNetworkUpdate();
-    }
+		// Consume power and transfer it to the table.
+		float power = powerProvider.useEnergy(0, 4, true);
+		laserTarget.receiveLaserEnergy(power);
 
-    protected boolean canFindTable()
-    {
-        return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
-    }
+		if (laser != null) {
+			laser.pushPower(power);
+		}
 
-    protected boolean canUpdateLaser()
-    {
-        return laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate);
-    }
+		sendNetworkUpdate();
+	}
 
-    protected boolean isValidTable()
-    {
-        if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
-        {
-            return false;
-        }
+	protected boolean canFindTable() {
+		return searchTracker.markTimeIfDelay(worldObj, nextLaserSearch);
+	}
 
-        return true;
-    }
+	protected boolean canUpdateLaser() {
+		return laserTickTracker.markTimeIfDelay(worldObj, nextLaserUpdate);
+	}
 
-    protected void findTable()
-    {
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        int minX = xCoord - 5;
-        int minY = yCoord - 5;
-        int minZ = zCoord - 5;
-        int maxX = xCoord + 5;
-        int maxY = yCoord + 5;
-        int maxZ = zCoord + 5;
+	protected boolean isValidTable() {
 
-        switch (ForgeDirection.values()[meta])
-        {
-            case WEST:
-                maxX = xCoord;
-                break;
+		if (laserTarget == null || laserTarget.isInvalid() || !laserTarget.hasCurrentWork())
+			return false;
 
-            case EAST:
-                minX = xCoord;
-                break;
+		return true;
+	}
 
-            case DOWN:
-                maxY = yCoord;
-                break;
+	protected void findTable() {
 
-            case UP:
-                minY = yCoord;
-                break;
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
 
-            case NORTH:
-                maxZ = zCoord;
-                break;
+		int minX = xCoord - 5;
+		int minY = yCoord - 5;
+		int minZ = zCoord - 5;
+		int maxX = xCoord + 5;
+		int maxY = yCoord + 5;
+		int maxZ = zCoord + 5;
 
-            default:
-            case SOUTH:
-                minZ = zCoord;
-                break;
-        }
+		switch (ForgeDirection.values()[meta]) {
+		case WEST:
+			maxX = xCoord;
+			break;
+		case EAST:
+			minX = xCoord;
+			break;
+		case DOWN:
+			maxY = yCoord;
+			break;
+		case UP:
+			minY = yCoord;
+			break;
+		case NORTH:
+			maxZ = zCoord;
+			break;
+		default:
+		case SOUTH:
+			minZ = zCoord;
+			break;
+		}
 
-        LinkedList<BlockIndex> targets = new LinkedList<BlockIndex>();
+		LinkedList<BlockIndex> targets = new LinkedList<BlockIndex>();
 
-        for (int x = minX; x <= maxX; ++x)
-        {
-            for (int y = minY; y <= maxY; ++y)
-            {
-                for (int z = minZ; z <= maxZ; ++z)
-                {
-                    TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+		for (int x = minX; x <= maxX; ++x) {
+			for (int y = minY; y <= maxY; ++y) {
+				for (int z = minZ; z <= maxZ; ++z) {
 
-                    if (tile instanceof ILaserTarget)
-                    {
-                        ILaserTarget table = (ILaserTarget) tile;
+					TileEntity tile = worldObj.getBlockTileEntity(x, y, z);
+					if (tile instanceof ILaserTarget) {
 
-                        if (table.hasCurrentWork())
-                        {
-                            targets.add(new BlockIndex(x, y, z));
-                        }
-                    }
-                }
-            }
-        }
+						ILaserTarget table = (ILaserTarget) tile;
+						if (table.hasCurrentWork()) {
+							targets.add(new BlockIndex(x, y, z));
+						}
+					}
 
-        if (targets.size() == 0)
-        {
-            return;
-        }
+				}
+			}
+		}
 
-        BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
-        laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.i, b.j, b.k);
-    }
+		if (targets.size() == 0)
+			return;
 
-    protected void createLaser()
-    {
-        laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
-        worldObj.spawnEntityInWorld(laser);
-    }
+		BlockIndex b = targets.get(worldObj.rand.nextInt(targets.size()));
+		laserTarget = (ILaserTarget) worldObj.getBlockTileEntity(b.i, b.j, b.k);
+	}
 
-    protected void updateLaser()
-    {
-        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-        double px = 0, py = 0, pz = 0;
+	protected void createLaser() {
 
-        switch (ForgeDirection.values()[meta])
-        {
-            case WEST:
-                px = -0.3;
-                break;
+		laser = new EntityEnergyLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord));
+		worldObj.spawnEntityInWorld(laser);
+	}
 
-            case EAST:
-                px = 0.3;
-                break;
+	protected void updateLaser() {
 
-            case DOWN:
-                py = -0.3;
-                break;
+		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+		double px = 0, py = 0, pz = 0;
 
-            case UP:
-                py = 0.3;
-                break;
+		switch (ForgeDirection.values()[meta]) {
 
-            case NORTH:
-                pz = -0.3;
-                break;
+		case WEST:
+			px = -0.3;
+			break;
+		case EAST:
+			px = 0.3;
+			break;
+		case DOWN:
+			py = -0.3;
+			break;
+		case UP:
+			py = 0.3;
+			break;
+		case NORTH:
+			pz = -0.3;
+			break;
+		case SOUTH:
+		default:
+			pz = 0.3;
+			break;
+		}
 
-            case SOUTH:
-            default:
-                pz = 0.3;
-                break;
-        }
+		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
+		Position tail = new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F,
+				laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 
-        Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
-        Position tail = new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F,
-                laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
-        laser.setPositions(head, tail);
+		laser.setPositions(head, tail);
 
-        if (!laser.isVisible())
-        {
-            laser.show();
-        }
-    }
+		if (!laser.isVisible()) {
+			laser.show();
+		}
+	}
 
-    protected void removeLaser()
-    {
-        if (laser != null)
-        {
-            laser.setDead();
-            laser = null;
-        }
-    }
+	protected void removeLaser() {
 
-    @Override
-    public void setPowerProvider(IPowerProvider provider)
-    {
-        powerProvider = provider;
-    }
+		if (laser != null) {
+			laser.setDead();
+			laser = null;
+		}
+	}
 
-    @Override
-    public IPowerProvider getPowerProvider()
-    {
-        return powerProvider;
-    }
+	@Override
+	public void setPowerProvider(IPowerProvider provider) {
+		powerProvider = provider;
+	}
 
-    @Override
-    public void doWork()
-    {
-    }
+	@Override
+	public IPowerProvider getPowerProvider() {
+		return powerProvider;
+	}
 
-    @Override
-    public int powerRequest()
-    {
-        if (powerProvider.getEnergyStored() < 200 || laser != null)
-        {
-            return 25;
-        }
-        else
-        {
-            return 0;
-        }
-    }
+	@Override
+	public void doWork() {
+	}
 
-    @Override
-    public void sendNetworkUpdate()
-    {
-        if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate))
-        {
-            super.sendNetworkUpdate();
-        }
-    };
+	@Override
+	public int powerRequest() {
+		if (powerProvider.getEnergyStored() < 200 || laser != null)
+			return 25;
+		else
+			return 0;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
-        powerProvider.configure(20, 25, 25, 25, 1000);
-    }
+	@Override
+	public void sendNetworkUpdate() {
+		if (networkTracker.markTimeIfDelay(worldObj, nextNetworkUpdate)) {
+			super.sendNetworkUpdate();
+		}
+	};
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-    @Override
-    public void invalidate()
-    {
-        super.invalidate();
-        removeLaser();
-    }
+		PowerFramework.currentFramework.loadPowerProvider(this, nbttagcompound);
+		powerProvider.configure(20, 25, 25, 25, 1000);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		PowerFramework.currentFramework.savePowerProvider(this, nbttagcompound);
+	}
+
+	@Override
+	public void invalidate() {
+		super.invalidate();
+		removeLaser();
+	}
+
 }

@@ -7,42 +7,34 @@ import java.io.IOException;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 
-public class PacketPowerUpdate extends PacketCoordinates
-{
-    public boolean overload;
-    public short[] displayPower;
+public class PacketPowerUpdate extends PacketCoordinates {
 
-    public PacketPowerUpdate()
-    {
-    }
+	public boolean overload;
+	public short[] displayPower;
 
-    public PacketPowerUpdate(int x, int y, int z)
-    {
-        super(PacketIds.PIPE_POWER, x, y, z);
-    }
+	public PacketPowerUpdate() {
+	}
 
-    @Override
-    public void readData(DataInputStream data) throws IOException
-    {
-        displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
-        super.readData(data);
-        overload = data.readBoolean();
+	public PacketPowerUpdate(int x, int y, int z) {
+		super(PacketIds.PIPE_POWER, x, y, z);
+	}
 
-        for (int i = 0; i < displayPower.length; i++)
-        {
-            displayPower[i] = data.readByte();
-        }
-    }
+	@Override
+	public void readData(DataInputStream data) throws IOException {
+		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
+		super.readData(data);
+		overload = data.readBoolean();
+		for (int i = 0; i < displayPower.length; i++) {
+			displayPower[i] = data.readByte();
+		}
+	}
 
-    @Override
-    public void writeData(DataOutputStream data) throws IOException
-    {
-        super.writeData(data);
-        data.writeBoolean(overload);
-
-        for (int i = 0; i < displayPower.length; i++)
-        {
-            data.writeByte(displayPower[i]);
-        }
-    }
+	@Override
+	public void writeData(DataOutputStream data) throws IOException {
+		super.writeData(data);
+		data.writeBoolean(overload);
+		for (int i = 0; i < displayPower.length; i++) {
+			data.writeByte(displayPower[i]);
+		}
+	}
 }

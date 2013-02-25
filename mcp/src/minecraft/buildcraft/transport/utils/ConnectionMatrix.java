@@ -6,49 +6,40 @@ import java.io.IOException;
 
 import net.minecraftforge.common.ForgeDirection;
 
-public class ConnectionMatrix
-{
-    private final boolean[] _connected = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+public class ConnectionMatrix {
 
-    private boolean dirty = false;
+	private final boolean[] _connected = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
 
-    public boolean isConnected(ForgeDirection direction)
-    {
-        return _connected[direction.ordinal()];
-    }
+	private boolean dirty = false;
 
-    public void setConnected(ForgeDirection direction, boolean value)
-    {
-        if (_connected[direction.ordinal()] != value)
-        {
-            _connected[direction.ordinal()] = value;
-            dirty = true;
-        }
-    }
+	public boolean isConnected(ForgeDirection direction) {
+		return _connected[direction.ordinal()];
+	}
 
-    public boolean isDirty()
-    {
-        return dirty;
-    }
+	public void setConnected(ForgeDirection direction, boolean value) {
+		if (_connected[direction.ordinal()] != value) {
+			_connected[direction.ordinal()] = value;
+			dirty = true;
+		}
+	}
 
-    public void clean()
-    {
-        dirty = false;
-    }
+	public boolean isDirty() {
+		return dirty;
+	}
 
-    public void writeData(DataOutputStream data) throws IOException
-    {
-        for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++)
-        {
-            data.writeBoolean(_connected[i]);
-        }
-    }
+	public void clean() {
+		dirty = false;
+	}
 
-    public void readData(DataInputStream data) throws IOException
-    {
-        for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++)
-        {
-            _connected[i] = data.readBoolean();
-        }
-    }
+	public void writeData(DataOutputStream data) throws IOException {
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			data.writeBoolean(_connected[i]);
+		}
+	}
+
+	public void readData(DataInputStream data) throws IOException {
+		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			_connected[i] = data.readBoolean();
+		}
+	}
 }

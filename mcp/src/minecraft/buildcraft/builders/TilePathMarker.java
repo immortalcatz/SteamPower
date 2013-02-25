@@ -16,314 +16,267 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.TileNetworkData;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TilePathMarker extends TileMarker
-{
-    public EntityLaser lasers[] = new EntityLaser[2];
+public class TilePathMarker extends TileMarker {
 
-    public int x0, y0, z0, x1, y1, z1;
-    public boolean loadLink0 = false, loadLink1 = false;
-    public @TileNetworkData
-    boolean tryingToConnect = false;
+	public EntityLaser lasers[] = new EntityLaser[2];
 
-    public TilePathMarker links[] = new TilePathMarker[2];
-    public static int searchSize = 64; // TODO: this should be moved to default props
+	public int x0, y0, z0, x1, y1, z1;
+	public boolean loadLink0 = false, loadLink1 = false;
+	public @TileNetworkData
+	boolean tryingToConnect = false;
 
-    // A list with the pathMarkers that aren't fully connected
-    // It only contains markers within the loaded chunks
-    private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
+	public TilePathMarker links[] = new TilePathMarker[2];
+	public static int searchSize = 64; // TODO: this should be moved to default props
 
-    public boolean isFullyConnected()
-    {
-        return lasers[0] != null && lasers[1] != null;
-    }
+	// A list with the pathMarkers that aren't fully connected
+	// It only contains markers within the loaded chunks
+	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
-    public boolean isLinkedTo(TilePathMarker pathMarker)
-    {
-        return links[0] == pathMarker || links[1] == pathMarker;
-    }
+	public boolean isFullyConnected() {
+		return lasers[0] != null && lasers[1] != null;
+	}
 
-    public void connect(TilePathMarker marker, EntityLaser laser)
-    {
-        if (lasers[0] == null)
-        {
-            lasers[0] = laser;
-            links[0] = marker;
-        }
-        else if (lasers[1] == null)
-        {
-            lasers[1] = laser;
-            links[1] = marker;
-        }
+	public boolean isLinkedTo(TilePathMarker pathMarker) {
+		return links[0] == pathMarker || links[1] == pathMarker;
+	}
 
-        if (isFullyConnected())
-        {
-            availableMarkers.remove(this);
-        }
-    }
+	public void connect(TilePathMarker marker, EntityLaser laser) {
+		if (lasers[0] == null) {
+			lasers[0] = laser;
+			links[0] = marker;
+		} else if (lasers[1] == null) {
+			lasers[1] = laser;
+			links[1] = marker;
+		}
 
-    public void createLaserAndConnect(TilePathMarker pathMarker)
-    {
-        if (CoreProxy.proxy.isRenderWorld(worldObj))
-        {
-            return;
-        }
+		if (isFullyConnected()) {
+			availableMarkers.remove(this);
+		}
+	}
 
-        EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5,
-                pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
-        laser.show();
-        laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
-        worldObj.spawnEntityInWorld(laser);
-        connect(pathMarker, laser);
-        pathMarker.connect(this, laser);
-    }
+	public void createLaserAndConnect(TilePathMarker pathMarker) {
 
-    // Searches the availableMarkers list for the nearest available that is within searchSize
-    private TilePathMarker findNearestAvailablePathMarker()
-    {
-        TilePathMarker nearestAvailable = null;
-        double nearestDistance = 0, distance; // The initialization of nearestDistance is only to make the compiler shut up
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
 
-        for (TilePathMarker t : availableMarkers)
-        {
-            if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.dimensionId != this.worldObj.provider.dimensionId)
-            {
-                continue;
-            }
+		EntityPowerLaser laser = new EntityPowerLaser(worldObj, new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5,
+				pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+		laser.show();
 
-            distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
+		laser.setTexture(DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png");
+		worldObj.spawnEntityInWorld(laser);
 
-            if (distance > searchSize)
-            {
-                continue;
-            }
+		connect(pathMarker, laser);
+		pathMarker.connect(this, laser);
+	}
 
-            if (nearestAvailable == null || distance < nearestDistance)
-            {
-                nearestAvailable = t;
-                nearestDistance = distance;
-            }
-        }
+	// Searches the availableMarkers list for the nearest available that is within searchSize
+	private TilePathMarker findNearestAvailablePathMarker() {
+		TilePathMarker nearestAvailable = null;
+		double nearestDistance = 0, distance; // The initialization of nearestDistance is only to make the compiler shut up
 
-        return nearestAvailable;
-    }
+		for (TilePathMarker t : availableMarkers) {
+			if (t == this || t == this.links[0] || t == this.links[1] || t.worldObj.provider.dimensionId != this.worldObj.provider.dimensionId) {
+				continue;
+			}
 
-    @Override
-    public void tryConnection()
-    {
-        if (CoreProxy.proxy.isRenderWorld(worldObj) || isFullyConnected())
-        {
-            return;
-        }
+			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
 
-        tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
-        sendNetworkUpdate();
-    }
+			if (distance > searchSize) {
+				continue;
+			}
 
-    @Override
-    public void updateEntity()
-    {
-        super.updateEntity();
+			if (nearestAvailable == null || distance < nearestDistance) {
+				nearestAvailable = t;
+				nearestDistance = distance;
+			}
+		}
 
-        if (CoreProxy.proxy.isRenderWorld(worldObj))
-        {
-            return;
-        }
+		return nearestAvailable;
+	}
 
-        if (tryingToConnect)
-        {
-            TilePathMarker nearestPathMarker = findNearestAvailablePathMarker();
+	@Override
+	public void tryConnection() {
 
-            if (nearestPathMarker != null)
-            {
-                createLaserAndConnect(nearestPathMarker);
-                tryingToConnect = false;
-                sendNetworkUpdate();
-            }
-        }
-    }
+		if (CoreProxy.proxy.isRenderWorld(worldObj) || isFullyConnected())
+			return;
 
-    public LinkedList<BlockIndex> getPath()
-    {
-        TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
-        LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
-        TilePathMarker nextTile = this;
+		tryingToConnect = !tryingToConnect; // Allow the user to stop the path marker from searching for new path markers to connect
+		sendNetworkUpdate();
+	}
 
-        while (nextTile != null)
-        {
-            BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
-            visitedPaths.add(b);
-            res.add(b);
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
 
-            if (nextTile.links[0] != null
-                    && !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord)))
-            {
-                nextTile = nextTile.links[0];
-            }
-            else if (nextTile.links[1] != null
-                    && !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord)))
-            {
-                nextTile = nextTile.links[1];
-            }
-            else
-            {
-                nextTile = null;
-            }
-        }
+		if (CoreProxy.proxy.isRenderWorld(worldObj))
+			return;
 
-        return res;
-    }
+		if (tryingToConnect) {
+			TilePathMarker nearestPathMarker = findNearestAvailablePathMarker();
 
-    @Override
-    public void invalidate()
-    {
-        super.invalidate();
+			if (nearestPathMarker != null) {
+				createLaserAndConnect(nearestPathMarker);
+				tryingToConnect = false;
+				sendNetworkUpdate();
+			}
+		}
+	}
 
-        if (lasers[0] != null)
-        {
-            links[0].unlink(this);
-            lasers[0].setDead();
-        }
+	public LinkedList<BlockIndex> getPath() {
+		TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
+		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
 
-        if (lasers[1] != null)
-        {
-            links[1].unlink(this);
-            lasers[1].setDead();
-        }
+		TilePathMarker nextTile = this;
 
-        availableMarkers.remove(this);
-        tryingToConnect = false;
-    }
+		while (nextTile != null) {
+			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
 
-    @Override
-    public void initialize()
-    {
-        super.initialize();
+			visitedPaths.add(b);
+			res.add(b);
 
-        if (CoreProxy.proxy.isSimulating(worldObj) && !isFullyConnected())
-        {
-            availableMarkers.add(this);
-        }
+			if (nextTile.links[0] != null
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+				nextTile = nextTile.links[0];
+			} else if (nextTile.links[1] != null
+					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+				nextTile = nextTile.links[1];
+			} else {
+				nextTile = null;
+			}
+		}
 
-        if (loadLink0)
-        {
-            TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
+		return res;
 
-            if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker)
-            {
-                createLaserAndConnect((TilePathMarker) e0);
-            }
+	}
 
-            loadLink0 = false;
-        }
+	@Override
+	public void invalidate() {
+		super.invalidate();
 
-        if (loadLink1)
-        {
-            TileEntity e1 = worldObj.getBlockTileEntity(x1, y1, z1);
+		if (lasers[0] != null) {
+			links[0].unlink(this);
+			lasers[0].setDead();
+		}
 
-            if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker)
-            {
-                createLaserAndConnect((TilePathMarker) e1);
-            }
+		if (lasers[1] != null) {
+			links[1].unlink(this);
+			lasers[1].setDead();
+		}
 
-            loadLink1 = false;
-        }
-    }
+		availableMarkers.remove(this);
+		tryingToConnect = false;
+	}
 
-    private void unlink(TilePathMarker tile)
-    {
-        if (links[0] == tile)
-        {
-            lasers[0] = null;
-            links[0] = null;
-        }
+	@Override
+	public void initialize() {
+		super.initialize();
 
-        if (links[1] == tile)
-        {
-            lasers[1] = null;
-            links[1] = null;
-        }
+		if (CoreProxy.proxy.isSimulating(worldObj) && !isFullyConnected()) {
+			availableMarkers.add(this);
+		}
 
-        if (!isFullyConnected() && !availableMarkers.contains(this) && CoreProxy.proxy.isSimulating(worldObj))
-        {
-            availableMarkers.add(this);
-        }
-    }
+		if (loadLink0) {
+			TileEntity e0 = worldObj.getBlockTileEntity(x0, y0, z0);
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
+			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
+				createLaserAndConnect((TilePathMarker) e0);
+			}
 
-        if (nbttagcompound.hasKey("x0"))
-        {
-            x0 = nbttagcompound.getInteger("x0");
-            y0 = nbttagcompound.getInteger("y0");
-            z0 = nbttagcompound.getInteger("z0");
-            loadLink0 = true;
-        }
+			loadLink0 = false;
+		}
 
-        if (nbttagcompound.hasKey("x1"))
-        {
-            x1 = nbttagcompound.getInteger("x1");
-            y1 = nbttagcompound.getInteger("y1");
-            z1 = nbttagcompound.getInteger("z1");
-            loadLink1 = true;
-        }
-    }
+		if (loadLink1) {
+			TileEntity e1 = worldObj.getBlockTileEntity(x1, y1, z1);
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
+			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
+				createLaserAndConnect((TilePathMarker) e1);
+			}
 
-        if (links[0] != null)
-        {
-            nbttagcompound.setInteger("x0", links[0].xCoord);
-            nbttagcompound.setInteger("y0", links[0].yCoord);
-            nbttagcompound.setInteger("z0", links[0].zCoord);
-        }
+			loadLink1 = false;
+		}
+	}
 
-        if (links[1] != null)
-        {
-            nbttagcompound.setInteger("x1", links[1].xCoord);
-            nbttagcompound.setInteger("y1", links[1].yCoord);
-            nbttagcompound.setInteger("z1", links[1].zCoord);
-        }
-    }
+	private void unlink(TilePathMarker tile) {
+		if (links[0] == tile) {
+			lasers[0] = null;
+			links[0] = null;
+		}
 
-    @Override
-    public void onChunkUnload()
-    {
-        availableMarkers.remove(this);
-    }
+		if (links[1] == tile) {
+			lasers[1] = null;
+			links[1] = null;
+		}
 
-    public static void clearAvailableMarkersList()
-    {
-        availableMarkers.clear();
-    }
+		if (!isFullyConnected() && !availableMarkers.contains(this) && CoreProxy.proxy.isSimulating(worldObj)) {
+			availableMarkers.add(this);
+		}
+	}
 
-    public static void clearAvailableMarkersList(World w)
-    {
-        for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();)
-        {
-            TilePathMarker t = it.next();
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
 
-            if (t.worldObj.provider.dimensionId != w.provider.dimensionId)
-            {
-                it.remove();
-            }
-        }
-    }
+		if (nbttagcompound.hasKey("x0")) {
+			x0 = nbttagcompound.getInteger("x0");
+			y0 = nbttagcompound.getInteger("y0");
+			z0 = nbttagcompound.getInteger("z0");
 
-    @Override
-    public void handleUpdatePacket(PacketUpdate packet)
-    {
-        boolean previousState = tryingToConnect;
-        super.handleUpdatePacket(packet);
+			loadLink0 = true;
+		}
 
-        if (previousState != tryingToConnect)
-        {
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
-    }
+		if (nbttagcompound.hasKey("x1")) {
+			x1 = nbttagcompound.getInteger("x1");
+			y1 = nbttagcompound.getInteger("y1");
+			z1 = nbttagcompound.getInteger("z1");
+
+			loadLink1 = true;
+		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+
+		if (links[0] != null) {
+			nbttagcompound.setInteger("x0", links[0].xCoord);
+			nbttagcompound.setInteger("y0", links[0].yCoord);
+			nbttagcompound.setInteger("z0", links[0].zCoord);
+		}
+
+		if (links[1] != null) {
+			nbttagcompound.setInteger("x1", links[1].xCoord);
+			nbttagcompound.setInteger("y1", links[1].yCoord);
+			nbttagcompound.setInteger("z1", links[1].zCoord);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		availableMarkers.remove(this);
+	}
+
+	public static void clearAvailableMarkersList() {
+		availableMarkers.clear();
+	}
+
+	public static void clearAvailableMarkersList(World w) {
+		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
+			TilePathMarker t = it.next();
+			if (t.worldObj.provider.dimensionId != w.provider.dimensionId) {
+				it.remove();
+			}
+		}
+	}
+
+	@Override
+	public void handleUpdatePacket(PacketUpdate packet) {
+		boolean previousState = tryingToConnect;
+
+		super.handleUpdatePacket(packet);
+
+		if (previousState != tryingToConnect) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+	}
 }

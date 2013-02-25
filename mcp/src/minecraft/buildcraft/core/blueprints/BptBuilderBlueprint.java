@@ -25,530 +25,414 @@ import buildcraft.core.IBuilderInventory;
 import buildcraft.core.blueprints.BptSlot.Mode;
 import buildcraft.core.utils.BlockUtil;
 
-public class BptBuilderBlueprint extends BptBuilderBase
-{
-    LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
-    LinkedList<BptSlot> primaryList = new LinkedList<BptSlot>();
-    LinkedList<BptSlot> secondaryList = new LinkedList<BptSlot>();
+public class BptBuilderBlueprint extends BptBuilderBase {
 
-    LinkedList<BptSlot> postProcessingList = new LinkedList<BptSlot>();
+	LinkedList<BptSlot> clearList = new LinkedList<BptSlot>();
+	LinkedList<BptSlot> primaryList = new LinkedList<BptSlot>();
+	LinkedList<BptSlot> secondaryList = new LinkedList<BptSlot>();
 
-    public TreeSet<ItemStack> neededItems = new TreeSet<ItemStack>(new Comparator<ItemStack>()
-    {
-        @Override
-        public int compare(ItemStack o1, ItemStack o2)
-        {
-            if (o1.stackSize > o2.stackSize)
-            {
-                return -1;
-            }
-            else if (o1.stackSize < o2.stackSize)
-            {
-                return 1;
-            }
-            else if (o1.itemID > o2.itemID)
-            {
-                return -1;
-            }
-            else if (o1.itemID < o2.itemID)
-            {
-                return 1;
-            }
-            else if (o1.getItemDamage() > o2.getItemDamage())
-            {
-                return -1;
-            }
-            else if (o1.getItemDamage() < o2.getItemDamage())
-            {
-                return 1;
-            }
+	LinkedList<BptSlot> postProcessingList = new LinkedList<BptSlot>();
 
-            return 0;
-        }
-    });
+	public TreeSet<ItemStack> neededItems = new TreeSet<ItemStack>(new Comparator<ItemStack>() {
 
-    public BptBuilderBlueprint(BptBlueprint bluePrint, World world, int x, int y, int z)
-    {
-        super(bluePrint, world, x, y, z);
+		@Override
+		public int compare(ItemStack o1, ItemStack o2) {
+			if (o1.stackSize > o2.stackSize)
+				return -1;
+			else if (o1.stackSize < o2.stackSize)
+				return 1;
+			else if (o1.itemID > o2.itemID)
+				return -1;
+			else if (o1.itemID < o2.itemID)
+				return 1;
+			else if (o1.getItemDamage() > o2.getItemDamage())
+				return -1;
+			else if (o1.getItemDamage() < o2.getItemDamage())
+				return 1;
 
-        for (int j = bluePrint.sizeY - 1; j >= 0; --j)
-        {
-            for (int i = 0; i < bluePrint.sizeX; ++i)
-            {
-                for (int k = 0; k < bluePrint.sizeZ; ++k)
-                {
-                    int xCoord = i + x - bluePrint.anchorX;
-                    int yCoord = j + y - bluePrint.anchorY;
-                    int zCoord = k + z - bluePrint.anchorZ;
-                    BptSlot slot = bluePrint.contents[i][j][k];
+			return 0;
+		}
+	});
 
-                    if (slot != null)
-                    {
-                        slot = slot.clone();
-                    }
-                    else
-                    {
-                        slot = new BptSlot();
-                        slot.meta = 0;
-                        slot.blockId = 0;
-                    }
+	public BptBuilderBlueprint(BptBlueprint bluePrint, World world, int x, int y, int z) {
+		super(bluePrint, world, x, y, z);
 
-                    slot.x = xCoord;
-                    slot.y = yCoord;
-                    slot.z = zCoord;
-                    slot.mode = Mode.ClearIfInvalid;
-                    clearList.add(slot);
-                }
-            }
-        }
+		for (int j = bluePrint.sizeY - 1; j >= 0; --j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
+				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+					int xCoord = i + x - bluePrint.anchorX;
+					int yCoord = j + y - bluePrint.anchorY;
+					int zCoord = k + z - bluePrint.anchorZ;
 
-        for (int j = 0; j < bluePrint.sizeY; ++j)
-        {
-            for (int i = 0; i < bluePrint.sizeX; ++i)
-            {
-                for (int k = 0; k < bluePrint.sizeZ; ++k)
-                {
-                    int xCoord = i + x - bluePrint.anchorX;
-                    int yCoord = j + y - bluePrint.anchorY;
-                    int zCoord = k + z - bluePrint.anchorZ;
-                    BptSlot slot = bluePrint.contents[i][j][k];
+					BptSlot slot = bluePrint.contents[i][j][k];
 
-                    if (slot != null)
-                    {
-                        slot = slot.clone();
-                    }
-                    else
-                    {
-                        slot = new BptSlot();
-                        slot.meta = 0;
-                        slot.blockId = 0;
-                    }
+					if (slot != null) {
+						slot = slot.clone();
+					} else {
+						slot = new BptSlot();
+						slot.meta = 0;
+						slot.blockId = 0;
+					}
 
-                    slot.x = xCoord;
-                    slot.y = yCoord;
-                    slot.z = zCoord;
-                    slot.mode = Mode.Build;
+					slot.x = xCoord;
+					slot.y = yCoord;
+					slot.z = zCoord;
 
-                    if (slot.blockId != 0 && Block.blocksList[slot.blockId].isOpaqueCube())
-                    {
-                        primaryList.add(slot);
-                    }
-                    else
-                    {
-                        secondaryList.add(slot);
-                    }
+					slot.mode = Mode.ClearIfInvalid;
 
-                    if (slot.blockId != 0)
-                    {
-                        postProcessingList.add(slot.clone());
-                    }
-                }
-            }
-        }
+					clearList.add(slot);
 
-        recomputeNeededItems();
-    }
+				}
+			}
+		}
 
-    private void checkDone()
-    {
-        recomputeNeededItems();
+		for (int j = 0; j < bluePrint.sizeY; ++j) {
+			for (int i = 0; i < bluePrint.sizeX; ++i) {
+				for (int k = 0; k < bluePrint.sizeZ; ++k) {
+					int xCoord = i + x - bluePrint.anchorX;
+					int yCoord = j + y - bluePrint.anchorY;
+					int zCoord = k + z - bluePrint.anchorZ;
 
-        if (clearList.size() == 0 && primaryList.size() == 0 && secondaryList.size() == 0)
-        {
-            done = true;
-        }
-        else
-        {
-            done = false;
-        }
-    }
+					BptSlot slot = bluePrint.contents[i][j][k];
 
-    @Override
-    public BptSlot getNextBlock(World world, IBuilderInventory inv)
-    {
-        if (clearList.size() != 0)
-        {
-            BptSlot slot = internalGetNextBlock(world, inv, clearList);
-            checkDone();
+					if (slot != null) {
+						slot = slot.clone();
+					} else {
+						slot = new BptSlot();
+						slot.meta = 0;
+						slot.blockId = 0;
+					}
 
-            if (slot != null)
-            {
-                return slot;
-            }
-            else
-            {
-                return null;
-            }
-        }
+					slot.x = xCoord;
+					slot.y = yCoord;
+					slot.z = zCoord;
 
-        if (primaryList.size() != 0)
-        {
-            BptSlot slot = internalGetNextBlock(world, inv, primaryList);
-            checkDone();
+					slot.mode = Mode.Build;
 
-            if (slot != null)
-            {
-                return slot;
-            }
-            else
-            {
-                return null;
-            }
-        }
+					if (slot.blockId != 0 && Block.blocksList[slot.blockId].isOpaqueCube()) {
+						primaryList.add(slot);
+					} else {
+						secondaryList.add(slot);
+					}
 
-        if (secondaryList.size() != 0)
-        {
-            BptSlot slot = internalGetNextBlock(world, inv, secondaryList);
-            checkDone();
+					if (slot.blockId != 0) {
+						postProcessingList.add(slot.clone());
+					}
+				}
+			}
+		}
 
-            if (slot != null)
-            {
-                return slot;
-            }
-            else
-            {
-                return null;
-            }
-        }
+		recomputeNeededItems();
+	}
 
-        checkDone();
-        return null;
-    }
+	private void checkDone() {
+		recomputeNeededItems();
 
-    public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list)
-    {
-        LinkedList<BptSlot> failSlots = new LinkedList<BptSlot>();
-        BptSlot result = null;
+		if (clearList.size() == 0 && primaryList.size() == 0 && secondaryList.size() == 0) {
+			done = true;
+		} else {
+			done = false;
+		}
+	}
 
-        while (list.size() > 0)
-        {
-            BptSlot slot = list.removeFirst();
-            boolean getNext = false;
+	@Override
+	public BptSlot getNextBlock(World world, IBuilderInventory inv) {
+		if (clearList.size() != 0) {
+			BptSlot slot = internalGetNextBlock(world, inv, clearList);
+			checkDone();
 
-            try
-            {
-                getNext = !slot.isValid(context) && !slot.ignoreBuilding();
-            }
-            catch (Throwable t)
-            {
-                // Defensive code against errors in implementers
-                t.printStackTrace();
-                BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "internalGetBlock", t);
-                getNext = false;
-            }
+			if (slot != null)
+				return slot;
+			else
+				return null;
+		}
 
-            if (getNext)
-                if (slot.mode == Mode.ClearIfInvalid)
-                {
-                    if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z))
-                    {
-                        result = slot;
-                        break;
-                    }
-                }
-                else if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE)
-                {
-                    // In creative, we don't use blocks given in the builder
-                    result = slot;
-                    break;
-                }
-                else if (checkRequirements(inv, slot))
-                {
-                    useRequirements(inv, slot);
-                    result = slot;
-                    break;
-                }
-                else
-                {
-                    failSlots.add(slot);
-                }
-        }
+		if (primaryList.size() != 0) {
+			BptSlot slot = internalGetNextBlock(world, inv, primaryList);
+			checkDone();
 
-        list.addAll(failSlots);
-        return result;
-    }
+			if (slot != null)
+				return slot;
+			else
+				return null;
+		}
 
-    public boolean checkRequirements(IBuilderInventory inv, BptSlot slot)
-    {
-        if (slot.blockId == 0)
-        {
-            return true;
-        }
+		if (secondaryList.size() != 0) {
+			BptSlot slot = internalGetNextBlock(world, inv, secondaryList);
+			checkDone();
 
-        LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
-        LinkedList<ItemStack> tmpInv = new LinkedList<ItemStack>();
+			if (slot != null)
+				return slot;
+			else
+				return null;
+		}
 
-        try
-        {
-            for (ItemStack stk : slot.getRequirements(context))
-                if (stk != null)
-                {
-                    tmpReq.add(stk.copy());
-                }
-        }
-        catch (Throwable t)
-        {
-            // Defensive code against errors in implementers
-            t.printStackTrace();
-            BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
-        }
+		checkDone();
 
-        int size = inv.getSizeInventory();
+		return null;
+	}
 
-        for (int i = 0; i < size; ++i)
-        {
-            if (!inv.isBuildingMaterial(i))
-            {
-                continue;
-            }
+	public BptSlot internalGetNextBlock(World world, IBuilderInventory inv, LinkedList<BptSlot> list) {
+		LinkedList<BptSlot> failSlots = new LinkedList<BptSlot>();
 
-            if (inv.getStackInSlot(i) != null)
-            {
-                tmpInv.add(inv.getStackInSlot(i).copy());
-            }
-        }
+		BptSlot result = null;
 
-        for (ItemStack reqStk : tmpReq)
-        {
-            for (ItemStack invStk : tmpInv)
-            {
-                if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0)
-                {
-                    if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage()))
-                    {
-                        continue; // it doesn't match, try again
-                    }
+		while (list.size() > 0) {
+			BptSlot slot = list.removeFirst();
 
-                    try
-                    {
-                        slot.useItem(context, reqStk, invStk);
-                    }
-                    catch (Throwable t)
-                    {
-                        // Defensive code against errors in implementers
-                        t.printStackTrace();
-                        BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
-                    }
+			boolean getNext = false;
 
-                    if (reqStk.stackSize == 0)
-                    {
-                        break;
-                    }
-                }
-            }
+			try {
+				getNext = !slot.isValid(context) && !slot.ignoreBuilding();
+			} catch (Throwable t) {
+				// Defensive code against errors in implementers
+				t.printStackTrace();
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "internalGetBlock", t);
+				getNext = false;
+			}
 
-            if (reqStk.stackSize != 0)
-            {
-                return false;
-            }
-        }
+			if (getNext)
+				if (slot.mode == Mode.ClearIfInvalid) {
+					if (!BlockUtil.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+						result = slot;
+						break;
+					}
+				} else if (world.getWorldInfo().getGameType() == EnumGameType.CREATIVE) {
+					// In creative, we don't use blocks given in the builder
 
-        return true;
-    }
+					result = slot;
 
-    public void useRequirements(IBuilderInventory inv, BptSlot slot)
-    {
-        if (slot.blockId == 0)
-        {
-            return;
-        }
+					break;
+				} else if (checkRequirements(inv, slot)) {
+					useRequirements(inv, slot);
 
-        LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
+					result = slot;
+					break;
+				} else {
+					failSlots.add(slot);
+				}
+		}
 
-        try
-        {
-            for (ItemStack stk : slot.getRequirements(context))
-                if (stk != null)
-                {
-                    tmpReq.add(stk.copy());
-                }
-        }
-        catch (Throwable t)
-        {
-            // Defensive code against errors in implementers
-            t.printStackTrace();
-            BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
-        }
+		list.addAll(failSlots);
 
-        ListIterator<ItemStack> itr = tmpReq.listIterator();
+		return result;
+	}
 
-        while (itr.hasNext())
-        {
-            ItemStack reqStk = itr.next();
-            boolean smallStack = reqStk.stackSize == 1;
-            ItemStack usedStack = reqStk;
-            int size = inv.getSizeInventory();
+	public boolean checkRequirements(IBuilderInventory inv, BptSlot slot) {
+		if (slot.blockId == 0)
+			return true;
 
-            for (int i = 0; i <= size; ++i)
-            {
-                if (!inv.isBuildingMaterial(i))
-                {
-                }
+		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
+		LinkedList<ItemStack> tmpInv = new LinkedList<ItemStack>();
 
-                ItemStack invStk = inv.getStackInSlot(i);
+		try {
+			for (ItemStack stk : slot.getRequirements(context))
+				if (stk != null) {
+					tmpReq.add(stk.copy());
+				}
+		} catch (Throwable t) {
+			// Defensive code against errors in implementers
+			t.printStackTrace();
+			BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
+		}
 
-                if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0)
-                {
-                    if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage()))
-                    {
-                        continue;
-                    }
+		int size = inv.getSizeInventory();
+		for (int i = 0; i < size; ++i) {
+			if (!inv.isBuildingMaterial(i)) {
+				continue;
+			}
 
-                    try
-                    {
-                        usedStack = slot.useItem(context, reqStk, invStk);
-                    }
-                    catch (Throwable t)
-                    {
-                        // Defensive code against errors in implementers
-                        t.printStackTrace();
-                        BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
-                    }
+			if (inv.getStackInSlot(i) != null) {
+				tmpInv.add(inv.getStackInSlot(i).copy());
+			}
+		}
 
-                    if (invStk.stackSize == 0)
-                    {
-                        inv.setInventorySlotContents(i, null);
-                    }
-                    else
-                    {
-                        inv.setInventorySlotContents(i, invStk);
-                    }
+		for (ItemStack reqStk : tmpReq) {
+			for (ItemStack invStk : tmpInv) {
+				if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0) {
 
-                    if (reqStk.stackSize == 0)
-                    {
-                        break;
-                    }
-                }
-            }
+					if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())) {
+						continue; // it doesn't match, try again
+					}
 
-            if (reqStk.stackSize != 0)
-            {
-                return;
-            }
+					try {
 
-            if (smallStack)
-            {
-                itr.set(usedStack); // set to the actual item used.
-            }
-        }
+						slot.useItem(context, reqStk, invStk);
+					} catch (Throwable t) {
+						// Defensive code against errors in implementers
+						t.printStackTrace();
+						BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "checkRequirements", t);
+					}
 
-        return;
-    }
+					if (reqStk.stackSize == 0) {
+						break;
+					}
+				}
+			}
 
-    public void recomputeNeededItems()
-    {
-        neededItems.clear();
-        TreeMap<ItemStack, Integer> computeStacks = new TreeMap<ItemStack, Integer>(new Comparator<ItemStack>()
-        {
-            @Override
-            public int compare(ItemStack o1, ItemStack o2)
-            {
-                if (o1.itemID > o2.itemID)
-                {
-                    return 1;
-                }
-                else if (o1.itemID < o2.itemID)
-                {
-                    return -1;
-                }
-                else if (o1.getItemDamage() > o2.getItemDamage())
-                {
-                    return 1;
-                }
-                else if (o1.getItemDamage() < o2.getItemDamage())
-                {
-                    return -1;
-                }
+			if (reqStk.stackSize != 0)
+				return false;
+		}
 
-                return 0;
-            }
-        });
+		return true;
+	}
 
-        for (BptSlot slot : primaryList)
-        {
-            LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+	public void useRequirements(IBuilderInventory inv, BptSlot slot) {
+		if (slot.blockId == 0)
+			return;
 
-            try
-            {
-                stacks = slot.getRequirements(context);
-            }
-            catch (Throwable t)
-            {
-                // Defensive code against errors in implementers
-                t.printStackTrace();
-                BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
-            }
+		LinkedList<ItemStack> tmpReq = new LinkedList<ItemStack>();
 
-            for (ItemStack stack : stacks)
-            {
-                if (stack == null || stack.itemID == 0)
-                {
-                    continue;
-                }
+		try {
+			for (ItemStack stk : slot.getRequirements(context))
+				if (stk != null) {
+					tmpReq.add(stk.copy());
+				}
+		} catch (Throwable t) {
+			// Defensive code against errors in implementers
+			t.printStackTrace();
+			BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
 
-                if (!computeStacks.containsKey(stack))
-                {
-                    computeStacks.put(stack.copy(), stack.stackSize);
-                }
-                else
-                {
-                    Integer num = computeStacks.get(stack);
-                    num += stack.stackSize;
-                    computeStacks.put(stack, num);
-                }
-            }
-        }
+		}
 
-        for (BptSlot slot : secondaryList)
-        {
-            LinkedList<ItemStack> stacks = slot.getRequirements(context);
+		ListIterator<ItemStack> itr = tmpReq.listIterator();
 
-            for (ItemStack stack : stacks)
-            {
-                if (stack == null || stack.itemID <= 0 || stack.itemID >= Item.itemsList.length || stack.stackSize == 0 || stack.getItem() == null)
-                {
-                    continue;
-                }
+		while (itr.hasNext()) {
+			ItemStack reqStk = itr.next();
+			boolean smallStack = reqStk.stackSize == 1;
+			ItemStack usedStack = reqStk;
+			int size = inv.getSizeInventory();
+			for (int i = 0; i <= size; ++i) {
+				if (!inv.isBuildingMaterial(i)) {
 
-                if (!computeStacks.containsKey(stack))
-                {
-                    computeStacks.put(stack.copy(), stack.stackSize);
-                }
-                else
-                {
-                    Integer num = computeStacks.get(stack);
-                    num += stack.stackSize;
-                    computeStacks.put(stack, num);
-                }
-            }
-        }
+				}
 
-        for (ItemStack stack : computeStacks.keySet())
-            if (stack.isItemStackDamageable())
-            {
-                neededItems.add(new ItemStack(stack.getItem()));
-            }
-            else
-            {
-                neededItems.add(new ItemStack(stack.itemID, computeStacks.get(stack), stack.getItemDamage()));
-            }
-    }
+				ItemStack invStk = inv.getStackInSlot(i);
 
-    @Override
-    public void postProcessing(World world)
-    {
-        for (BptSlot s : postProcessingList)
-        {
-            try
-            {
-                s.postProcessing(context);
-            }
-            catch (Throwable t)
-            {
-                // Defensive code against errors in implementers
-                t.printStackTrace();
-                BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "postProcessing", t);
-            }
-        }
-    }
+				if (invStk != null && reqStk.itemID == invStk.itemID && invStk.stackSize > 0) {
+
+					if (!invStk.isItemStackDamageable() && (reqStk.getItemDamage() != invStk.getItemDamage())) {
+						continue;
+					}
+
+					try {
+						usedStack = slot.useItem(context, reqStk, invStk);
+					} catch (Throwable t) {
+						// Defensive code against errors in implementers
+						t.printStackTrace();
+						BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "useRequirements", t);
+					}
+
+					if (invStk.stackSize == 0) {
+						inv.setInventorySlotContents(i, null);
+					} else {
+						inv.setInventorySlotContents(i, invStk);
+					}
+
+					if (reqStk.stackSize == 0) {
+						break;
+					}
+				}
+			}
+
+			if (reqStk.stackSize != 0)
+				return;
+			if (smallStack) {
+				itr.set(usedStack); // set to the actual item used.
+			}
+		}
+
+		return;
+	}
+
+	public void recomputeNeededItems() {
+		neededItems.clear();
+
+		TreeMap<ItemStack, Integer> computeStacks = new TreeMap<ItemStack, Integer>(new Comparator<ItemStack>() {
+
+			@Override
+			public int compare(ItemStack o1, ItemStack o2) {
+				if (o1.itemID > o2.itemID)
+					return 1;
+				else if (o1.itemID < o2.itemID)
+					return -1;
+				else if (o1.getItemDamage() > o2.getItemDamage())
+					return 1;
+				else if (o1.getItemDamage() < o2.getItemDamage())
+					return -1;
+
+				return 0;
+			}
+		});
+
+		for (BptSlot slot : primaryList) {
+
+			LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+
+			try {
+				stacks = slot.getRequirements(context);
+			} catch (Throwable t) {
+				// Defensive code against errors in implementers
+				t.printStackTrace();
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "recomputeIfNeeded", t);
+			}
+
+			for (ItemStack stack : stacks) {
+				if (stack == null || stack.itemID == 0) {
+					continue;
+				}
+
+				if (!computeStacks.containsKey(stack)) {
+					computeStacks.put(stack.copy(), stack.stackSize);
+				} else {
+					Integer num = computeStacks.get(stack);
+					num += stack.stackSize;
+
+					computeStacks.put(stack, num);
+				}
+
+			}
+		}
+
+		for (BptSlot slot : secondaryList) {
+			LinkedList<ItemStack> stacks = slot.getRequirements(context);
+
+			for (ItemStack stack : stacks) {
+				if (stack == null || stack.itemID <= 0 || stack.itemID >= Item.itemsList.length || stack.stackSize == 0 || stack.getItem() == null) {
+					continue;
+				}
+
+				if (!computeStacks.containsKey(stack)) {
+					computeStacks.put(stack.copy(), stack.stackSize);
+				} else {
+					Integer num = computeStacks.get(stack);
+					num += stack.stackSize;
+
+					computeStacks.put(stack, num);
+				}
+
+			}
+		}
+
+		for (ItemStack stack : computeStacks.keySet())
+			if (stack.isItemStackDamageable()) {
+				neededItems.add(new ItemStack(stack.getItem()));
+			} else {
+				neededItems.add(new ItemStack(stack.itemID, computeStacks.get(stack), stack.getItemDamage()));
+			}
+	}
+
+	@Override
+	public void postProcessing(World world) {
+		for (BptSlot s : postProcessingList) {
+			try {
+				s.postProcessing(context);
+			} catch (Throwable t) {
+				// Defensive code against errors in implementers
+				t.printStackTrace();
+				BuildCraftCore.bcLog.throwing("BptBuilderBlueprint", "postProcessing", t);
+			}
+		}
+	}
+
 }

@@ -26,148 +26,120 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.Utils;
 
-public class BlockTank extends BlockContainer
-{
-    public BlockTank(int i)
-    {
-        super(i, Material.glass);
-        setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
-        setHardness(0.5F);
-        setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
-    }
+public class BlockTank extends BlockContainer {
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+	public BlockTank(int i) {
+		super(i, Material.glass);
+		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
+		setHardness(0.5F);
+		setCreativeTab(CreativeTabBuildCraft.tabBuildCraft);
+	}
 
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
-    public boolean isACube()
-    {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World var1)
-    {
-        return new TileTank();
-    }
+	public boolean isACube() {
+		return false;
+	}
 
-    @Override
-    public String getTextureFile()
-    {
-        return DefaultProps.TEXTURE_BLOCKS;
-    }
+	@Override
+	public TileEntity createNewTileEntity(World var1) {
+		return new TileTank();
+	}
 
-    @Override
-    public int getBlockTextureFromSide(int i)
-    {
-        switch (i)
-        {
-            case 0:
-            case 1:
-                return 6 * 16 + 2;
+	@Override
+	public String getTextureFile() {
+		return DefaultProps.TEXTURE_BLOCKS;
+	}
 
-            default:
-                return 6 * 16 + 0;
-        }
-    }
+	@Override
+	public int getBlockTextureFromSide(int i) {
+		switch (i) {
+		case 0:
+		case 1:
+			return 6 * 16 + 2;
+		default:
+			return 6 * 16 + 0;
+		}
+	}
 
-    @SuppressWarnings( { "all" })
-    public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l)
-    {
-        switch (l)
-        {
-            case 0:
-            case 1:
-                return 6 * 16 + 2;
+	@SuppressWarnings({ "all" })
+	public int getBlockTexture(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+		switch (l) {
+		case 0:
+		case 1:
+			return 6 * 16 + 2;
+		default:
+			if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
+				return 6 * 16 + 1;
+			else
+				return 6 * 16 + 0;
+		}
+	}
 
-            default:
-                if (iblockaccess.getBlockId(i, j - 1, k) == blockID)
-                {
-                    return 6 * 16 + 1;
-                }
-                else
-                {
-                    return 6 * 16 + 0;
-                }
-        }
-    }
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9)
-    {
-        ItemStack current = entityplayer.inventory.getCurrentItem();
+		ItemStack current = entityplayer.inventory.getCurrentItem();
+		if (current != null) {
 
-        if (current != null)
-        {
-            LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
-            TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
+			LiquidStack liquid = LiquidContainerRegistry.getLiquidForFilledItem(current);
 
-            // Handle filled containers
-            if (liquid != null)
-            {
-                int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
+			TileTank tank = (TileTank) world.getBlockTileEntity(i, j, k);
 
-                if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode)
-                {
-                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
-                }
+			// Handle filled containers
+			if (liquid != null) {
+				int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
-                return true;
-                // Handle empty containers
-            }
-            else
-            {
-                LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
+				if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+				}
 
-                if (available != null)
-                {
-                    ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
-                    liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
+				return true;
 
-                    if (liquid != null)
-                    {
-                        if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode)
-                        {
-                            if (current.stackSize > 1)
-                            {
-                                if (!entityplayer.inventory.addItemStackToInventory(filled))
-                                {
-                                    return false;
-                                }
-                                else
-                                {
-                                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
-                                }
-                            }
-                            else
-                            {
-                                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
-                                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
-                            }
-                        }
+				// Handle empty containers
+			} else {
 
-                        tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-                        return true;
-                    }
-                }
-            }
-        }
+				LiquidStack available = tank.getTanks(ForgeDirection.UNKNOWN)[0].getLiquid();
+				if (available != null) {
+					ItemStack filled = LiquidContainerRegistry.fillLiquidContainer(available, current);
 
-        return false;
-    }
+					liquid = LiquidContainerRegistry.getLiquidForFilledItem(filled);
 
-    @SuppressWarnings( { "unchecked", "rawtypes" })
-    @Override
-    public void addCreativeItems(ArrayList itemList)
-    {
-        itemList.add(new ItemStack(this));
-    }
+					if (liquid != null) {
+						if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+							if (current.stackSize > 1) {
+								if (!entityplayer.inventory.addItemStackToInventory(filled))
+									return false;
+								else {
+									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+								}
+							} else {
+								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, Utils.consumeItem(current));
+								entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
+							}
+						}
+						tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void addCreativeItems(ArrayList itemList) {
+		itemList.add(new ItemStack(this));
+	}
+
 }

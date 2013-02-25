@@ -7,21 +7,17 @@ import net.minecraftforge.common.ISidedInventory;
 /**
  * Will respect ISidedInventory implementation but only accept input from above or below.
  */
-public class TransactorFurnace extends TransactorSided
-{
-    public TransactorFurnace(ISidedInventory inventory)
-    {
-        super(inventory);
-    }
+public class TransactorFurnace extends TransactorSided {
 
-    @Override
-    public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd)
-    {
-        if (orientation != ForgeDirection.DOWN && orientation != ForgeDirection.UP)
-        {
-            return 0;
-        }
+	public TransactorFurnace(ISidedInventory inventory) {
+		super(inventory);
+	}
 
-        return super.inject(stack, orientation, doAdd);
-    }
+	@Override
+	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
+		if (orientation != ForgeDirection.DOWN && orientation != ForgeDirection.UP)
+			return 0;
+
+		return super.inject(stack, orientation, doAdd);
+	}
 }

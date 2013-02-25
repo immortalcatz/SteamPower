@@ -21,136 +21,116 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.SimpleInventory;
 import buildcraft.transport.BlockGenericPipe;
 
-public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory
-{
-    private SimpleInventory filters = new SimpleInventory(54, "items", 1);
+public class PipeLogicDiamond extends PipeLogic implements ISpecialInventory {
 
-    /* PIPE LOGIC */
-    @Override
-    public boolean doDrop()
-    {
-        return false;
-    }
+	private SimpleInventory filters = new SimpleInventory(54, "items", 1);
 
-    @Override
-    public boolean blockActivated(EntityPlayer entityplayer)
-    {
-        if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length)
-            if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
-            {
-                return false;
-            }
+	/* PIPE LOGIC */
+	@Override
+	public boolean doDrop() {
+		return false;
+	}
 
-        if (!CoreProxy.proxy.isRenderWorld(container.worldObj))
-        {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
-        }
+	@Override
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		if (entityplayer.getCurrentEquippedItem() != null && entityplayer.getCurrentEquippedItem().itemID < Block.blocksList.length)
+			if (Block.blocksList[entityplayer.getCurrentEquippedItem().itemID] instanceof BlockGenericPipe)
+				return false;
 
-        return true;
-    }
+		if (!CoreProxy.proxy.isRenderWorld(container.worldObj)) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.worldObj, container.xCoord, container.yCoord, container.zCoord);
+		}
 
-    /* SAVING & LOADING */
-    @Override
-    public void readFromNBT(NBTTagCompound nbttagcompound)
-    {
-        super.readFromNBT(nbttagcompound);
-        filters.readFromNBT(nbttagcompound);
-    }
+		return true;
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbttagcompound)
-    {
-        super.writeToNBT(nbttagcompound);
-        filters.writeToNBT(nbttagcompound);
-    }
+	/* SAVING & LOADING */
+	@Override
+	public void readFromNBT(NBTTagCompound nbttagcompound) {
+		super.readFromNBT(nbttagcompound);
+		filters.readFromNBT(nbttagcompound);
+	}
 
-    /* ISPECIALINVENTORY */
-    @Override
-    public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from)
-    {
-        return 0;
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbttagcompound) {
+		super.writeToNBT(nbttagcompound);
+		filters.writeToNBT(nbttagcompound);
+	}
 
-    @Override
-    public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount)
-    {
-        return new ItemStack[0];
-    }
+	/* ISPECIALINVENTORY */
+	@Override
+	public int addItem(ItemStack stack, boolean doAdd, ForgeDirection from) {
+		return 0;
+	}
 
-    /* IINVENTORY IMPLEMENTATION */
-    @Override
-    public int getSizeInventory()
-    {
-        return filters.getSizeInventory();
-    }
+	@Override
+	public ItemStack[] extractItem(boolean doRemove, ForgeDirection from, int maxItemCount) {
+		return new ItemStack[0];
+	}
 
-    @Override
-    public ItemStack getStackInSlot(int i)
-    {
-        return filters.getStackInSlot(i);
-    }
+	/* IINVENTORY IMPLEMENTATION */
+	@Override
+	public int getSizeInventory() {
+		return filters.getSizeInventory();
+	}
 
-    @Override
-    public String getInvName()
-    {
-        return "Filters";
-    }
+	@Override
+	public ItemStack getStackInSlot(int i) {
+		return filters.getStackInSlot(i);
+	}
 
-    @Override
-    public int getInventoryStackLimit()
-    {
-        return filters.getInventoryStackLimit();
-    }
+	@Override
+	public String getInvName() {
+		return "Filters";
+	}
 
-    @Override
-    public ItemStack getStackInSlotOnClosing(int i)
-    {
-        return filters.getStackInSlotOnClosing(i);
-    }
+	@Override
+	public int getInventoryStackLimit() {
+		return filters.getInventoryStackLimit();
+	}
 
-    @Override
-    public void onInventoryChanged()
-    {
-        filters.onInventoryChanged();
-    }
+	@Override
+	public ItemStack getStackInSlotOnClosing(int i) {
+		return filters.getStackInSlotOnClosing(i);
+	}
 
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer var1)
-    {
-        return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
-    }
+	@Override
+	public void onInventoryChanged() {
+		filters.onInventoryChanged();
+	}
 
-    @Override
-    public void openChest()
-    {
-    }
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer var1) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == container;
+	}
 
-    @Override
-    public void closeChest()
-    {
-    }
+	@Override
+	public void openChest() {
+	}
 
-    @Override
-    public ItemStack decrStackSize(int i, int j)
-    {
-        ItemStack stack = filters.decrStackSize(i, j);
+	@Override
+	public void closeChest() {
+	}
 
-        if (CoreProxy.proxy.isSimulating(worldObj))
-        {
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
+	@Override
+	public ItemStack decrStackSize(int i, int j) {
+		ItemStack stack = filters.decrStackSize(i, j);
 
-        return stack;
-    }
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
 
-    @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack)
-    {
-        filters.setInventorySlotContents(i, itemstack);
+		return stack;
+	}
 
-        if (CoreProxy.proxy.isSimulating(worldObj))
-        {
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        }
-    }
+	@Override
+	public void setInventorySlotContents(int i, ItemStack itemstack) {
+
+		filters.setInventorySlotContents(i, itemstack);
+		if (CoreProxy.proxy.isSimulating(worldObj)) {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+
+	}
+
 }

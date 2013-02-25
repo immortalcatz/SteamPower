@@ -12,11 +12,11 @@ package buildcraft.core;
 import buildcraft.api.power.IPowerProvider;
 import buildcraft.api.power.PowerFramework;
 
-public class RedstonePowerFramework extends PowerFramework
-{
-    @Override
-    public IPowerProvider createPowerProvider()
-    {
-        return new RedstonePowerProvider();
-    }
+public class RedstonePowerFramework extends PowerFramework {
+
+	@Override
+	public IPowerProvider createPowerProvider() {
+		return new RedstonePowerProvider();
+	}
+
 }

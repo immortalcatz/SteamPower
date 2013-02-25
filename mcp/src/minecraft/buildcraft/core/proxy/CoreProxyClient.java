@@ -45,154 +45,133 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-public class CoreProxyClient extends CoreProxy
-{
-    /* INSTANCES */
-    public Object getClient()
-    {
-        return FMLClientHandler.instance().getClient();
-    }
+public class CoreProxyClient extends CoreProxy {
 
-    public World getClientWorld()
-    {
-        return FMLClientHandler.instance().getClient().theWorld;
-    }
+	/* INSTANCES */
+	public Object getClient() {
+		return FMLClientHandler.instance().getClient();
+	}
 
-    /* ENTITY HANDLING */
-    @Override
-    public void removeEntity(Entity entity)
-    {
-        super.removeEntity(entity);
+	public World getClientWorld() {
+		return FMLClientHandler.instance().getClient().theWorld;
+	}
 
-        if (isRenderWorld(entity.worldObj))
-        {
-            ((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
-        }
-    }
+	/* ENTITY HANDLING */
+	@Override
+	public void removeEntity(Entity entity) {
+		super.removeEntity(entity);
 
-    /* WRAPPER */
-    public void feedSubBlocks(int id, CreativeTabs tab, List itemList)
-    {
-        if (Block.blocksList[id] == null)
-        {
-            return;
-        }
+		if (isRenderWorld(entity.worldObj)) {
+			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.entityId);
+		}
+	}
 
-        Block.blocksList[id].getSubBlocks(id, tab, itemList);
-    }
+	/* WRAPPER */
+	public void feedSubBlocks(int id, CreativeTabs tab, List itemList) {
+		if (Block.blocksList[id] == null)
+			return;
 
-    /* LOCALIZATION */
-    @Override
-    public String getCurrentLanguage()
-    {
-        return StringTranslate.getInstance().getCurrentLanguage();
-    }
+		Block.blocksList[id].getSubBlocks(id, tab, itemList);
+	}
 
-    @Override
-    public void addName(Object obj, String s)
-    {
-        LanguageRegistry.addName(obj, s);
-    }
+	/* LOCALIZATION */
+	@Override
+	public String getCurrentLanguage() {
+		return StringTranslate.getInstance().getCurrentLanguage();
+	}
 
-    @Override
-    public void addLocalization(String s1, String string)
-    {
-        LanguageRegistry.instance().addStringLocalization(s1, string);
-    }
+	@Override
+	public void addName(Object obj, String s) {
+		LanguageRegistry.addName(obj, s);
+	}
 
-    @Override
-    public String getItemDisplayName(ItemStack stack)
-    {
-        if (Item.itemsList[stack.itemID] == null)
-        {
-            return "";
-        }
+	@Override
+	public void addLocalization(String s1, String string) {
+		LanguageRegistry.instance().addStringLocalization(s1, string);
+	}
 
-        return Item.itemsList[stack.itemID].getItemDisplayName(stack);
-    }
+	@Override
+	public String getItemDisplayName(ItemStack stack) {
+		if (Item.itemsList[stack.itemID] == null)
+			return "";
 
-    /* GFX */
-    @Override
-    public void obsidianPipePickup(World world, EntityItem item, TileEntity tile)
-    {
-        FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
-    }
+		return Item.itemsList[stack.itemID].getItemDisplayName(stack);
+	}
 
-    @Override
-    public void initializeRendering()
-    {
-        BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
-        BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
-        BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
-        BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
-        RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-        RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-        RenderingRegistry.registerBlockHandler(new RenderingOil());
-        RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-        MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
-        MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
-    }
+	/* GFX */
+	@Override
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
+		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+	}
 
-    @Override
-    public void initializeEntityRendering()
-    {
-        RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
-        RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
-        RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
-        RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
-    }
+	@Override
+	public void initializeRendering() {
+		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.oilModel = RenderingRegistry.getNextAvailableRenderId();
 
-    /* NETWORKING */
-    @Override
-    public void sendToServer(Packet packet)
-    {
-        FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
-    }
+		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
+		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
+		RenderingRegistry.registerBlockHandler(new RenderingOil());
+		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 
-    /* FILE SYSTEM */
-    public File getBuildCraftBase()
-    {
-        return Minecraft.getMinecraftDir();
-    }
+		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_BLOCKS);
+		MinecraftForgeClient.preloadTexture(DefaultProps.TEXTURE_ITEMS);
+	}
 
-    /* BUILDCRAFT PLAYER */
-    @Override
-    public String playerName()
-    {
-        return FMLClientHandler.instance().getClient().thePlayer.username;
-    }
+	@Override
+	public void initializeEntityRendering() {
+		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, new RenderEntityBlock());
+		RenderingRegistry.registerEntityRenderingHandler(EntityPowerLaser.class, new RenderLaser());
+		RenderingRegistry.registerEntityRenderingHandler(EntityEnergyLaser.class, new RenderEnergyLaser());
+		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
+	}
 
-    private EntityPlayer createNewPlayer(World world)
-    {
-        EntityPlayer player = new EntityPlayer(world)
-        {
-            @Override
-            public void sendChatToPlayer(String var1)
-            {
-            }
-            @Override
-            public boolean canCommandSenderUseCommand(int var1, String var2)
-            {
-                return false;
-            }
-            @Override
-            public ChunkCoordinates getPlayerCoordinates()
-            {
-                return null;
-            }
-        };
-        player.username = "[BuildCraft]";
-        return player;
-    }
+	/* NETWORKING */
+	@Override
+	public void sendToServer(Packet packet) {
+		FMLClientHandler.instance().getClient().getSendQueue().addToSendQueue(packet);
+	}
 
-    @Override
-    public EntityPlayer getBuildCraftPlayer(World world)
-    {
-        if (CoreProxy.buildCraftPlayer == null)
-        {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world);
-        }
+	/* FILE SYSTEM */
+	public File getBuildCraftBase() {
+		return Minecraft.getMinecraftDir();
+	}
 
-        return CoreProxy.buildCraftPlayer;
-    }
+	/* BUILDCRAFT PLAYER */
+	@Override
+	public String playerName() {
+		return FMLClientHandler.instance().getClient().thePlayer.username;
+	}
+
+	private EntityPlayer createNewPlayer(World world) {
+		EntityPlayer player = new EntityPlayer(world) {
+			@Override
+			public void sendChatToPlayer(String var1) {
+			}
+
+			@Override
+			public boolean canCommandSenderUseCommand(int var1, String var2) {
+				return false;
+			}
+
+			@Override
+			public ChunkCoordinates getPlayerCoordinates() {
+				return null;
+			}
+		};
+		player.username = "[BuildCraft]";
+		return player;
+	}
+
+	@Override
+	public EntityPlayer getBuildCraftPlayer(World world) {
+		if (CoreProxy.buildCraftPlayer == null) {
+			CoreProxy.buildCraftPlayer = createNewPlayer(world);
+		}
+
+		return CoreProxy.buildCraftPlayer;
+	}
+
 }
