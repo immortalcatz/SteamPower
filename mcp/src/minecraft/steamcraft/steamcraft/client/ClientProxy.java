@@ -18,6 +18,7 @@ public class ClientProxy extends CommonProxy
     {
         MinecraftForgeClient.preloadTexture(SteamCraft.ITEMS_PNG);
         MinecraftForgeClient.preloadTexture(SteamCraft.BLOCKS_PNG);
+        MinecraftForgeClient.preloadTexture(SteamCraft.modelTextureLocation + "researchtable.png");
         RenderingRegistry.registerEntityRenderingHandler(EntityMusketBall.class, new RenderBoiler(4));
         RenderingRegistry.registerEntityRenderingHandler(EntityMech.class, new RenderMech());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityResearchTable.class, new ResearchTableRender());

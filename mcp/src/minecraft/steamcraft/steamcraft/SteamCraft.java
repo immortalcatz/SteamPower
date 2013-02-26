@@ -91,6 +91,7 @@ public class SteamCraft {
 	public static Item ingotZinc;
 	public static Item ingotBrass;
 	public static Item ingotCopper;
+	public static Item ingotGalvanized;
 	public static Item stock;
 	public static Item musketBarrel;
 	public static Item blunderbussBarrel;
@@ -156,6 +157,7 @@ public class SteamCraft {
 		ingotZinc = (new ItemSteamcraft(7001)).setIconCoord(1, 0).setItemName("ingotZinc").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotBrass = (new ItemSteamcraft(7002)).setIconCoord(2, 0).setItemName("ingotBrass").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotCopper = (new ItemSteamcraft(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
+		ingotGalvanized = (new ItemSteamcraft(7023)).setIconCoord(15, 0).setItemName("ingotGalvanized").setCreativeTab(CreativeTabs.tabMaterials);
 
 		researchPaper = (new ItemResearchNotes(7022)).setIconCoord(13, 0).setItemName("researchNotes").setCreativeTab(CreativeTabs.tabMisc);
 
@@ -256,6 +258,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(ingotCopper, "Copper Ingot");
 		LanguageRegistry.addName(ingotZinc, "Zinc Ingot");
 		LanguageRegistry.addName(ingotBrass, "Brass Ingot");
+		LanguageRegistry.addName(ingotGalvanized, "Galvanized Iron Ingot");
 		LanguageRegistry.addName(musket, "Flintlock Musket");
 		LanguageRegistry.addName(pistol, "Flintlock Pistol");
 		LanguageRegistry.addName(blunderbuss, "Blunderbuss");
@@ -337,6 +340,7 @@ public class SteamCraft {
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
 		ThaumcraftApi.registerObjectTag(SteamCraft.ingotZinc.itemID, -1, (new ObjectTags()).add(EnumTag.METAL, 6).add(EnumTag.HEAL, 2));
+		ThaumcraftApi.registerObjectTag(SteamCraft.ingotGalvanized.itemID, -1, (new ObjectTags()).add(EnumTag.METAL, 8).add(EnumTag.HEAL, 1).add(EnumTag.ARMOR, 1));
 		ThaumcraftApi.registerObjectTag(SteamCraft.zincOre.blockID, -1, (new ObjectTags()).add(EnumTag.METAL, 5).add(EnumTag.HEAL, 1).add(EnumTag.ROCK, 2));
 
 	}
