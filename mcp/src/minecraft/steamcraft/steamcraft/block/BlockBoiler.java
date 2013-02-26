@@ -30,7 +30,7 @@ public class BlockBoiler extends BlockContainer {
 	public BlockBoiler(int par1, boolean par2) {
 		super(par1, Material.iron);
 		this.isActive = par2;
-		this.blockIndexInTexture = 24;
+		this.blockIndexInTexture = 18;
 	}
 
 	@Override
@@ -76,10 +76,10 @@ public class BlockBoiler extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public int getBlockTexture(IBlockAccess blockAccess, int x, int y, int z, int side) {
 		if (side == 0 || side == 1) {
-			return 18;
+			return 24;
 		} else {
 			int front = blockAccess.getBlockMetadata(x, y, z);
-			return side != front ? 18 : (!this.isActive ? this.blockIndexInTexture : this.blockIndexInTexture + 1);
+			return side != front ? 24 : (!this.isActive ? this.blockIndexInTexture : this.blockIndexInTexture + 1);
 		}
 	}
 
@@ -121,7 +121,7 @@ public class BlockBoiler extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSide(int side) {
-		return (side == 1 || side == 0) ? 18 : (side == 3 ? this.blockIndexInTexture : 18);
+		return (side == 1 || side == 0) ? 24 : (side == 3 ? this.blockIndexInTexture : 24);
 	}
 
 	@Override
