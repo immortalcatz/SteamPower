@@ -30,7 +30,7 @@ public class BlockBoiler extends BlockContainer {
 	public BlockBoiler(int par1, boolean par2) {
 		super(par1, Material.iron);
 		this.isActive = par2;
-		this.blockIndexInTexture = 18;
+		this.blockIndexInTexture = 24;
 	}
 
 	@Override
@@ -76,21 +76,20 @@ public class BlockBoiler extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public int getBlockTexture(IBlockAccess blockAccess, int x, int y, int z, int side) {
 		if (side == 0 || side == 1) {
-			return 24;
+			return 18;
 		} else {
 			int front = blockAccess.getBlockMetadata(x, y, z);
-			return side != front ? 24 : (!this.isActive ? this.blockIndexInTexture : this.blockIndexInTexture + 1);
+			return side != front ? 18 : (!this.isActive ? this.blockIndexInTexture : this.blockIndexInTexture + 1);
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World par1World, int par2, int par3,
-			int par4, Random par5Random) {
+	public void randomDisplayTick(World par1World, int par2, int par3, int par4, Random par5Random) {
 		if (this.isActive) {
 			int var6 = par1World.getBlockMetadata(par2, par3, par4);
 			float var7 = par2 + 0.5F;
-			float var8 = par3 + 0.0F + par5Random.nextFloat() * 6.0F / 16.0F;
+			float var8 = par3 + 0.2F + par5Random.nextFloat() * 6.0F / 16.0F;
 			float var9 = par4 + 0.5F;
 			float var10 = 0.52F;
 			float var11 = par5Random.nextFloat() * 0.6F - 0.3F;
@@ -121,7 +120,7 @@ public class BlockBoiler extends BlockContainer {
 
 	@Override
 	public int getBlockTextureFromSide(int side) {
-		return (side == 1 || side == 0) ? 24 : (side == 3 ? this.blockIndexInTexture : 24);
+		return (side == 1 || side == 0) ? 18 : (side == 3 ? this.blockIndexInTexture : 18);
 	}
 
 	@Override
