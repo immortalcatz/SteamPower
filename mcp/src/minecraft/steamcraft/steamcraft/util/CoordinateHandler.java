@@ -1,4 +1,4 @@
-package dimitriye98.core.util;
+package steamcraft.steamcraft.util;
 
 public abstract class CoordinateHandler {
 	

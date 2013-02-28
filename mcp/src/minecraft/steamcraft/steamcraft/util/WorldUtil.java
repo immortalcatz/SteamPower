@@ -1,4 +1,4 @@
-package dimitriye98.core.util;
+package steamcraft.steamcraft.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
