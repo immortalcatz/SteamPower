@@ -1,7 +1,13 @@
 package steamcraft.steamcraft.tileentity;
 
+import java.util.Collections;
+import java.util.HashSet;
+
+import buildcraft.api.inventory.ISpecialInventory;
+
 import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockForgeMain;
+import steamcraft.steamcraft.recipes.MetallurgyRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,78 +28,71 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileEntityForge extends TileEntity implements IInventory, ISidedInventory
-{
-    private ItemStack[] furnaceItemStacks = new ItemStack[4];
+public class TileEntityForge extends TileEntity implements IInventory, ISidedInventory {
+    private ItemStack[] forgeItemStacks = new ItemStack[4];
 
-    public int furnaceBurnTime = 0;
+    public int forgeBurnTime = 0;
 
     public int currentItemBurnTime = 0;
 
-    public int furnaceCookTime = 0;
+    public int forgeCookTime = 0;
 
     @Override
 	public int getSizeInventory()
     {
-        return this.furnaceItemStacks.length;
+        return this.forgeItemStacks.length;
     }
 
     @Override
 	public ItemStack getStackInSlot(int par1)
     {
-        return this.furnaceItemStacks[par1];
+        return this.forgeItemStacks[par1];
     }
 
     @Override
 	public ItemStack decrStackSize(int par1, int par2)
     {
-        if (this.furnaceItemStacks[par1] != null)
+        if (this.forgeItemStacks[par1] != null)
         {
             ItemStack var3;
 
-            if (this.furnaceItemStacks[par1].stackSize <= par2)
+            if (this.forgeItemStacks[par1].stackSize <= par2)
             {
-                var3 = this.furnaceItemStacks[par1];
-                this.furnaceItemStacks[par1] = null;
+                var3 = this.forgeItemStacks[par1];
+                this.forgeItemStacks[par1] = null;
                 return var3;
             }
             else
             {
-                var3 = this.furnaceItemStacks[par1].splitStack(par2);
+                var3 = this.forgeItemStacks[par1].splitStack(par2);
 
-                if (this.furnaceItemStacks[par1].stackSize == 0)
+                if (this.forgeItemStacks[par1].stackSize == 0)
                 {
-                    this.furnaceItemStacks[par1] = null;
+                    this.forgeItemStacks[par1] = null;
                 }
 
                 return var3;
             }
-        }
-        else
-        {
-            return null;
-        }
+        } else
+			return null;
     }
 
     @Override
 	public ItemStack getStackInSlotOnClosing(int par1)
     {
-        if (this.furnaceItemStacks[par1] != null)
+        if (this.forgeItemStacks[par1] != null)
         {
-            ItemStack var2 = this.furnaceItemStacks[par1];
-            this.furnaceItemStacks[par1] = null;
+            ItemStack var2 = this.forgeItemStacks[par1];
+            this.forgeItemStacks[par1] = null;
             return var2;
-        }
-        else
-        {
-            return null;
-        }
+        } else
+			return null;
     }
 
     @Override
 	public void setInventorySlotContents(int par1, ItemStack par2ItemStack)
     {
-        this.furnaceItemStacks[par1] = par2ItemStack;
+        this.forgeItemStacks[par1] = par2ItemStack;
 
         if (par2ItemStack != null && par2ItemStack.stackSize > this.getInventoryStackLimit())
         {
@@ -112,21 +111,21 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     {
         super.readFromNBT(par1NBTTagCompound);
         NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
-        this.furnaceItemStacks = new ItemStack[this.getSizeInventory()];
+        this.forgeItemStacks = new ItemStack[this.getSizeInventory()];
 
         for (int var3 = 0; var3 < var2.tagCount(); ++var3)
         {
             NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
             byte var5 = var4.getByte("Slot");
 
-            if (var5 >= 0 && var5 < this.furnaceItemStacks.length)
+            if (var5 >= 0 && var5 < this.forgeItemStacks.length)
             {
-                this.furnaceItemStacks[var5] = ItemStack.loadItemStackFromNBT(var4);
+                this.forgeItemStacks[var5] = ItemStack.loadItemStackFromNBT(var4);
             }
         }
 
-        this.furnaceBurnTime = par1NBTTagCompound.getShort("BurnTime");
-        this.furnaceCookTime = par1NBTTagCompound.getShort("CookTime");
+        this.forgeBurnTime = par1NBTTagCompound.getShort("BurnTime");
+        this.forgeCookTime = par1NBTTagCompound.getShort("CookTime");
         this.currentItemBurnTime = par1NBTTagCompound.getShort("ItemBurnTime");
     }
 
@@ -134,18 +133,18 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 	public void writeToNBT(NBTTagCompound par1NBTTagCompound)
     {
         super.writeToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setShort("BurnTime", (short)this.furnaceBurnTime);
+        par1NBTTagCompound.setShort("BurnTime", (short)this.forgeBurnTime);
         par1NBTTagCompound.setShort("ItemBurnTime", (short)this.currentItemBurnTime);
-        par1NBTTagCompound.setShort("CookTime", (short)this.furnaceCookTime);
+        par1NBTTagCompound.setShort("CookTime", (short)this.forgeCookTime);
         NBTTagList var2 = new NBTTagList();
 
-        for (int var3 = 0; var3 < this.furnaceItemStacks.length; ++var3)
+        for (int var3 = 0; var3 < this.forgeItemStacks.length; ++var3)
         {
-            if (this.furnaceItemStacks[var3] != null)
+            if (this.forgeItemStacks[var3] != null)
             {
                 NBTTagCompound var4 = new NBTTagCompound();
                 var4.setByte("Slot", (byte)var3);
-                this.furnaceItemStacks[var3].writeToNBT(var4);
+                this.forgeItemStacks[var3].writeToNBT(var4);
                 var2.appendTag(var4);
             }
         }
@@ -163,7 +162,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
     public int getCookProgressScaled(int par1)
     {
-        return this.furnaceCookTime * par1 / 200;
+        return this.forgeCookTime * par1 / 200;
     }
 
     @SideOnly(Side.CLIENT)
@@ -175,42 +174,42 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
             this.currentItemBurnTime = 200;
         }
 
-        return this.furnaceBurnTime * par1 / this.currentItemBurnTime;
+        return this.forgeBurnTime * par1 / this.currentItemBurnTime;
     }
 
     public boolean isBurning()
     {
-        return this.furnaceBurnTime > 0;
+        return this.forgeBurnTime > 0;
     }
 
     @Override
 	public void updateEntity()
     {
-        boolean var1 = this.furnaceBurnTime > 0;
+        boolean var1 = this.forgeBurnTime > 0;
         boolean var2 = false;
 
-        if (this.furnaceBurnTime > 0)
+        if (this.forgeBurnTime > 0)
         {
-            --this.furnaceBurnTime;
+            --this.forgeBurnTime;
         }
 
         if (!this.worldObj.isRemote)
         {
-            if (this.furnaceBurnTime == 0 && this.canSmelt())
+            if (this.forgeBurnTime == 0 && this.canSmelt())
             {
-                this.currentItemBurnTime = this.furnaceBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+                this.currentItemBurnTime = this.forgeBurnTime = getItemBurnTime(this.forgeItemStacks[3]);
 
-                if (this.furnaceBurnTime > 0)
+                if (this.forgeBurnTime > 0)
                 {
                     var2 = true;
 
-                    if (this.furnaceItemStacks[1] != null)
+                    if (this.forgeItemStacks[3] != null)
                     {
-                        --this.furnaceItemStacks[1].stackSize;
+                        --this.forgeItemStacks[3].stackSize;
 
-                        if (this.furnaceItemStacks[1].stackSize == 0)
+                        if (this.forgeItemStacks[3].stackSize == 0)
                         {
-                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+                            this.forgeItemStacks[3] = this.forgeItemStacks[3].getItem().getContainerItemStack(forgeItemStacks[3]);
                         }
                     }
                 }
@@ -218,24 +217,24 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
             if (this.isBurning() && this.canSmelt())
             {
-                ++this.furnaceCookTime;
+                ++this.forgeCookTime;
 
-                if (this.furnaceCookTime == 200)
+                if (this.forgeCookTime == 200)
                 {
-                    this.furnaceCookTime = 0;
+                    this.forgeCookTime = 0;
                     this.smeltItem();
                     var2 = true;
                 }
             }
             else
             {
-                this.furnaceCookTime = 0;
+                this.forgeCookTime = 0;
             }
 
-            if (var1 != this.furnaceBurnTime > 0)
+            if (var1 != this.forgeBurnTime > 0)
             {
                 var2 = true;
-                BlockForgeMain.updateFurnaceBlockState(this.furnaceBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+                BlockForgeMain.updateFurnaceBlockState(this.forgeBurnTime > 0, this.worldObj, this.xCoord, this.yCoord, this.zCoord);
             }
         }
 
@@ -247,95 +246,42 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
     private boolean canSmelt()
     {
-        if (this.furnaceItemStacks[0] == null)
+        if (this.forgeItemStacks[0] == null && this.forgeItemStacks[1] == null)
+			return false;
+		else
         {
-            return false;
+            ItemStack res = MetallurgyRecipes.metallurgy().getMetallurgyResult(this.forgeItemStacks[0], this.forgeItemStacks[1]);
+            if (res != null) return true;
+
+            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[0]);
+            if (res != null) return true;
+
+            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[1]);
+            if (res != null) return true;
         }
-        else
-        {
-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
-
-            if ((this.furnaceItemStacks[0].isItemEqual(new ItemStack(SteamCraft.ingotCopper))) && this.furnaceItemStacks[0].stackSize > 1)
-            {
-                if (this.furnaceItemStacks[3] == null)
-                {
-                    return false;
-                }
-
-                if (this.furnaceItemStacks[3].isItemEqual(new ItemStack(SteamCraft.ingotZinc)))
-                {
-                    var1 = new ItemStack(SteamCraft.ingotBrass);
-                }
-            }
-
-            if (var1 == null)
-            {
-                return false;
-            }
-
-            if (this.furnaceItemStacks[2] == null)
-            {
-                return true;
-            }
-
-            if (!this.furnaceItemStacks[2].isItemEqual(var1))
-            {
-                return false;
-            }
-
-            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
-            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
-        }
+        return false;
     }
 
     public void smeltItem()
     {
         if (this.canSmelt())
         {
-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+            ItemStack res = MetallurgyRecipes.metallurgy().getMetallurgyResult(this.forgeItemStacks[0], this.forgeItemStacks[1]);
 
-            if ((this.furnaceItemStacks[0].isItemEqual(new ItemStack(SteamCraft.ingotCopper))) && this.furnaceItemStacks[0].stackSize > 1)
+            if (this.forgeItemStacks[3] == null)
             {
-                if (this.furnaceItemStacks[3].isItemEqual(new ItemStack(SteamCraft.ingotZinc)))
-                {
-                    var1 = new ItemStack(SteamCraft.ingotBrass, 2);
-                }
+                this.forgeItemStacks[3] = res.copy();
+            }
+            else if (this.forgeItemStacks[3].isItemEqual(res))
+            {
+                forgeItemStacks[3].stackSize += res.stackSize;
             }
 
-            if (this.furnaceItemStacks[2] == null)
-            {
-                this.furnaceItemStacks[2] = var1.copy();
-            }
-            else if (this.furnaceItemStacks[2].isItemEqual(var1))
-            {
-                furnaceItemStacks[2].stackSize += var1.stackSize;
-            }
+            --this.forgeItemStacks[0].stackSize;
 
-            if ((this.furnaceItemStacks[0].isItemEqual(new ItemStack(SteamCraft.ingotCopper))) && this.furnaceItemStacks[0].stackSize > 1)
+            if (this.forgeItemStacks[0].stackSize <= 0)
             {
-                if (this.furnaceItemStacks[3].isItemEqual(new ItemStack(SteamCraft.ingotZinc)))
-                {
-                    var1 = new ItemStack(SteamCraft.ingotBrass);
-                    this.furnaceItemStacks[0].stackSize = this.furnaceItemStacks[0].stackSize - 2;
-
-                    if (this.furnaceItemStacks[3].stackSize == 1)
-                    {
-                        this.furnaceItemStacks[3] = null;
-                    }
-                    else
-                    {
-                        this.furnaceItemStacks[3].stackSize = this.furnaceItemStacks[3].stackSize - 1;
-                    }
-                }
-            }
-            else
-            {
-                --this.furnaceItemStacks[0].stackSize;
-            }
-
-            if (this.furnaceItemStacks[0].stackSize <= 0)
-            {
-                this.furnaceItemStacks[0] = null;
+                this.forgeItemStacks[0] = null;
             }
         }
     }
@@ -343,10 +289,8 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     public static int getItemBurnTime(ItemStack par0ItemStack)
     {
         if (par0ItemStack == null)
-        {
-            return 0;
-        }
-        else
+			return 0;
+		else
         {
             int var1 = par0ItemStack.getItem().itemID;
             Item var2 = par0ItemStack.getItem();
@@ -356,20 +300,14 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
                 Block var3 = Block.blocksList[var1];
 
                 if (var3 == Block.woodSingleSlab)
-                {
-                    return 225;
-                }
+					return 225;
 
                 if (var3.blockMaterial == Material.wood)
-                {
-                    return 450;
-                }
+					return 450;
             }
 
             if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
-            {
-                return 300;
-            }
+				return 300;
 
 //            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
 //            {
@@ -377,34 +315,22 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 //            }
 
             if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD"))
-            {
-                return 300;
-            }
+				return 300;
 
             if (var1 == Item.stick.itemID)
-            {
-                return 150;
-            }
+				return 150;
 
             if (var1 == Item.coal.itemID)
-            {
-                return 2400;
-            }
+				return 2400;
 
             if (var1 == Item.bucketLava.itemID)
-            {
-                return 30000;
-            }
+				return 30000;
 
             if (var1 == Block.sapling.blockID)
-            {
-                return 150;
-            }
+				return 150;
 
             if (var1 == Item.blazeRod.itemID)
-            {
-                return 3600;
-            }
+				return 3600;
 
             return (int)(GameRegistry.getFuelValue(par0ItemStack) * 1.5);
         }
@@ -431,21 +357,18 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     public int getStartInventorySide(ForgeDirection side)
     {
         if (side == ForgeDirection.DOWN)
-        {
-            return 1;
-        }
+			return 2;
 
         if (side == ForgeDirection.UP)
-        {
-            return 0;
-        }
+			return 0;
 
-        return 2;
+        return 3;
     }
 
     @Override
     public int getSizeInventorySide(ForgeDirection side)
     {
+    	if (side == ForgeDirection.UP) return 2;
         return 1;
     }
 }

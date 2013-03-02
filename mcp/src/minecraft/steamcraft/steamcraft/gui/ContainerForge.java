@@ -46,8 +46,8 @@ public class ContainerForge extends Container
     public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
-        par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
-        par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
+        par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.forgeCookTime);
+        par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.forgeBurnTime);
         par1ICrafting.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
     }
 
@@ -59,14 +59,14 @@ public class ContainerForge extends Container
         {
             ICrafting var2 = (ICrafting)this.crafters.get(var1);
 
-            if (this.lastCookTime != this.furnace.furnaceCookTime)
+            if (this.lastCookTime != this.furnace.forgeCookTime)
             {
-                var2.sendProgressBarUpdate(this, 0, this.furnace.furnaceCookTime);
+                var2.sendProgressBarUpdate(this, 0, this.furnace.forgeCookTime);
             }
 
-            if (this.lastBurnTime != this.furnace.furnaceBurnTime)
+            if (this.lastBurnTime != this.furnace.forgeBurnTime)
             {
-                var2.sendProgressBarUpdate(this, 1, this.furnace.furnaceBurnTime);
+                var2.sendProgressBarUpdate(this, 1, this.furnace.forgeBurnTime);
             }
 
             if (this.lastItemBurnTime != this.furnace.currentItemBurnTime)
@@ -75,8 +75,8 @@ public class ContainerForge extends Container
             }
         }
 
-        this.lastCookTime = this.furnace.furnaceCookTime;
-        this.lastBurnTime = this.furnace.furnaceBurnTime;
+        this.lastCookTime = this.furnace.forgeCookTime;
+        this.lastBurnTime = this.furnace.forgeBurnTime;
         this.lastItemBurnTime = this.furnace.currentItemBurnTime;
     }
 
@@ -85,12 +85,12 @@ public class ContainerForge extends Container
     {
         if (par1 == 0)
         {
-            this.furnace.furnaceCookTime = par2;
+            this.furnace.forgeCookTime = par2;
         }
 
         if (par1 == 1)
         {
-            this.furnace.furnaceBurnTime = par2;
+            this.furnace.forgeBurnTime = par2;
         }
 
         if (par1 == 2)
