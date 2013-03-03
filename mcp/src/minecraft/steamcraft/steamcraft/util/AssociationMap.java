@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class AssociationMap<K, V> extends AbstractMap {
@@ -48,26 +49,31 @@ public class AssociationMap<K, V> extends AbstractMap {
 
 		@Override
 		public Iterator iterator() {
-			// TODO Auto-generated method stub
-			return null;
+			return new SetIterator();
 		}
 
 		@Override
 		public int size() {
-			// TODO Auto-generated method stub
-			return 0;
+			return valMap.size();
 		}
 
 		@Override
 		public boolean add(Object e) {
-			// TODO Auto-generated method stub
+			if (!(e instanceof Entry)) throw new ClassCastException();
+			keyMap.put((V)((Entry) e).getValue(), (K)((Entry) e).getKey());
+			V previous = valMap.put((K)((Entry) e).getKey(), (V)((Entry) e).getValue());
+			if (previous != null) return true;
 			return false;
 		}
 
 		@Override
-		public boolean addAll(Collection c) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean addAll(Collection c) throws ClassCastException {
+			for (Object o : c) {
+
+			}
+			boolean out = false;
+
+			return out;
 		}
 
 		@Override
@@ -130,6 +136,13 @@ public class AssociationMap<K, V> extends AbstractMap {
 	public Set<java.util.Map.Entry<K, V>> entrySet() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Object put(Object key, Object value) throws ClassCastException {
+		try {
+
+		}
 	}
 
 }
