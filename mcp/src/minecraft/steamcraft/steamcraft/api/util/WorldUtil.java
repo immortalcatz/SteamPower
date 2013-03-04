@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.util;
+package steamcraft.steamcraft.api.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

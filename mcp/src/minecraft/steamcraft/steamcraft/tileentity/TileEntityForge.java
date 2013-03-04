@@ -6,6 +6,7 @@ import java.util.HashSet;
 import buildcraft.api.inventory.ISpecialInventory;
 
 import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.api.recipes.MetallurgyRecipes;
 import steamcraft.steamcraft.block.BlockForgeMain;
 import steamcraft.steamcraft.recipes.MetallurgyRecipes;
 import net.minecraft.block.Block;

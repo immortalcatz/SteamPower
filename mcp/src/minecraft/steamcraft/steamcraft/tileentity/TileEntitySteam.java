@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.api.util.WorldUtil;
 import steamcraft.steamcraft.block.BlockSteam;
-import steamcraft.steamcraft.util.WorldUtil;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Vec3;
