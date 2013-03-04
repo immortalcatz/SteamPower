@@ -1,5 +1,6 @@
 package steamcraft.steamcraft.tileentity;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -8,7 +9,6 @@ import buildcraft.api.inventory.ISpecialInventory;
 import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.api.recipes.MetallurgyRecipes;
 import steamcraft.steamcraft.block.BlockForgeMain;
-import steamcraft.steamcraft.recipes.MetallurgyRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -267,7 +267,9 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     {
         if (this.canSmelt())
         {
-            ItemStack res = MetallurgyRecipes.metallurgy().getMetallurgyResult(this.forgeItemStacks[0], this.forgeItemStacks[1]);
+        	HashSet ingredients = new HashSet();
+        	ingredients.addAll(Arrays.asList(forgeItemStacks[]))
+            ItemStack res = MetallurgyRecipes.metallurgy().getMetallurgyResult();
 
             if (this.forgeItemStacks[3] == null)
             {
@@ -307,7 +309,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 					return 450;
             }
 
-            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
+/*            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
 				return 300;
 
 //            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
@@ -332,7 +334,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
             if (var1 == Item.blazeRod.itemID)
 				return 3600;
-
+*/
             return (int)(GameRegistry.getFuelValue(par0ItemStack) * 1.5);
         }
     }
