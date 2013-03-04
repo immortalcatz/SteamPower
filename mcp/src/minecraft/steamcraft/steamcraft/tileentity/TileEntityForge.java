@@ -309,13 +309,11 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 					return 450;
             }
 
-/*            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
+            if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD"))
 				return 300;
 
-//            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
-//            {
-//                return 300;
-//            }
+            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD"))
+				return 300;
 
             if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD"))
 				return 300;
@@ -334,7 +332,7 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 
             if (var1 == Item.blazeRod.itemID)
 				return 3600;
-*/
+
             return (int)(GameRegistry.getFuelValue(par0ItemStack) * 1.5);
         }
     }
