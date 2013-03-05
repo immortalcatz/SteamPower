@@ -1,5 +1,7 @@
 package steamcraft.steamcraft;
 
+import java.util.Arrays;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
@@ -13,6 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import steamcraft.steamcraft.block.BlockBoiler;
+import steamcraft.steamcraft.block.BlockEngineeringTable;
 import steamcraft.steamcraft.block.BlockForge;
 import steamcraft.steamcraft.block.BlockForgeMain;
 import steamcraft.steamcraft.block.BlockForgePiece;
@@ -24,12 +27,17 @@ import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.ItemFirearm;
 import steamcraft.steamcraft.item.ItemMech;
+import steamcraft.steamcraft.item.ItemResearchBook;
 import steamcraft.steamcraft.item.ItemResearchNotes;
 import steamcraft.steamcraft.item.ItemSteamcraft;
 import steamcraft.steamcraft.item.ItemSteamcraftArmor;
 import steamcraft.steamcraft.item.ItemWrench;
 import steamcraft.steamcraft.packet.PacketHandler;
+import steamcraft.steamcraft.research.Research;
+import steamcraft.steamcraft.research.ResearchDictionary;
+import steamcraft.steamcraft.research.ResearchRecipe;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
+import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
@@ -83,6 +91,7 @@ public class SteamCraft {
 	public static Block blockForgeMain;
 	public static Block steam;
 	public static Block researchTable;
+	public static Block engineeringTable;
 
 	//Items
 	public static Item musketBall;
@@ -98,6 +107,7 @@ public class SteamCraft {
 	public static Item flintlock;
 
 	public static Item researchPaper;
+	public static Item researchBook;
 
 		//Tools
 	public static Item musket;
@@ -115,6 +125,10 @@ public class SteamCraft {
 	public static Item brassTorso;
 	public static Item brassLegs;
 	public static Item brassBoots;
+
+		//Research
+	public static Research forge;
+	public static Research basic;
 
 		//Achievements
 	public static Achievement AchResearch;
@@ -148,6 +162,7 @@ public class SteamCraft {
 		zincOre = new BlockSteamcraftOre(153, 1).setHardness(2.5F).setResistance(15.0F).setStepSound(Block.soundStoneFootstep).setBlockName("zincOre").setCreativeTab(CreativeTabs.tabBlock);
 		steam = new BlockSteam(165).setBlockName("blockSteam");
 		researchTable = new BlockResearchTable(169).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
+		engineeringTable = new BlockEngineeringTable(179).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("engineeringTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
 
 
 		//Initialize Items
@@ -159,7 +174,9 @@ public class SteamCraft {
 		ingotCopper = (new ItemSteamcraft(7000)).setIconCoord(0, 0).setItemName("ingotCopper").setCreativeTab(CreativeTabs.tabMaterials);
 		ingotGalvanized = (new ItemSteamcraft(7023)).setIconCoord(15, 0).setItemName("ingotGalvanized").setCreativeTab(CreativeTabs.tabMaterials);
 
-		researchPaper = (new ItemResearchNotes(7022)).setIconCoord(13, 0).setItemName("researchNotes").setCreativeTab(CreativeTabs.tabMisc);
+		researchPaper = (new ItemResearchNotes(7022)).setIconCoord(13, 0).setItemName("researchNotes");
+		researchBook = (new ItemResearchBook(7025)).setIconCoord(14, 0).setItemName("researchBook");
+
 
 		stock = (new ItemSteamcraft(7003).setIconIndex(9).setItemName("gunStock"));
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
@@ -185,6 +202,19 @@ public class SteamCraft {
 		brassLegs = (new ItemSteamcraftArmor(7017,materialBrass, 4, 2, true, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 3).setCreativeTab(CreativeTabs.tabCombat));
 		brassBoots = (new ItemSteamcraftArmor(7018, materialBrass, 4, 3, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
 
+			//Research
+	String researchDescription = "You have discovered that by enlarging the furnace, it can reach hotter temperatures. This discovery could potentially allow you to construct alloys in the future. ~cr{one;two;three;four;five;six;seven;eight;nine;}cr~Test";
+		forge = new Research("forge", "Forge", null, new ItemStack(blockFurnaceExtension,1), Block.stoneOvenIdle, SteamCraft.ingotCopper);
+		forge.addDescriptionPage("\npsst secret page\n2\n3\n4\n5\n6");
+		forge.addRecipe(new ResearchRecipe("crafting", 0, 2,Block.cobblestone, ingotCopper, Block.cobblestone, ingotCopper, Item.ingotIron, Block.cobblestone, ingotCopper, Block.cobblestone, ingotCopper, blockFurnaceExtension));
+		forge.registerResearch();
+		basic = new Research("basic", "Scientific Method", null, new ItemStack(blockFurnaceExtension));
+		basic.addDescriptionPage("test");
+		basic.registerResearch();
+
+//		Integer test = ResearchDictionary.getNumResearchFromItems(Arrays.asList(new ItemStack(Block.stoneOvenIdle, 1)));
+//		System.out.println(test);
+
 		//Initialize Achievements
 		AchResearch = new Achievement(2001, "AchResearch", 1, -2, SteamCraft.researchTable, null).registerAchievement();
 		AchBrass  = new Achievement(2002, "AchBrass", 3, 0, SteamCraft.ingotBrass, AchResearch).registerAchievement();
@@ -198,6 +228,9 @@ public class SteamCraft {
 
 			//Blocks
 		GameRegistry.registerBlock(researchTable, "researchTable"); //Research Table
+		MinecraftForge.setBlockHarvestLevel(researchTable, "axe", 0);
+
+		GameRegistry.registerBlock(engineeringTable, "engineeringTable"); //Engineering Table
 		MinecraftForge.setBlockHarvestLevel(researchTable, "axe", 0);
 
 		GameRegistry.registerBlock(boilerIdle, "boilerIdle"); //Inactive Boiler
@@ -237,6 +270,7 @@ public class SteamCraft {
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "tileEntityBoiler");
 		GameRegistry.registerTileEntity(TileEntityForge.class, "tileEntityForge");
 		GameRegistry.registerTileEntity(TileEntityResearchTable.class, "tileEntityResearchTable");
+		GameRegistry.registerTileEntity(TileEntityEngineeringTable.class, "tileEntityEngineeringTable");
 
 			//Names
 
@@ -253,6 +287,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(blockForgeOn, "blockForgeOn");
 		LanguageRegistry.addName(blockForgeMain, "blockForgeMain");
 		LanguageRegistry.addName(researchTable, "Allmighty Table of Research");
+		LanguageRegistry.addName(engineeringTable, "Table of Engineering");
 
 				//Items
 		LanguageRegistry.addName(ingotCopper, "Copper Ingot");
@@ -271,6 +306,7 @@ public class SteamCraft {
 		LanguageRegistry.addName(blunderbussBarrel, "Blunderbuss Barrel");
 		LanguageRegistry.addName(flintlock, "Flintlock");
 		LanguageRegistry.addName(researchPaper, "Research");
+		LanguageRegistry.addName(researchBook, "Notebook");
 
 		LanguageRegistry.addName(copperHelmet, "Copper Helmet");
 		LanguageRegistry.addName(copperTorso, "Copper Chestplate");
@@ -325,6 +361,7 @@ public class SteamCraft {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", "  S", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", " P ", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'P', "plankWood"));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbuss, 1), "B  ", " BF", "  S", 'B', SteamCraft.blunderbussBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.researchBook, 1), "PPP", "PBP", "PPP", 'P', Item.paper, 'B', Item.book));
 	}
 
 	private void addAchievementName(String ach, String name)

@@ -1,5 +1,8 @@
 package steamcraft.steamcraft.tileentity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,8 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
@@ -27,6 +32,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.block.BlockResearchTable;
 import steamcraft.steamcraft.item.ItemResearchNotes;
+import steamcraft.steamcraft.research.ResearchDictionary;
 
 public class TileEntityResearchTable extends TileEntity implements IInventory, ISidedInventory
 {
@@ -163,35 +169,64 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
         if (!this.worldObj.isRemote)
         {
         	ItemStack stack = new ItemStack(SteamCraft.researchPaper, 1);
-        	boolean newResearch = false;
-        	if (this.researchStacks[1] != null && this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID) {
+        	int newResearch = 0;
+        	int selected = 1;
+        	if (this.researchStacks[1] != null && this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID  && this.researchStacks[0] != null) {
+        		if (this.researchStacks[1].hasTagCompound() && (this.researchStacks[1].stackTagCompound.getCompoundTag("1").getInteger("Complete") == 1 || this.researchStacks[1].stackTagCompound.getCompoundTag("1").getInteger("Complete") == 2)) {
+        			return;
+        		}
         		stack = this.researchStacks[1];
-        		newResearch = true;
+        		newResearch = 1;
+
         	}
-            if ((this.researchStacks[2] != null || newResearch) && this.researchStacks[0] != null)
+        	if (this.researchStacks[1] != null && this.researchStacks[1].itemID == SteamCraft.researchBook.itemID  && this.researchStacks[0] != null) {
+        		selected = this.researchStacks[1].getTagCompound().getInteger("SelectedResearch");
+        		System.out.println(selected);
+        		if (this.researchStacks[1].stackTagCompound.getCompoundTag(Integer.toString(selected)).getInteger("Complete") == 1 || this.researchStacks[1].stackTagCompound.getCompoundTag("1").getInteger("Complete") == 2) {
+        			return;
+        		}
+        		stack = this.researchStacks[1];
+        		newResearch = 2;
+
+        	}
+            if ((this.researchStacks[2] != null || newResearch > 0) && this.researchStacks[0] != null)
             {
-                if ((newResearch || this.researchStacks[2].itemID == Item.paper.itemID)  && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0 || this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID ))
+                if ((newResearch > 0 || this.researchStacks[2].itemID == Item.paper.itemID)  && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0 || this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID ))
                 {
-                	if (!newResearch) {
-		            if (this.researchStacks[2].stackSize <= 1)
-		            {
-		            this.researchStacks[2] = null;
-		            }
-		            else
-		            {
-		            this.researchStacks[2].stackSize--;
-		            }
+                	if (newResearch == 0)
+                	{
+                		if (this.researchStacks[2].stackSize <= 1)
+                		{
+                			this.researchStacks[2] = null;
+                		}
+                		else
+                		{
+                			this.researchStacks[2].stackSize--;
+                		}
                 	}
 
                     if (!stack.hasTagCompound())
-                      {
+                    {
               			stack.setTagCompound(new NBTTagCompound());
               			NBTTagList items = new NBTTagList();
-              			stack.stackTagCompound.setTag("Contents", items);
-
-                     }
+              			NBTTagCompound index = new NBTTagCompound();
+              			index.setTag("Contents", items);
+              			index.setInteger("Complete", 0);
+              			index.setString("Research", "");
+              			stack.stackTagCompound.setTag("1", index);
+              			stack.stackTagCompound.setInteger("SelectedResearch", 1);
+                    }
+                    if (newResearch == 2 && selected > this.researchStacks[1].getTagCompound().getTags().size() - 1) {
+                    	NBTTagCompound index = new NBTTagCompound();
+                    	NBTTagList items = new NBTTagList();
+              			index.setTag("Contents", items);
+              			index.setInteger("Complete", 0);
+              			index.setString("Research", "");
+                    	stack.stackTagCompound.setTag(Integer.toString(selected), index);
+                    }
                     NBTTagCompound addition = new NBTTagCompound();
-                    ItemStack addStack = new ItemStack(this.researchStacks[0].getItem(), 1);
+                    ItemStack addStack = this.researchStacks[0].copy();
+                    addStack.stackSize = 1;
                     addStack.writeToNBT(addition);
                     if (this.researchStacks[0].stackSize <= 1)
                     {
@@ -201,8 +236,25 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
                     {
                         this.researchStacks[0].stackSize--;
                     }
-
-            		stack.stackTagCompound.getTagList("Contents").appendTag(addition);
+                    stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).getTagList("Contents").appendTag(addition);
+                	List items = new ArrayList<ItemStack>();
+                	for (int i = 0; i < stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).getTagList("Contents").tagCount(); i++) {
+                		NBTBase currentTag = stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).getTagList("Contents").tagAt(i);
+                		items.add(ItemStack.loadItemStackFromNBT((NBTTagCompound) currentTag));
+                	}
+                	int researchLeft = ResearchDictionary.getNumResearchFromItems(items);
+                	System.out.println(researchLeft);
+                	if (researchLeft == 0) {
+              			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setInteger("Complete", 2);
+                	}
+                	if (researchLeft == 1) {
+                		String research = ResearchDictionary.getResearchFromItems(items);
+                    	System.out.println(research);
+                		if (ResearchDictionary.isResearchComplete(research, items)) {
+                			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setInteger("Complete", 1);
+                			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setString("Research", research);
+                		}
+                	}
 
                     this.researchStacks[1] = stack;
                 }

@@ -20,7 +20,7 @@ public class ContainerResearchTable extends Container
         this.entityTable = par2TileEntityResearchTable;
         this.addSlotToContainer(new Slot(par2TileEntityResearchTable, 0, 32, 26));
         this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 2, 74, 55, Item.paper));
-        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 1, 125, 26, SteamCraft.researchPaper, true, par1InventoryPlayer.player));
+        this.addSlotToContainer(new SlotLimiter(par2TileEntityResearchTable, 1, 125, 26, new ItemStack[] {new ItemStack(SteamCraft.researchPaper, 1), new ItemStack(SteamCraft.researchBook, 1)}));
         int var3;
 
         for (var3 = 0; var3 < 3; ++var3)
