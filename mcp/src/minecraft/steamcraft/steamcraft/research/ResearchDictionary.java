@@ -56,10 +56,11 @@ public class ResearchDictionary {
 
     /**
      * Gets the research corresponding to a list of items. Returns the first one it finds, make sure there is only one left.
+     * @param stack
      */
-    public static String getResearchFromItems(List<ItemStack> items) {
+    public static String getResearchFromItems(List<ItemStack> items, ItemStack stack) {
     	for (Research research:researchList.values()) {
-    		if (research.doesContain(items)) {
+    		if (research.doesContain(items, stack)) {
     			return research.token;
     		}
     	}
@@ -68,9 +69,10 @@ public class ResearchDictionary {
 
     /**
      * Returns a boolean that tells if the current research is complete
+     * @param stack
      */
-    public static Boolean isResearchComplete(String token, List<ItemStack> items) {
-    	if (researchList.get(token).doesContainAll(items)) {
+    public static Boolean isResearchComplete(String token, List<ItemStack> items, ItemStack stack) {
+    	if (researchList.get(token).doesContainAll(items, stack)) {
     		return true;
     	}
     	else
@@ -81,11 +83,12 @@ public class ResearchDictionary {
 
     /**
      * Gets the number of researches applying to a list of items. 0 is a failed research
+     * @param stack
      */
-    public static Integer getNumResearchFromItems(List<ItemStack> items) {
+    public static Integer getNumResearchFromItems(List<ItemStack> items, ItemStack stack) {
     	int i = 0;
     	for (Research research:researchList.values()) {
-    		boolean contains = research.doesContain(items);
+    		boolean contains = research.doesContain(items, stack);
     		if (contains) {
     			i++;
     		}

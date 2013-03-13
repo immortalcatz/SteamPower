@@ -8,32 +8,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class ResearchRecipe {
-	public String type;
-
-	public List<ItemStack> items;
-
 	public int position;
 
 	public int page;
 
-	public ResearchRecipe (String par1, int par2, int par3, Object... par5) {
-			List par6 = new ArrayList<ItemStack>();
-	    	for (Object obj:par5) {
-	    		if (obj instanceof Block) {
-	    			par6.add(new ItemStack((Block) obj, 1));
-	    		}
-	    		else if (obj instanceof Item)
-	    		{
-	    			par6.add(new ItemStack((Item) obj, 1));
-	        	}
-	    		else
-	    		{
-	            	par6.add(obj);
-	    		}
-	    	}
-	    	this.type = par1;
+	public String texlocation;
+
+	public int texWidth;
+
+	public int texHeight;
+
+	public ResearchRecipe (int par2, int par3, String par4, int par5, int par6) {
 	    	this.page = par2;
 	    	this.position = par3;
-	    	this.items = par6;
+	    	this.texlocation = par4;
+	    	this.texWidth = par5;
+	    	this.texHeight = par6;
 	}
 }

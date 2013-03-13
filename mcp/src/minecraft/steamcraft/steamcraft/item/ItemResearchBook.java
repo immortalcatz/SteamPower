@@ -2,16 +2,17 @@ package steamcraft.steamcraft.item;
 
 import java.util.List;
 
-import steamcraft.steamcraft.SteamCraft;
-import steamcraft.steamcraft.research.ResearchDictionary;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.research.InventoryResearchBook;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemResearchBook extends ItemResearchNotes{
+    public InventoryResearchBook inventory = new InventoryResearchBook();
 
 	public ItemResearchBook(int par1) {
 		super(par1);
@@ -32,7 +33,15 @@ public class ItemResearchBook extends ItemResearchNotes{
 	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
+		if (par3EntityPlayer.isSneaking()) {
+		if (!par3EntityPlayer.worldObj.isRemote) {
+		par3EntityPlayer.openGui(SteamCraft.instance, 6, par2World, 0, 0, 0);
+		}
+		}
+		else
+		{
 		par3EntityPlayer.openGui(SteamCraft.instance, 5, par2World, 0, 0, 0);
+		}
         return par1ItemStack;
     }
 
@@ -42,5 +51,6 @@ public class ItemResearchBook extends ItemResearchNotes{
     public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
     {
     }
+
 
 }

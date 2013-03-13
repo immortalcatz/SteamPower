@@ -182,16 +182,15 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
         	if (this.researchStacks[1] != null && this.researchStacks[1].itemID == SteamCraft.researchBook.itemID  && this.researchStacks[0] != null) {
         		selected = this.researchStacks[1].getTagCompound().getInteger("SelectedResearch");
         		System.out.println(selected);
-        		if (this.researchStacks[1].stackTagCompound.getCompoundTag(Integer.toString(selected)).getInteger("Complete") == 1 || this.researchStacks[1].stackTagCompound.getCompoundTag("1").getInteger("Complete") == 2) {
+        		if (this.researchStacks[1].stackTagCompound.getCompoundTag(Integer.toString(selected)).getInteger("Complete") == 1 || this.researchStacks[1].stackTagCompound.getCompoundTag(Integer.toString(selected)).getInteger("Complete") == 2) {
         			return;
         		}
         		stack = this.researchStacks[1];
         		newResearch = 2;
-
         	}
             if ((this.researchStacks[2] != null || newResearch > 0) && this.researchStacks[0] != null)
             {
-                if ((newResearch > 0 || this.researchStacks[2].itemID == Item.paper.itemID)  && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0 || this.researchStacks[1].itemID == SteamCraft.researchPaper.itemID ))
+                if ((newResearch > 0 || this.researchStacks[2].itemID == Item.paper.itemID)  && (this.researchStacks[1] == null || this.researchStacks[1].stackSize <= 0 || newResearch > 0 ))
                 {
                 	if (newResearch == 0)
                 	{
@@ -242,15 +241,14 @@ public class TileEntityResearchTable extends TileEntity implements IInventory, I
                 		NBTBase currentTag = stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).getTagList("Contents").tagAt(i);
                 		items.add(ItemStack.loadItemStackFromNBT((NBTTagCompound) currentTag));
                 	}
-                	int researchLeft = ResearchDictionary.getNumResearchFromItems(items);
-                	System.out.println(researchLeft);
+                	int researchLeft = ResearchDictionary.getNumResearchFromItems(items, stack);
                 	if (researchLeft == 0) {
               			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setInteger("Complete", 2);
                 	}
                 	if (researchLeft == 1) {
-                		String research = ResearchDictionary.getResearchFromItems(items);
+                		String research = ResearchDictionary.getResearchFromItems(items, stack);
                     	System.out.println(research);
-                		if (ResearchDictionary.isResearchComplete(research, items)) {
+                		if (ResearchDictionary.isResearchComplete(research, items, stack)) {
                 			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setInteger("Complete", 1);
                 			stack.stackTagCompound.getCompoundTag(Integer.toString(selected)).setString("Research", research);
                 		}

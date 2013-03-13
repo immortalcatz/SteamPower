@@ -43,13 +43,13 @@ public class ItemResearchNotes extends ItemSteamcraft {
 	        int complete = par1ItemStack.stackTagCompound.getCompoundTag("1").getInteger("Complete");
 	        switch (complete) {
 	        case 0:
-	            par3List.add("§eIncomplete");
+	            par3List.add("U+00A7eIncomplete");
 	            break;
 	        case 1:
 	            par3List.add(ResearchDictionary.getNameFromToken(par1ItemStack.stackTagCompound.getCompoundTag("1").getString("Research")));
 	            break;
 	        case 2:
-	            par3List.add("§4Failed");
+	            par3List.add("U+00A74Failed");
 	            break;
 	        }
     	}

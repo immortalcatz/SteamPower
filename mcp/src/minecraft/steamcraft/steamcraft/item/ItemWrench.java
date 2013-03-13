@@ -28,7 +28,7 @@ public class ItemWrench extends ItemSteamcraft{
     @Override
 	public boolean onItemUseFirst(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-
+    	System.out.println(par3World.blockHasTileEntity(par4, par5, par6));
     	 if (!par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack))
          {
              return true;

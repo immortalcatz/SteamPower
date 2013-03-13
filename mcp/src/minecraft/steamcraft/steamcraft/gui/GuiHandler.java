@@ -3,12 +3,15 @@ package steamcraft.steamcraft.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.IGuiHandler;
+import steamcraft.steamcraft.research.ContainerResearchBook;
+import steamcraft.steamcraft.research.GuiResearchBook;
 import steamcraft.steamcraft.research.GuiScreenResearch;
+import steamcraft.steamcraft.research.InventoryResearchBook;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
+import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler
 {
@@ -28,9 +31,10 @@ public class GuiHandler implements IGuiHandler
             case 3:
                 return new ContainerEngineeringTable(player.inventory, (TileEntityEngineeringTable) tile_entity);
             case 4:
-                return null;
             case 5:
                 return null;
+            case 6:
+            	return new ContainerResearchBook(player.inventory, player.inventory.mainInventory[player.inventory.currentItem], new InventoryResearchBook(player.inventory.mainInventory[player.inventory.currentItem]));
         }
 
         return null;
@@ -55,6 +59,8 @@ public class GuiHandler implements IGuiHandler
                 return new GuiScreenResearch(player, player.inventory.mainInventory[player.inventory.currentItem], false);
             case 5:
                 return new GuiScreenResearch(player, player.inventory.mainInventory[player.inventory.currentItem], true);
+            case 6:
+            	return new GuiResearchBook(player.inventory, player.inventory.mainInventory[player.inventory.currentItem]);
 
         }
 

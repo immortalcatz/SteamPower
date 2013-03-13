@@ -6,11 +6,13 @@ import steamcraft.steamcraft.client.render.EngineeringTableRender;
 import steamcraft.steamcraft.client.render.RenderBoiler;
 import steamcraft.steamcraft.client.render.RenderMech;
 import steamcraft.steamcraft.client.render.ResearchTableRender;
+import steamcraft.steamcraft.client.render.SteamPistonRender;
 import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.entity.EntityMech;
 import steamcraft.steamcraft.entity.EntityMusketBall;
 import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
+import steamcraft.steamcraft.tileentity.TileEntitySteamPistonMoving;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 public class ClientProxy extends CommonProxy
@@ -27,6 +29,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerBlockHandler(new ResearchTableRender());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEngineeringTable.class, new EngineeringTableRender());
         RenderingRegistry.registerBlockHandler(new EngineeringTableRender());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamPistonMoving.class, new SteamPistonRender());
     }
 
 }

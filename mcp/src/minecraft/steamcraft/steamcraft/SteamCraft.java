@@ -1,7 +1,5 @@
 package steamcraft.steamcraft;
 
-import java.util.Arrays;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
@@ -21,6 +19,9 @@ import steamcraft.steamcraft.block.BlockForgeMain;
 import steamcraft.steamcraft.block.BlockForgePiece;
 import steamcraft.steamcraft.block.BlockResearchTable;
 import steamcraft.steamcraft.block.BlockSteam;
+import steamcraft.steamcraft.block.BlockSteamPistonBase;
+import steamcraft.steamcraft.block.BlockSteamPistonExtension;
+import steamcraft.steamcraft.block.BlockSteamPistonMoving;
 import steamcraft.steamcraft.block.BlockSteamcraftOre;
 import steamcraft.steamcraft.block.BlockSteamcraftStorage;
 import steamcraft.steamcraft.common.CommonProxy;
@@ -34,7 +35,6 @@ import steamcraft.steamcraft.item.ItemSteamcraftArmor;
 import steamcraft.steamcraft.item.ItemWrench;
 import steamcraft.steamcraft.packet.PacketHandler;
 import steamcraft.steamcraft.research.Research;
-import steamcraft.steamcraft.research.ResearchDictionary;
 import steamcraft.steamcraft.research.ResearchRecipe;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
@@ -92,6 +92,9 @@ public class SteamCraft {
 	public static Block steam;
 	public static Block researchTable;
 	public static Block engineeringTable;
+	public static Block steamPistonBase;
+	public static BlockSteamPistonMoving steamPistonMoving;
+	public static Block steamPistonExtension;
 
 	//Items
 	public static Item musketBall;
@@ -129,6 +132,7 @@ public class SteamCraft {
 		//Research
 	public static Research forge;
 	public static Research basic;
+	public static Research brass;
 
 		//Achievements
 	public static Achievement AchResearch;
@@ -163,6 +167,9 @@ public class SteamCraft {
 		steam = new BlockSteam(165).setBlockName("blockSteam");
 		researchTable = new BlockResearchTable(169).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("researchTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
 		engineeringTable = new BlockEngineeringTable(179).setHardness(2.0F).setStepSound(Block.soundWoodFootstep).setBlockName("engineeringTable").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
+		steamPistonBase = (new BlockSteamPistonBase(190, 107, false)).setBlockName("pistonSteamBase").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
+	    steamPistonMoving = new BlockSteamPistonMoving(191);
+	    steamPistonExtension = (new BlockSteamPistonExtension(192, 107)).setRequiresSelfNotify();
 
 
 		//Initialize Items
@@ -203,11 +210,15 @@ public class SteamCraft {
 		brassBoots = (new ItemSteamcraftArmor(7018, materialBrass, 4, 3, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
 
 			//Research
-	String researchDescription = "You have discovered that by enlarging the furnace, it can reach hotter temperatures. This discovery could potentially allow you to construct alloys in the future. ~cr{one;two;three;four;five;six;seven;eight;nine;}cr~Test";
 		forge = new Research("forge", "Forge", null, new ItemStack(blockFurnaceExtension,1), Block.stoneOvenIdle, SteamCraft.ingotCopper);
 		forge.addDescriptionPage("\npsst secret page\n2\n3\n4\n5\n6");
-		forge.addRecipe(new ResearchRecipe("crafting", 0, 2,Block.cobblestone, ingotCopper, Block.cobblestone, ingotCopper, Item.ingotIron, Block.cobblestone, ingotCopper, Block.cobblestone, ingotCopper, blockFurnaceExtension));
+		forge.addRecipe(new ResearchRecipe(0, 2, this.guiLocation + "basicrecipe.png", 116, 54));
 		forge.registerResearch();
+		Research[] preR = new Research[1];
+		preR[0] = forge;
+		brass = new Research("brass", "Brass", preR, new ItemStack(blockFurnaceExtension,1), SteamCraft.ingotZinc, SteamCraft.ingotCopper);
+		brass.addDescriptionPage("\nbrass looks like gold");
+		brass.registerResearch();
 		basic = new Research("basic", "Scientific Method", null, new ItemStack(blockFurnaceExtension));
 		basic.addDescriptionPage("test");
 		basic.registerResearch();
@@ -265,6 +276,12 @@ public class SteamCraft {
 
 		GameRegistry.registerBlock(blockForgeMain, "blockForgeMain"); //Forge Container Piece
 		MinecraftForge.setBlockHarvestLevel(blockForgeMain, "pickaxe", 0);
+
+		GameRegistry.registerBlock(steamPistonBase, "steamPistonBase"); //Research Table
+
+		GameRegistry.registerBlock(steamPistonMoving, "steamPistonMoving"); //Research Table
+
+		GameRegistry.registerBlock(steamPistonExtension, "steamPistonExtension"); //Research Table
 
 				//Tile Entities
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "tileEntityBoiler");

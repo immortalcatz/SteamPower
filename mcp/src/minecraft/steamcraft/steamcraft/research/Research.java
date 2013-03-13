@@ -91,13 +91,27 @@ public class Research {
     }
 
 
-    public Boolean doesContain(List<ItemStack> items) {
+    public Boolean doesContain(List<ItemStack> items, ItemStack stack) {
+    	Research[] pre = this.prerequisites;
+    	if (pre != null) {
+    	mainLoop1: for (Research currResearch:pre) {
+    		for (int i = 0; i < stack.stackTagCompound.getTags().size() - 1; i ++) {
+    			if(stack.stackTagCompound.getCompoundTag(Integer.toString(i)).getString("Research").equals(currResearch.token)) {
+    				continue mainLoop1;
+    			}
+    			System.out.println(stack.stackTagCompound.getCompoundTag(Integer.toString(i)).getString("Research"));
+    			System.out.println(currResearch.token);
+    			System.out.println(stack.stackTagCompound.getCompoundTag(Integer.toString(i)).getString("Research").equals(currResearch.token));
+    		}
+    		return false;
+    	}
+    	}
     	List<ItemStack> stuff = this.researchItems;
-    	mainLoop: for (ItemStack item:items) {
+    	mainLoop2: for (ItemStack item:items) {
         	for (ItemStack researchItem:stuff) {
         		if(item.isItemEqual(researchItem)) {
         			//remainingItems.remove(researchItem);
-        			continue mainLoop;
+        			continue mainLoop2;
         		}
         	}
         	return false;
@@ -105,7 +119,18 @@ public class Research {
     	return true;
     }
 
-	public boolean doesContainAll(List<ItemStack> items) {
+	public boolean doesContainAll(List<ItemStack> items, ItemStack stack) {
+    	Research[] pre = this.prerequisites;
+    	if (pre != null) {
+    	mainLoop1: for (Research currResearch:pre) {
+    		for (int i = 0; i < stack.stackTagCompound.getTags().size() - 1; i ++) {
+    			if(stack.stackTagCompound.getCompoundTag(Integer.toString(i)).getString("Research").equals(currResearch.token)) {
+    				continue mainLoop1;
+    			}
+    		}
+    		return false;
+    	}
+    	}
 		List<ItemStack> remainingItems = this.researchItems;
     	mainLoop: for (ItemStack researchItem:remainingItems) {
         	for (ItemStack item:items) {

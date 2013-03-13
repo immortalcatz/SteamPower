@@ -1,5 +1,7 @@
 package steamcraft.steamcraft.research;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.Collection;
 
 
@@ -14,14 +16,18 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.ChatAllowedCharacters;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import steamcraft.steamcraft.SteamCraft;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -192,7 +198,19 @@ public class GuiScreenResearch extends GuiContainer
             this.maxResearch = par2ItemStack.stackTagCompound.getTags().size() - 1;
             this.bookmarkpage = par2ItemStack.stackTagCompound.getInteger("SelectedResearch");
             this.index = book;
+            if (!(bookmarkpage > maxResearch)) {
+            	this.index = false;
+            	this.currentResearch = bookmarkpage;
+                this.researchKey = itemstack.stackTagCompound.getCompoundTag(Integer.toString(bookmarkpage)).getString("Research");
+                this.complete = itemstack.stackTagCompound.getCompoundTag(Integer.toString(bookmarkpage)).getInteger("Complete");
+            	if (itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getInteger("Complete") == 1) {
+                this.totalPages = ResearchDictionary.researchList.get(researchKey).description.size();
+            	}
+            }
             this.isBook = book;
+            if (this.index) {
+                this.totalPages = (this.maxResearch - (this.maxResearch % 5))/5 + 1;
+            }
 
             System.out.println(bookmarkpage);
 
@@ -222,7 +240,7 @@ public class GuiScreenResearch extends GuiContainer
         int var2 = (this.height - this.bookImageHeight - 40) / 2;
         this.controlList.add(this.buttonNextPage = new GuiButtonNextPage(1, var1 + 120, var2 + 154, true));
         this.controlList.add(this.buttonPreviousPage = new GuiButtonNextPage(2, var1 + 38, var2 + 154, false));
-        this.controlList.add(this.buttonIndex = new GuiButtonNextPage(8, var1 + 33, var2 + 10, false));
+        this.controlList.add(this.buttonIndex = new GuiButtonNextPage(8, var1 + 28, var2 + 10, false));
         this.controlList.add(this.buttonMenu1 = new GuiButtonSelect(3, var1 + 35, var2 + 30, 110, 20, ""));
         this.controlList.add(this.buttonMenu2 = new GuiButtonSelect(4, var1 + 35, var2 + 55, 110, 20, ""));
         this.controlList.add(this.buttonMenu3 = new GuiButtonSelect(5, var1 + 35, var2 + 80, 110, 20, ""));
@@ -290,6 +308,27 @@ public class GuiScreenResearch extends GuiContainer
 
     }
 
+    private void updateBookmark() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(8);
+        DataOutputStream outputStream = new DataOutputStream(bos);
+        try
+        {
+            outputStream.writeByte(2);
+            outputStream.writeInt(editingPlayer.worldObj.provider.dimensionId);
+            outputStream.writeInt(this.bookmarkpage);
+            outputStream.writeUTF(editingPlayer.username);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        Packet250CustomPayload packet = new Packet250CustomPayload();
+        packet.channel = "SteamCraft";
+        packet.data = bos.toByteArray();
+        packet.length = bos.size();
+        PacketDispatcher.sendPacketToServer(packet);
+    }
+
     /**
      * Fired when a control is clicked. This is the equivalent of ActionListener.actionPerformed(ActionEvent e).
      */
@@ -317,30 +356,34 @@ public class GuiScreenResearch extends GuiContainer
             {
                 this.index = true;
                 this.currPage = 0;
+                this.totalPages = (this.maxResearch - (this.maxResearch % 5))/5 + 1;
             }
             else if (par1GuiButton.id == 9)
             {
                 if (this.currentResearch == this.bookmarkpage) {
                 	this.bookmarkpage = this.maxResearch + 1;
+                	System.out.println("changed");
                 }
                 else
                 {
                 	this.bookmarkpage = this.currentResearch;
+                	System.out.println("changed");
                 }
-                itemstack.stackTagCompound.setInteger("SelectedResearch", this.bookmarkpage);
-                editingPlayer.inventory.mainInventory[editingPlayer.inventory.currentItem] = itemstack;
+                editingPlayer.inventory.mainInventory[editingPlayer.inventory.currentItem].stackTagCompound.setInteger("SelectedResearch", this.bookmarkpage);
+                updateBookmark();
+
             }
             else if (par1GuiButton.id > 2)
             {
-            	if (itemstack.stackTagCompound.getCompoundTag(Integer.toString(par1GuiButton.id - 2 + (currPage*5))).getInteger("Complete") == 1) {
-	                this.currPage = 0;
 	                this.index = false;
 	                this.currentResearch = par1GuiButton.id + (currPage*5) - 2;
 	                NBTTagCompound var4 = itemstack.getTagCompound();
-	                this.researchKey = itemstack.stackTagCompound.getCompoundTag(Integer.toString(par1GuiButton.id - 2 + (currPage*5))).getString("Research");
-	                this.complete = itemstack.stackTagCompound.getCompoundTag(Integer.toString(par1GuiButton.id - 2 + (currPage*5))).getInteger("Complete");
-	                this.totalPages = ResearchDictionary.researchList.get(researchKey).description.size();
-            	}
+	                this.researchKey = itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getString("Research");
+	                this.complete = itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getInteger("Complete");
+	            	if (itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getInteger("Complete") == 1) {
+	                    this.totalPages = ResearchDictionary.researchList.get(researchKey).description.size();
+	                }
+	                this.currPage = 0;
             }
 
             this.updateButtons();
@@ -350,6 +393,17 @@ public class GuiScreenResearch extends GuiContainer
     private void addNewPage()
     {
 
+    }
+
+    private void drawItemStack(ItemStack par1ItemStack, int par2, int par3)
+    {
+        GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+        this.zLevel = 200.0F;
+        itemRenderer.zLevel = 200.0F;
+        itemRenderer.renderItemAndEffectIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
+        itemRenderer.renderItemOverlayIntoGUI(this.fontRenderer, this.mc.renderEngine, par1ItemStack, par2, par3);
+        this.zLevel = 0.0F;
+        itemRenderer.zLevel = 0.0F;
     }
 
 	@Override
@@ -363,23 +417,34 @@ public class GuiScreenResearch extends GuiContainer
         this.drawTexturedModalRect(var5, var6, 0, 0, this.bookImageWidth, this.bookImageHeight);
 
         if (!index) {
-	        String var8;
-	        var8 = ResearchDictionary.getDescFromToken(researchKey, currPage);
-	        String var7;
-	        int var9;
-	        this.fontRenderer.drawSplitString(var8, var5 + 30, var6 + 0 + 25, 116, 0);
-	        List<ResearchRecipe> recipes = ResearchDictionary.getRecipesFromToken(this.researchKey);
-	        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	        this.mc.renderEngine.bindTexture(var4);
-	        for (ResearchRecipe recipe:recipes) {
-	        	if (recipe.page == currPage) {
-	        		this.drawTexturedModalRect(var5 + 33, var6+ 30 + (recipe.position*9), 140, 202, 116, 54);
-	        	}
-	        }
+        	if (itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getInteger("Complete") == 1) {
+		        String var8;
+		        var8 = ResearchDictionary.getDescFromToken(researchKey, currPage);
+		        String var7;
+		        int var9;
+		        this.fontRenderer.drawSplitString(var8, var5 + 30, var6 + 0 + 25, 116, 0);
+		        this.fontRenderer.drawSplitString(ResearchDictionary.getNameFromToken(this.researchKey), var5 + 55, var6 + 0 + 15, 116, 0);
+		        List<ResearchRecipe> recipes = ResearchDictionary.getRecipesFromToken(this.researchKey);
+		        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		        for (ResearchRecipe recipe:recipes) {
+		        	if (recipe.page == currPage) {
+		        		this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture(recipe.texlocation));
+		        		this.drawTexturedModalRect(var5 + 33, var6+ 30 + (recipe.position*9), 0, 0, recipe.texWidth, recipe.texHeight);
+		        	}
+		        }
+        	}
+        	else if (itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getInteger("Complete") == 2) {
+		        this.fontRenderer.drawSplitString("Incomplete", var5 + 55, var6 + 0 + 15, 116, 0);
+        		for (int i = 0; i < itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getTagList("Contents").tagCount(); i++) {
+        			NBTBase currentTag = itemstack.stackTagCompound.getCompoundTag(Integer.toString(this.currentResearch)).getTagList("Contents").tagAt(i);
+        			ItemStack thisItem = ItemStack.loadItemStackFromNBT((NBTTagCompound) currentTag);
+        			this.drawItemStack(thisItem, var5 + 33 + ((i % 6) * 18), var6+ 30 + ((i - (i % 6)) /6 ) * 18);
+        		}
+        	}
         }
         else
         {
-        	 this.fontRenderer.drawSplitString("Index", var5 + 80, var6 + 0 + 15, 116, 0);
+        	 this.fontRenderer.drawSplitString("Index", var5 + 75, var6 + 0 + 15, 116, 0);
         }
 
 	}
