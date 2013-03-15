@@ -231,6 +231,8 @@ public class SteamCraft {
 		GameRegistry.registerBlock(blockForgeMain, "blockForgeMain"); //Forge Container Piece
 		MinecraftForge.setBlockHarvestLevel(blockForgeMain, "pickaxe", 0);
 
+		GameRegistry.registerBlock(steam, "steam"); //Research Table
+
 				//Tile Entities
 		GameRegistry.registerTileEntity(TileEntityBoiler.class, "tileEntityBoiler");
 		GameRegistry.registerTileEntity(TileEntityForge.class, "tileEntityForge");
