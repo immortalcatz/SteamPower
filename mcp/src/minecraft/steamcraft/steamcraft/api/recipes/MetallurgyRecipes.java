@@ -30,9 +30,11 @@ public class MetallurgyRecipes
     }
 
     public RecipeMetallurgy getMetallurgyRecipe(Collection<ItemStack> ingredients) {
+    	System.out.println("Finding recipe.");
     	for (RecipeMetallurgy recipe : recipes) {
     		if (recipe.canSmelt(ingredients)) return recipe;
     	}
+    	System.out.println("No recipe found.");
     	return null;
     }
 }

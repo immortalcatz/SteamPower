@@ -1,5 +1,9 @@
 package steamcraft.steamcraft;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import steamcraft.steamcraft.api.recipes.MetallurgyRecipes;
 import steamcraft.steamcraft.block.*;
 import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
@@ -165,8 +169,8 @@ public class SteamCraft {
 		brassBoots = (new ItemSteamcraftArmor(7018, materialBrass, 4, 3, false, armorLocation+"brass_1.png", armorLocation+"brass_2.png").setItemName("brassLegs").setIconCoord(1, 4).setCreativeTab(CreativeTabs.tabCombat));
 
 		//Registration
-		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, SteamCraft.instance, 100, 1, true);
-		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMech.class, "Mech", 1, SteamCraft.instance, 100, 5, true);
+		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMusketBall.class, "MusketBall", 0, instance, 100, 1, true);
+		EntityRegistry.registerModEntity(steamcraft.steamcraft.entity.EntityMech.class, "Mech", 1, instance, 100, 5, true);
 
 		GameRegistry.registerWorldGenerator(new WorldGenBoiler());
 
@@ -271,31 +275,33 @@ public class SteamCraft {
 
 	public void addRecipes()
 	{
-		GameRegistry.addShapelessRecipe(new ItemStack(SteamCraft.musketBall, 1, 0), Block.cobblestone);
-		GameRegistry.addShapelessRecipe(new ItemStack(SteamCraft.musketCartridge, 1, 0), Item.gunpowder, Item.paper, SteamCraft.musketBall);
-		GameRegistry.addSmelting(SteamCraft.copperOre.blockID, new ItemStack(SteamCraft.ingotCopper), 0.5F);
-		GameRegistry.addSmelting(SteamCraft.zincOre.blockID, new ItemStack(SteamCraft.ingotZinc), 0.5F);
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blockCopper, 1), "XXX", "XXX", "XXX", 'X', "ingotCopper"));
-		GameRegistry.addShapelessRecipe(new ItemStack(SteamCraft.ingotCopper, 9, 0), SteamCraft.blockCopper);
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blockZinc, 1), "XXX", "XXX", "XXX", 'X', "ingotZinc"));
+		GameRegistry.addShapelessRecipe(new ItemStack(musketBall, 1, 0), Block.cobblestone);
+		GameRegistry.addShapelessRecipe(new ItemStack(musketCartridge, 1, 0), Item.gunpowder, Item.paper, musketBall);
+		GameRegistry.addSmelting(copperOre.blockID, new ItemStack(ingotCopper), 0.5F);
+		GameRegistry.addSmelting(zincOre.blockID, new ItemStack(ingotZinc), 0.5F);
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockCopper, 1), "XXX", "XXX", "XXX", 'X', "ingotCopper"));
+		GameRegistry.addShapelessRecipe(new ItemStack(ingotCopper, 9, 0), blockCopper);
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockZinc, 1), "XXX", "XXX", "XXX", 'X', "ingotZinc"));
 
-		GameRegistry.addShapelessRecipe(new ItemStack(SteamCraft.ingotZinc, 9, 0), blockZinc);
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blockBrass, 1), "XXX", "XXX", "XXX", 'X', "ingotBrass"));
-		GameRegistry.addShapelessRecipe(new ItemStack(SteamCraft.ingotBrass, 9, 0), blockBrass);
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blockFurnaceExtension, 1), "XFX", "FYF", "XFX", 'X', Block.cobblestone, 'F', "ingotCopper", 'Y', Item.ingotIron));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.stock, 1), "PPP", " PP", 'P', "plankWood"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musketBarrel, 1), "III", 'I', Item.ingotIron));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbussBarrel, 1), "III", "III", 'I', "ingotBrass"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.flintlock, 1), "F  ", "I  ", "III", 'I', Item.ingotIron, 'F', Item.flintAndSteel));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", "  S", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.musket, 1), "B  ", " BF", " P ", 'B', SteamCraft.musketBarrel, 'F', SteamCraft.flintlock, 'P', "plankWood"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SteamCraft.blunderbuss, 1), "B  ", " BF", "  S", 'B', SteamCraft.blunderbussBarrel, 'F', SteamCraft.flintlock, 'S', SteamCraft.stock));
+		GameRegistry.addShapelessRecipe(new ItemStack(ingotZinc, 9, 0), blockZinc);
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockBrass, 1), "XXX", "XXX", "XXX", 'X', "ingotBrass"));
+		GameRegistry.addShapelessRecipe(new ItemStack(ingotBrass, 9, 0), blockBrass);
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockFurnaceExtension, 1), "XFX", "FYF", "XFX", 'X', Block.cobblestone, 'F', "ingotCopper", 'Y', Item.ingotIron));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(stock, 1), "PPP", " PP", 'P', "plankWood"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(musketBarrel, 1), "III", 'I', Item.ingotIron));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blunderbussBarrel, 1), "III", "III", 'I', "ingotBrass"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(flintlock, 1), "F  ", "I  ", "III", 'I', Item.ingotIron, 'F', Item.flintAndSteel));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(musket, 1), "B  ", " BF", "  S", 'B', musketBarrel, 'F', flintlock, 'S', stock));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(musket, 1), "B  ", " BF", " P ", 'B', musketBarrel, 'F', flintlock, 'P', "plankWood"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blunderbuss, 1), "B  ", " BF", "  S", 'B', blunderbussBarrel, 'F', flintlock, 'S', stock));
+
+		MetallurgyRecipes.metallurgy().addAlloy(Arrays.asList(new ItemStack(ingotZinc, 1)), new ItemStack(ingotBrass, 1), 0.5F);
 	}
 
 	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
-		ThaumcraftApi.registerObjectTag(SteamCraft.ingotZinc.itemID, -1, (new ObjectTags()).add(EnumTag.METAL, 6).add(EnumTag.HEAL, 2));
-		ThaumcraftApi.registerObjectTag(SteamCraft.zincOre.blockID, -1, (new ObjectTags()).add(EnumTag.METAL, 5).add(EnumTag.HEAL, 1).add(EnumTag.ROCK, 2));
+		ThaumcraftApi.registerObjectTag(ingotZinc.itemID, -1, (new ObjectTags()).add(EnumTag.METAL, 6).add(EnumTag.HEAL, 2));
+		ThaumcraftApi.registerObjectTag(zincOre.blockID, -1, (new ObjectTags()).add(EnumTag.METAL, 5).add(EnumTag.HEAL, 1).add(EnumTag.ROCK, 2));
 
 	}
 }

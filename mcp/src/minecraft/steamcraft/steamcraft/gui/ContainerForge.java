@@ -24,8 +24,8 @@ public class ContainerForge extends Container
     {
         this.furnace = par2TileEntityForge;
         this.addSlotToContainer(new Slot(par2TileEntityForge, 0, 56, 17));
-        this.addSlotToContainer(new Slot(par2TileEntityForge, 3, 28, 17));
-        this.addSlotToContainer(new Slot(par2TileEntityForge, 1, 56, 53));
+        this.addSlotToContainer(new Slot(par2TileEntityForge, 1, 28, 17));
+        this.addSlotToContainer(new Slot(par2TileEntityForge, 3, 56, 53));
         this.addSlotToContainer(new SlotForge(par1InventoryPlayer.player, par2TileEntityForge, 2, 116, 35));
         int var3;
 
@@ -43,7 +43,8 @@ public class ContainerForge extends Container
         }
     }
 
-    public void addCraftingToCrafters(ICrafting par1ICrafting)
+    @Override
+	public void addCraftingToCrafters(ICrafting par1ICrafting)
     {
         super.addCraftingToCrafters(par1ICrafting);
         par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.forgeCookTime);
@@ -51,7 +52,8 @@ public class ContainerForge extends Container
         par1ICrafting.sendProgressBarUpdate(this, 2, this.furnace.currentItemBurnTime);
     }
 
-    public void detectAndSendChanges()
+    @Override
+	public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
 
@@ -80,7 +82,8 @@ public class ContainerForge extends Container
         this.lastItemBurnTime = this.furnace.currentItemBurnTime;
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2)
     {
         if (par1 == 0)
@@ -99,12 +102,14 @@ public class ContainerForge extends Container
         }
     }
 
-    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
+    @Override
+	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
     {
         return this.furnace.isUseableByPlayer(par1EntityPlayer);
     }
 
-    public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
+    @Override
+	public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
     {
         ItemStack var3 = null;
         Slot var4 = (Slot)this.inventorySlots.get(par2);
@@ -117,9 +122,7 @@ public class ContainerForge extends Container
             if (par2 == 2)
             {
                 if (!this.mergeItemStack(var5, 3, 39, true))
-                {
-                    return null;
-                }
+					return null;
 
                 var4.onSlotChange(var5, var3);
             }
@@ -128,29 +131,21 @@ public class ContainerForge extends Container
                 if (FurnaceRecipes.smelting().getSmeltingResult(var5) != null || var5.itemID == SteamCraft.ingotCopper.itemID)
                 {
                     if (!this.mergeItemStack(var5, 0, 1, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
                 else if (var5.itemID == SteamCraft.ingotZinc.itemID)
                 {
                     if (!this.mergeItemStack(var5, 1, 2, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
                 else if (TileEntityForge.isItemFuel(var5))
                 {
                     if (!this.mergeItemStack(var5, 2, 3, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
             }
             else if (!this.mergeItemStack(var5, 4, 39, false))
-            {
-                return null;
-            }
+				return null;
 
             if (var5.stackSize == 0)
             {
@@ -162,9 +157,7 @@ public class ContainerForge extends Container
             }
 
             if (var5.stackSize == var3.stackSize)
-            {
-                return null;
-            }
+				return null;
 
             var4.onPickupFromSlot(par1EntityPlayer, var5);
         }

@@ -1,11 +1,13 @@
 package steamcraft.steamcraft.api.util;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class ItemAnonymous {
 	private int itemID;
 	private int metadata;
 	private int amount;
+	private int oreID;
 
 	public int getItemID() {
 		return itemID;
@@ -31,6 +33,14 @@ public class ItemAnonymous {
 		this.amount = amount;
 	}
 
+	public int getOreID() {
+		return this.oreID;
+	}
+
+	public void setOreID(int oreID) {
+		this.oreID = oreID;
+	}
+
 	public ItemAnonymous() {
 		super();
 	}
@@ -39,18 +49,19 @@ public class ItemAnonymous {
 		itemID = stack.itemID;
 		metadata = stack.getItemDamage();
 		amount = stack.stackSize;
+
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof ItemAnonymous)) return false;
 		ItemAnonymous nodeO = (ItemAnonymous)o;
-		if (nodeO.itemID == this.itemID && nodeO.metadata == this.metadata && nodeO.amount == this.amount) return true;
+		if ((nodeO.itemID == this.itemID && nodeO.metadata == this.metadata && nodeO.amount == this.amount) && nodeO.oreID == this.oreID) return true;
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return (amount ^ itemID) ^ (metadata * 31);
+		return ((amount ^ itemID) ^ (metadata * 31)) ^ oreID;
 	}
 }

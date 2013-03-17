@@ -1,8 +1,5 @@
 package steamcraft.steamcraft.item;
 
-import steamcraft.steamcraft.SteamCraft;
-import steamcraft.steamcraft.client.ClientProxy;
-import steamcraft.steamcraft.entity.EntityMusketBall;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
+
+import steamcraft.steamcraft.SteamCraft;
+import steamcraft.steamcraft.entity.EntityMusketBall;
 
 public class ItemFirearm extends Item
 {
@@ -57,18 +58,14 @@ public class ItemFirearm extends Item
             MinecraftForge.EVENT_BUS.post(event);
 
             if (event.isCanceled())
-            {
-                return;
-            }
+				return;
 
             var6 = event.charge;
             float var7 = var6 / 20.0F;
             var7 = (var7 * var7 + var7 * 2.0F) / 3.0F;
 
             if (var7 < 0.1D)
-            {
-                return;
-            }
+				return;
 
             if (var7 > 1.0F)
             {
@@ -209,13 +206,9 @@ public class ItemFirearm extends Item
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
         if ((nbt.getBoolean("loaded")) || (nbt.getBoolean("done")))
-        {
-            return 72000;
-        }
-        else
-        {
-            return reloadTime;
-        }
+			return 72000;
+		else
+			return reloadTime;
     }
 
     /**
@@ -235,13 +228,9 @@ public class ItemFirearm extends Item
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
         if (nbt.getBoolean("loaded"))
-        {
-            return EnumAction.bow;
-        }
-        else
-        {
-            return EnumAction.block;
-        }
+			return EnumAction.bow;
+		else
+			return EnumAction.block;
     }
 
     /**
@@ -266,9 +255,7 @@ public class ItemFirearm extends Item
             MinecraftForge.EVENT_BUS.post(event);
 
             if (event.isCanceled())
-            {
-                return event.result;
-            }
+				return event.result;
 
             par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
         }

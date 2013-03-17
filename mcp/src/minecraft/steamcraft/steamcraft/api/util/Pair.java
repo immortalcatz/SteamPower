@@ -26,4 +26,17 @@ public class Pair<L, R> {
 		this.right = right;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Pair)) return false;
+		Pair pairO = (Pair)o;
+		if (left.equals(pairO.left) && right.equals(pairO.right)) return true;
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return left.hashCode() ^ right.hashCode();
+	}
+
 }
