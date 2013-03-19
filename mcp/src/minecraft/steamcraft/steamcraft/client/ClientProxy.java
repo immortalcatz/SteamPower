@@ -5,6 +5,7 @@ import steamcraft.steamcraft.SteamCraft;
 import steamcraft.steamcraft.client.render.EngineeringTableRender;
 import steamcraft.steamcraft.client.render.RenderBoiler;
 import steamcraft.steamcraft.client.render.RenderMech;
+import steamcraft.steamcraft.client.render.RenderPlating;
 import steamcraft.steamcraft.client.render.ResearchTableRender;
 import steamcraft.steamcraft.client.render.SteamPistonRender;
 import steamcraft.steamcraft.common.CommonProxy;
@@ -30,6 +31,7 @@ public class ClientProxy extends CommonProxy
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEngineeringTable.class, new EngineeringTableRender());
         RenderingRegistry.registerBlockHandler(new EngineeringTableRender());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySteamPistonMoving.class, new SteamPistonRender());
+        RenderingRegistry.registerBlockHandler(new RenderPlating());
     }
 
 }

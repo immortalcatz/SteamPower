@@ -17,6 +17,7 @@ import steamcraft.steamcraft.block.BlockEngineeringTable;
 import steamcraft.steamcraft.block.BlockForge;
 import steamcraft.steamcraft.block.BlockForgeMain;
 import steamcraft.steamcraft.block.BlockForgePiece;
+import steamcraft.steamcraft.block.BlockPlating;
 import steamcraft.steamcraft.block.BlockResearchTable;
 import steamcraft.steamcraft.block.BlockSteam;
 import steamcraft.steamcraft.block.BlockSteamPistonBase;
@@ -27,6 +28,7 @@ import steamcraft.steamcraft.block.BlockSteamcraftStorage;
 import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.ItemFirearm;
+import steamcraft.steamcraft.item.ItemPlating;
 import steamcraft.steamcraft.item.ItemMech;
 import steamcraft.steamcraft.item.ItemResearchBook;
 import steamcraft.steamcraft.item.ItemResearchNotes;
@@ -39,6 +41,7 @@ import steamcraft.steamcraft.research.ResearchRecipe;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
+import steamcraft.steamcraft.tileentity.TileEntityPlating;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
 import thaumcraft.api.EnumTag;
@@ -95,6 +98,7 @@ public class SteamCraft {
 	public static Block steamPistonBase;
 	public static BlockSteamPistonMoving steamPistonMoving;
 	public static Block steamPistonExtension;
+	public static Block platingBrass;
 
 	//Items
 	public static Item musketBall;
@@ -157,7 +161,8 @@ public class SteamCraft {
 		boilerActive = new BlockBoiler(151, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("extruder").setRequiresSelfNotify();
 		blockCopper = new BlockSteamcraftStorage(154, 16).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockCopper").setCreativeTab(CreativeTabs.tabBlock);
 		blockZinc = new BlockSteamcraftStorage(156, 17).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockZinc").setCreativeTab(CreativeTabs.tabBlock);
-		blockBrass = new BlockSteamcraftStorage(155, 18).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockZinc").setCreativeTab(CreativeTabs.tabBlock);
+		blockBrass = new BlockSteamcraftStorage(155, 18).setHardness(5.0F).setResistance(10.0F).setStepSound(Block.soundMetalFootstep).setBlockName("blockBrass").setCreativeTab(CreativeTabs.tabBlock);
+		platingBrass = new BlockPlating(193, 18).setHardness(2.5F).setResistance(5.0F).setStepSound(Block.soundMetalFootstep).setBlockName("platingBrass").setCreativeTab(CreativeTabs.tabBlock).setRequiresSelfNotify();
 		blockFurnaceExtension = new BlockForgePiece(157, 4).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("furnaceExtension").setRequiresSelfNotify().setCreativeTab(CreativeTabs.tabDecorations);
 		blockForge = new BlockForge(158, 4, false).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("blockForge").setTickRandomly(true);
 		blockForgeOn = new BlockForge(160, 4, true).setHardness(3.5F).setStepSound(Block.soundStoneFootstep).setBlockName("blockForgeOn").setTickRandomly(true);
@@ -265,6 +270,9 @@ public class SteamCraft {
 		GameRegistry.registerBlock(blockBrass, "blockBrass"); //Brass Block
 		MinecraftForge.setBlockHarvestLevel(blockBrass, "pickaxe", 1);
 
+		GameRegistry.registerBlock(platingBrass, ItemPlating.class, "platingBrass"); //Brass Plating
+		MinecraftForge.setBlockHarvestLevel(platingBrass, "pickaxe", 1);
+
 		GameRegistry.registerBlock(blockFurnaceExtension, "blockFurnaceExtension"); //Furnace Extension (Forge piece)
 		MinecraftForge.setBlockHarvestLevel(blockFurnaceExtension, "pickaxe", 0);
 
@@ -288,7 +296,7 @@ public class SteamCraft {
 		GameRegistry.registerTileEntity(TileEntityForge.class, "tileEntityForge");
 		GameRegistry.registerTileEntity(TileEntityResearchTable.class, "tileEntityResearchTable");
 		GameRegistry.registerTileEntity(TileEntityEngineeringTable.class, "tileEntityEngineeringTable");
-
+		GameRegistry.registerTileEntity(TileEntityPlating.class, "tileEntityPlating");
 			//Names
 
 				//Blocks
