@@ -1,5 +1,6 @@
 package steamcraft.steamcraft.api.util;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -50,6 +51,12 @@ public class ItemAnonymous {
 		metadata = stack.getItemDamage();
 		amount = stack.stackSize;
 
+	}
+
+	public boolean checkMatch(ItemStack stack) {
+		if (stack.itemID == this.itemID) {
+			if (Item.itemsList[this.itemID].isItemTool(stack) )
+		}
 	}
 
 	@Override
