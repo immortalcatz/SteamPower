@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.api.util;
+package steamcraft.steamcraft.util;
 
 public class Pair<L, R> {
 

@@ -25,8 +25,8 @@ public class ContainerForge extends Container
         this.furnace = par2TileEntityForge;
         this.addSlotToContainer(new Slot(par2TileEntityForge, 0, 56, 17));
         this.addSlotToContainer(new Slot(par2TileEntityForge, 1, 28, 17));
-        this.addSlotToContainer(new Slot(par2TileEntityForge, 3, 56, 53));
         this.addSlotToContainer(new SlotForge(par1InventoryPlayer.player, par2TileEntityForge, 2, 116, 35));
+        this.addSlotToContainer(new Slot(par2TileEntityForge, 3, 56, 53));
         int var3;
 
         for (var3 = 0; var3 < 3; ++var3)

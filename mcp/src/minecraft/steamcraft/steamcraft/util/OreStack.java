@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.api.util;
+package steamcraft.steamcraft.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,8 +9,8 @@ import java.util.Set;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class OreStack {
-	private final String material;
-	private final int amount;
+	private String material;
+	private int amount;
 
 	/**
 	 * A getter for the material of the OreStack.
@@ -26,6 +26,14 @@ public class OreStack {
 	 */
 	public int getAmount() {
 		return amount;
+	}
+
+	/**
+	 * A setter for the amount of the OreStack.
+	 * @param amount the desired amount for the OreStack
+	 */
+	public void setAmount(int amount) {
+		this.amount = amount;
 	}
 
 	/**

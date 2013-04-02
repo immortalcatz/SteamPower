@@ -2,6 +2,7 @@ package steamcraft.steamcraft.tileentity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -17,16 +18,34 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
-import steamcraft.steamcraft.api.recipes.MetallurgyRecipes;
-import steamcraft.steamcraft.api.recipes.RecipeMetallurgy;
+import net.minecraftforge.oredict.OreDictionary;
+
 import steamcraft.steamcraft.block.BlockForgeMain;
+import steamcraft.steamcraft.recipes.MetallurgyRecipes;
+import steamcraft.steamcraft.util.OreStack;
+import steamcraft.steamcraft.util.Pair;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityForge extends TileEntity implements IInventory, ISidedInventory {
+
+	//Constants
+
+	public static final int SLOT_INGREDIENT_ONE = 0;
+
+	public static final int SLOT_INGREDIENT_TWO = 1;
+
+	public static final int SLOT_RESULT = 2;
+
+	public static final int SLOT_FUEL = 3;
+
+	//End Constants
+
     private ItemStack[] forgeItemStacks = new ItemStack[4];
 
     public int forgeBurnTime = 0;
@@ -194,19 +213,19 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         {
             if (this.forgeBurnTime == 0 && this.canSmelt())
             {
-                this.currentItemBurnTime = this.forgeBurnTime = getItemBurnTime(this.forgeItemStacks[3]);
+                this.currentItemBurnTime = this.forgeBurnTime = getItemBurnTime(this.forgeItemStacks[SLOT_FUEL]);
 
                 if (this.forgeBurnTime > 0)
                 {
                     var2 = true;
 
-                    if (this.forgeItemStacks[3] != null)
+                    if (this.forgeItemStacks[SLOT_FUEL] != null)
                     {
-                        --this.forgeItemStacks[3].stackSize;
+                        --this.forgeItemStacks[SLOT_FUEL].stackSize;
 
-                        if (this.forgeItemStacks[3].stackSize == 0)
+                        if (this.forgeItemStacks[SLOT_FUEL].stackSize == 0)
                         {
-                            this.forgeItemStacks[3] = this.forgeItemStacks[3].getItem().getContainerItemStack(forgeItemStacks[3]);
+                            this.forgeItemStacks[SLOT_FUEL] = this.forgeItemStacks[SLOT_FUEL].getItem().getContainerItemStack(forgeItemStacks[SLOT_FUEL]);
                         }
                     }
                 }
@@ -241,28 +260,25 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         }
     }
 
+    private OreStack[] ingredientOres() {
+    	int oreIDOne = OreDictionary.getOreID(forgeItemStacks[SLOT_INGREDIENT_ONE]);
+    	int oreIDTwo = OreDictionary.getOreID(forgeItemStacks[SLOT_INGREDIENT_TWO]);
+    	if (oreIDOne != -1 && oreIDTwo != -1) {
+    		OreStack[] out = new OreStack[2];
+    		out[SLOT_INGREDIENT_ONE] = new OreStack(OreDictionary.getOreName(oreIDOne), forgeItemStacks[SLOT_INGREDIENT_ONE].stackSize);
+    		out[SLOT_INGREDIENT_TWO] = new OreStack(OreDictionary.getOreName(oreIDTwo), forgeItemStacks[SLOT_INGREDIENT_TWO].stackSize);
+    		return out;
+    	}
+    	return null;
+    }
+
     private boolean canSmelt()
     {
-        if (this.forgeItemStacks[0] == null && this.forgeItemStacks[1] == null)
-			return false;
-		else
-        {
-	        ItemStack res;
-			if (this.forgeItemStacks[0] != null && this.forgeItemStacks[1] != null) {
-	        	ArrayList ingredients = new ArrayList(Arrays.asList(forgeItemStacks[0], forgeItemStacks[1]));
-	            RecipeMetallurgy recipe = MetallurgyRecipes.metallurgy().getMetallurgyRecipe(ingredients);
-	            if (recipe != null) {
-	            	res = recipe.getResult();
-	            	if (res != null) return true;
-	            }
-			}
-
-            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[0]);
-            if (res != null) return true;
-
-            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[1]);
-            if (res != null) return true;
-        }
+    	if (this.forgeItemStacks[SLOT_INGREDIENT_ONE] == null && this.forgeItemStacks[SLOT_INGREDIENT_TWO] == null) return false;
+    	Set<OreStack> ores = OreStack.compressCollection(Arrays.asList(ingredientOres()));
+    	if (MetallurgyRecipes.metallurgy().getMetallurgyRecipe(ores) != null) return true;
+    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE]) != null) return true;
+    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO]) != null) return true;
         return false;
     }
 
@@ -270,52 +286,33 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     {
         if (this.canSmelt())
         {
-        	ArrayList ingredients = new ArrayList(Arrays.asList(forgeItemStacks[0], forgeItemStacks[1]));
-            RecipeMetallurgy recipe = MetallurgyRecipes.metallurgy().getMetallurgyRecipe(ingredients);
-            ItemStack res;
-            if (recipe != null) {
-            	System.out.println("Smelting metallurgy");
-	            res = recipe.getResult();
-	            if (res != null) {
-		            if (this.forgeItemStacks[2] == null)
-		            {
-		                this.forgeItemStacks[2] = res.copy();
-		            } else if (this.forgeItemStacks[2].isItemEqual(res))
-		            {
-		                forgeItemStacks[2].stackSize += res.stackSize;
-		            }
-
-		            ArrayList<ItemStack> leftovers = recipe.getLeftovers(ingredients);
-		            if (leftovers == null) return;
-		            this.forgeItemStacks[0] = leftovers.get(0);
-		            this.forgeItemStacks[1] = leftovers.get(1);
-
-		            if (this.forgeItemStacks[0].stackSize <= 0) {
-		            	this.forgeItemStacks[0] = null;
-		            }
-		            if (this.forgeItemStacks[1].stackSize <= 0) {
-		            	this.forgeItemStacks[1] = null;
-		            }
-		            return;
-	            }
-            }
-
-            int slotID = 0;
-            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[0]);
-            if (res == null) {
-            	res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[1]);
-            	slotID = 1;
-            }
-
-            if (res != null) {
-            	if (this.forgeItemStacks[2] == null) {
-            		this.forgeItemStacks[2] = res.copy();
-            	} else if (this.forgeItemStacks[2].isItemEqual(res)) {
-            		forgeItemStacks[2].stackSize += res.stackSize;
+        	ItemStack res;
+        	Pair<ItemStack, Set<OreStack>> recipe = MetallurgyRecipes.metallurgy().getMetallurgyRecipe(OreStack.compressCollection(Arrays.asList(ingredientOres())));
+        	if (recipe != null) {
+        		res = recipe.getLeft();
+            	if (this.forgeItemStacks[SLOT_RESULT] == null) {
+            		this.forgeItemStacks[SLOT_RESULT] = res.copy();
+            	} else if (this.forgeItemStacks[SLOT_RESULT].isItemEqual(res)) {
+            		forgeItemStacks[SLOT_RESULT].stackSize += res.stackSize;
             	}
+            	this.forgeItemStacks = (ItemStack[]) MetallurgyRecipes.getLeftovers(recipe, Arrays.asList(this.forgeItemStacks)).toArray();
+        	} else {
+	            int slotID = 0;
+	            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE]);
+	            if (res == null) {
+	            	res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO]);
+	            	slotID = 1;
+	            }
 
-            	this.forgeItemStacks[slotID].stackSize -= 1;
-            }
+	            if (res != null) {
+	            	if (this.forgeItemStacks[SLOT_RESULT] == null) {
+	            		this.forgeItemStacks[SLOT_RESULT] = res.copy();
+	            	} else if (this.forgeItemStacks[SLOT_RESULT].isItemEqual(res)) {
+	            		forgeItemStacks[SLOT_RESULT].stackSize += res.stackSize;
+	            	}
+	            	this.forgeItemStacks[slotID].stackSize -= 1;
+	            }
+        	}
         }
     }
 

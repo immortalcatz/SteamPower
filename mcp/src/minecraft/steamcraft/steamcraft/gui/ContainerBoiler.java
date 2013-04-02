@@ -8,9 +8,11 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.liquids.LiquidStack;
 
 
 public class ContainerBoiler extends Container
@@ -24,7 +26,7 @@ public class ContainerBoiler extends Container
     {
         this.boiler = boilerEntity;
         this.addSlotToContainer(new Slot(boilerEntity, 0, 34, 41));
-        this.addSlotToContainer(new Slot(boilerEntity, 1, 100, 41));
+        this.addSlotToContainer(new SlotLiquid(boilerEntity, 1, 100, 41, new LiquidStack(Item.bucketWater, 1000)));
 
         for (int y = 0; y < 3; y++)
         {
@@ -118,33 +120,23 @@ public class ContainerBoiler extends Container
                 if (TileEntityBoiler.isItemFuel(item))
                 {
                     if (!this.mergeItemStack(item, 0, 1, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
                 else if (TileEntityBoiler.isItemWaterContainer(item))
                 {
                     if (!this.mergeItemStack(item, 1, 2, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
                 else if (slotIndex >= 2 && slotIndex < 29)
                 {
                     if (!this.mergeItemStack(item, 29, 38, false))
-                    {
-                        return null;
-                    }
+						return null;
                 }
                 else if (slotIndex >= 29 && slotIndex < 38 && !this.mergeItemStack(item, 2, 29, false))
-                {
-                    return null;
-                }
+					return null;
             }
             else if (!this.mergeItemStack(item, 2, 38, false))
-            {
-                return null;
-            }
+				return null;
 
             if (item.stackSize == 0)
             {
@@ -156,9 +148,7 @@ public class ContainerBoiler extends Container
             }
 
             if (item.stackSize == itemOutput.stackSize)
-            {
-                return null;
-            }
+				return null;
 
             slot.onPickupFromSlot(yoursTruly, item);
         }

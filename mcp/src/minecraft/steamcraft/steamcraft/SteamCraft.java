@@ -2,20 +2,26 @@ package steamcraft.steamcraft;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-import steamcraft.steamcraft.api.recipes.MetallurgyRecipes;
 import steamcraft.steamcraft.block.*;
 import steamcraft.steamcraft.common.CommonProxy;
 import steamcraft.steamcraft.gui.GuiHandler;
 import steamcraft.steamcraft.item.*;
+import steamcraft.steamcraft.recipes.MetallurgyRecipes;
 import steamcraft.steamcraft.tileentity.TileEntityBoiler;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
+import steamcraft.steamcraft.util.OreStack;
+import steamcraft.steamcraft.util.Pair;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
 import steamcraft.steamcraft.packet.PacketHandler;
+
 import thaumcraft.api.EnumTag;
 import thaumcraft.api.ObjectTags;
 import thaumcraft.api.ThaumcraftApi;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumArmorMaterial;
@@ -26,6 +32,7 @@ import net.minecraftforge.common.EnumHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
@@ -295,7 +302,10 @@ public class SteamCraft {
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(musket, 1), "B  ", " BF", " P ", 'B', musketBarrel, 'F', flintlock, 'P', "plankWood"));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blunderbuss, 1), "B  ", " BF", "  S", 'B', blunderbussBarrel, 'F', flintlock, 'S', stock));
 
-		MetallurgyRecipes.metallurgy().addAlloy(Arrays.asList(new ItemStack(ingotZinc, 1)), new ItemStack(ingotBrass, 1), 0.5F);
+		Set<OreStack> recipeCache = new HashSet();
+		recipeCache.add(new OreStack("ingotCopper", 1));
+		recipeCache.add(new OreStack("ingotZinc", 3));
+		MetallurgyRecipes.metallurgy().addMetallurgy(new ItemStack(ingotBrass), recipeCache);
 	}
 
 	@PostInit

@@ -1,4 +1,4 @@
-package steamcraft.steamcraft.api.util;
+package steamcraft.steamcraft.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
