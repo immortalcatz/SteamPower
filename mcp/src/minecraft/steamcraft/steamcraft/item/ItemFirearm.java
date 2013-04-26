@@ -20,11 +20,12 @@ public class ItemFirearm extends Item
 {
     public float damage;
     public int reloadTime;
+    public int shellCount;
     public float accuracy;
     public float knockback;
     public boolean shotgun;
 
-    public ItemFirearm(int par1, float par2, int par3, float par4, float par5, boolean par6)
+    public ItemFirearm(int par1, float par2, int par3, float par4, float par5, boolean par6, int par7)
     {
         super(par1);
         this.maxStackSize = 1;
@@ -34,6 +35,7 @@ public class ItemFirearm extends Item
         this.accuracy = par4;
         this.knockback = par5;
         this.shotgun = par6;
+        this.shellCount = par7;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class ItemFirearm extends Item
     {
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-        if (nbt.getBoolean("loaded"))
+        if (nbt.getInteger("loaded") > 0)
         {
             int var6 = this.getMaxItemUseDuration(par1ItemStack) - par4;
             ArrowLooseEvent event = new ArrowLooseEvent(par3EntityPlayer, par1ItemStack, var6);
@@ -128,7 +130,7 @@ public class ItemFirearm extends Item
                 //minecraft.entityRenderer.
             }
 
-            nbt.setBoolean("loaded", false);
+            nbt.setInteger("loaded", nbt.getInteger("loaded") - 1);
 
             if (par2World.isRemote && !par3EntityPlayer.capabilities.isCreativeMode)
             {
@@ -154,7 +156,7 @@ public class ItemFirearm extends Item
                 //done = false;
                 //par3EntityPlayer.inventoryContainer.putStackInSlot(par3EntityPlayer.inventory.currentItem + 36, new ItemStack(BoilerMod.musket, 1));
                 //par3EntityPlayer.inventoryContainer.detectAndSendChanges();
-                nbt.setBoolean("loaded", true);
+                nbt.setInteger("loaded", nbt.getInteger("numloaded"));
                 nbt.setBoolean("done", false);
             }
         }
@@ -170,12 +172,22 @@ public class ItemFirearm extends Item
         {
             if (nbt.getBoolean("done") == false)
             {
+            	nbt.setInteger("numloaded", 1);
                 if (var5)
                 {
                 }
                 else
                 {
                     par3EntityPlayer.inventory.consumeInventoryItem(SteamCraft.musketCartridge.itemID);
+                    if (this.shellCount > 1) {
+                    	for (int i = 1; i < this.shellCount; i++) {
+                    		if (par3EntityPlayer.inventory.hasItem(SteamCraft.musketCartridge.itemID))
+                            {
+                    			par3EntityPlayer.inventory.consumeInventoryItem(SteamCraft.musketCartridge.itemID);
+                    			nbt.setInteger("numloaded", nbt.getInteger("numloaded") + 1);
+                            }
+                    	}
+                    }
                 }
 
                 nbt.setBoolean("done", true);
@@ -202,13 +214,14 @@ public class ItemFirearm extends Item
         {
             par1ItemStack.setTagCompound(new NBTTagCompound());
             NBTTagCompound nbt = par1ItemStack.getTagCompound();
-            nbt.setBoolean("loaded", false);
+            nbt.setInteger("loaded", 0);
+            nbt.setInteger("numloaded", 0);
             //nbt.setBoolean("done", false);
         }
 
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-        if ((nbt.getBoolean("loaded")) || (nbt.getBoolean("done")))
+        if ((nbt.getInteger("loaded") > 0) || (nbt.getBoolean("done")))
         {
             return 72000;
         }
@@ -228,13 +241,14 @@ public class ItemFirearm extends Item
         {
             par1ItemStack.setTagCompound(new NBTTagCompound());
             NBTTagCompound nbt = par1ItemStack.getTagCompound();
-            nbt.setBoolean("loaded", false);
+            nbt.setInteger("loaded", 0);
+            nbt.setInteger("numloaded", 0);
             //nbt.setBoolean("done", false);
         }
 
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-        if (nbt.getBoolean("loaded"))
+        if (nbt.getInteger("loaded") > 0)
         {
             return EnumAction.bow;
         }
@@ -254,13 +268,14 @@ public class ItemFirearm extends Item
         {
             par1ItemStack.setTagCompound(new NBTTagCompound());
             NBTTagCompound nbt = par1ItemStack.getTagCompound();
-            nbt.setBoolean("loaded", false);
+            nbt.setInteger("loaded", 0);
             nbt.setBoolean("done", false);
+            nbt.setInteger("numloaded", 0);
         }
 
         NBTTagCompound nbt = par1ItemStack.getTagCompound();
 
-        if (nbt.getBoolean("loaded"))
+        if (nbt.getInteger("loaded") > 0)
         {
             ArrowNockEvent event = new ArrowNockEvent(par3EntityPlayer, par1ItemStack);
             MinecraftForge.EVENT_BUS.post(event);

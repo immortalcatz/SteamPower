@@ -30,6 +30,7 @@ import steamcraft.steamcraft.item.ItemFirearm;
 import steamcraft.steamcraft.item.ItemMech;
 import steamcraft.steamcraft.item.ItemResearchBook;
 import steamcraft.steamcraft.item.ItemResearchNotes;
+import steamcraft.steamcraft.item.ItemSpyglass;
 import steamcraft.steamcraft.item.ItemSteamcraft;
 import steamcraft.steamcraft.item.ItemSteamcraftArmor;
 import steamcraft.steamcraft.item.ItemWrench;
@@ -41,6 +42,7 @@ import steamcraft.steamcraft.tileentity.TileEntityEngineeringTable;
 import steamcraft.steamcraft.tileentity.TileEntityForge;
 import steamcraft.steamcraft.tileentity.TileEntityResearchTable;
 import steamcraft.steamcraft.worldgen.WorldGenBoiler;
+import steamcraft.steamcraft.event.TickHandler;
 import thaumcraft.api.EnumTag;
 import thaumcraft.api.ObjectTags;
 import thaumcraft.api.ThaumcraftApi;
@@ -58,6 +60,8 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 
 @Mod(modid = "SteamCraft", name = "SteamCraft", version = "0.0.1")
@@ -116,7 +120,9 @@ public class SteamCraft {
 	public static Item musket;
 	public static Item pistol;
     public static Item blunderbuss;
+    public static Item revolver;
 	public static Item toolWrench;
+	public static Item toolSpyglass;
 
 		//Armor
 	public static Item copperHelmet;
@@ -171,6 +177,14 @@ public class SteamCraft {
 	    steamPistonMoving = new BlockSteamPistonMoving(191);
 	    steamPistonExtension = (new BlockSteamPistonExtension(192, 107)).setRequiresSelfNotify();
 
+	    //Tools
+	    musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false, 1)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
+		pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false, 1)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
+		revolver = (new ItemFirearm(7026, 12.5F, 84,0.4F, 1.0F, false, 6)).setIconCoord(2, 2).setItemName("revolver").setCreativeTab(CreativeTabs.tabCombat);
+		blunderbuss = (new ItemFirearm(7019, 25.0F, 95,3.5F, 7.5F, true, 1)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
+		toolWrench = (new ItemWrench(7010)).setIconCoord(6, 0).setItemName("toolWrench").setCreativeTab(CreativeTabs.tabTools);
+		toolSpyglass = (new ItemSpyglass(7027)).setIconCoord(3, 2).setItemName("toolSpyglass").setCreativeTab(CreativeTabs.tabTools);
+
 
 		//Initialize Items
 		musketBall = (new ItemSteamcraft(7006)).setIconCoord(4, 0).setItemName("musketBall").setCreativeTab(CreativeTabs.tabCombat);
@@ -189,12 +203,6 @@ public class SteamCraft {
 		musketBarrel = (new ItemSteamcraft(7004).setIconIndex(10).setItemName("musketBarrel"));
 		blunderbussBarrel = (new ItemSteamcraft(7020).setIconIndex(12).setItemName("blunderbussBarrel"));
 		flintlock = (new ItemSteamcraft(7021).setIconIndex(11).setItemName("flintlock"));
-
-			//Tools
-		musket = (new ItemFirearm(7005, 20.0F, 84,0.1F, 5.0F, false)).setIconCoord(3, 0).setItemName("musket").setCreativeTab(CreativeTabs.tabCombat);
-		pistol = (new ItemFirearm(7008, 15.0F, 42,0.3F, 2.0F, false)).setIconCoord(7, 0).setItemName("pistol").setCreativeTab(CreativeTabs.tabCombat);
-		blunderbuss = (new ItemFirearm(7019, 25.0F, 95,3.5F, 7.5F, true)).setIconCoord(8, 0).setItemName("blunderbuss").setCreativeTab(CreativeTabs.tabCombat);
-		toolWrench = (new ItemWrench(7010)).setIconCoord(6, 0).setItemName("toolWrench").setCreativeTab(CreativeTabs.tabTools);
 
 			//Armor
 		EnumArmorMaterial materialCopper = EnumHelper.addArmorMaterial("spCopper", 12, new int[]{2, 5, 4, 1}, 9);
@@ -311,13 +319,17 @@ public class SteamCraft {
 		LanguageRegistry.addName(ingotZinc, "Zinc Ingot");
 		LanguageRegistry.addName(ingotBrass, "Brass Ingot");
 		LanguageRegistry.addName(ingotGalvanized, "Galvanized Iron Ingot");
+
 		LanguageRegistry.addName(musket, "Flintlock Musket");
 		LanguageRegistry.addName(pistol, "Flintlock Pistol");
 		LanguageRegistry.addName(blunderbuss, "Blunderbuss");
+		LanguageRegistry.addName(revolver, "Flintlock Revolver");
+		LanguageRegistry.addName(toolWrench, "Brass Wrench");
+		LanguageRegistry.addName(toolSpyglass, "Spyglass");
+
 		LanguageRegistry.addName(musketBall, "Musket Ball");
 		LanguageRegistry.addName(itemMech, "Mech");
 		LanguageRegistry.addName(musketCartridge, "Musket Cartridge");
-		LanguageRegistry.addName(toolWrench, "Brass Wrench");
 		LanguageRegistry.addName(stock, "Gun Stock");
 		LanguageRegistry.addName(musketBarrel, "Musket Barrel");
 		LanguageRegistry.addName(blunderbussBarrel, "Blunderbuss Barrel");
@@ -351,6 +363,8 @@ public class SteamCraft {
 
 			//Register Achievements
 		AchievementPage.registerAchievementPage(steamAchievementPage);
+
+		TickRegistry.registerTickHandler(new TickHandler(), Side.CLIENT);
 
 		proxy.registerRenderers();
 		addRecipes();
