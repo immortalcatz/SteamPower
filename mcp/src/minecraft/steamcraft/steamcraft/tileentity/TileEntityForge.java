@@ -2,6 +2,7 @@ package steamcraft.steamcraft.tileentity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -275,10 +276,13 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
     private boolean canSmelt()
     {
     	if (this.forgeItemStacks[SLOT_INGREDIENT_ONE] == null && this.forgeItemStacks[SLOT_INGREDIENT_TWO] == null) return false;
-    	Set<OreStack> ores = OreStack.compressCollection(Arrays.asList(ingredientOres()));
-    	if (MetallurgyRecipes.metallurgy().getMetallurgyRecipe(ores) != null) return true;
-    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE]) != null) return true;
-    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO]) != null) return true;
+    	if (ingredientOres() != null) {
+    		List<OreStack> orel = Arrays.asList(ingredientOres());
+    		Set<OreStack> ores = OreStack.compressCollection(orel);
+    		if (MetallurgyRecipes.metallurgy().getMetallurgyRecipe(ores) != null) return true;
+    	}
+    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE]) != null && (this.forgeItemStacks[SLOT_RESULT] == null || this.forgeItemStacks[SLOT_RESULT].isItemEqual(FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE])))) return true;
+    	if (FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO]) != null && (this.forgeItemStacks[SLOT_RESULT] == null || this.forgeItemStacks[SLOT_RESULT].isItemEqual(FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO])))) return true;
         return false;
     }
 
@@ -287,7 +291,10 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
         if (this.canSmelt())
         {
         	ItemStack res;
-        	Pair<ItemStack, Set<OreStack>> recipe = MetallurgyRecipes.metallurgy().getMetallurgyRecipe(OreStack.compressCollection(Arrays.asList(ingredientOres())));
+        	Pair<ItemStack, Set<OreStack>> recipe = null;
+        	if (ingredientOres() != null) {
+        		recipe = MetallurgyRecipes.metallurgy().getMetallurgyRecipe(OreStack.compressCollection(Arrays.asList(ingredientOres())));
+        	}
         	if (recipe != null) {
         		res = recipe.getLeft();
             	if (this.forgeItemStacks[SLOT_RESULT] == null) {
@@ -295,9 +302,12 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
             	} else if (this.forgeItemStacks[SLOT_RESULT].isItemEqual(res)) {
             		forgeItemStacks[SLOT_RESULT].stackSize += res.stackSize;
             	}
-            	this.forgeItemStacks = (ItemStack[]) MetallurgyRecipes.getLeftovers(recipe, Arrays.asList(this.forgeItemStacks)).toArray();
-        	} else {
-	            int slotID = 0;
+            	this.forgeItemStacks = MetallurgyRecipes.getLeftovers(recipe, Arrays.asList(this.forgeItemStacks)).toArray(new ItemStack[MetallurgyRecipes.getLeftovers(recipe, Arrays.asList(this.forgeItemStacks)).size()]);
+
+        	}
+        	else
+        	{
+        		int slotID = 0;
 	            res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_ONE]);
 	            if (res == null) {
 	            	res = FurnaceRecipes.smelting().getSmeltingResult(this.forgeItemStacks[SLOT_INGREDIENT_TWO]);
@@ -310,7 +320,13 @@ public class TileEntityForge extends TileEntity implements IInventory, ISidedInv
 	            	} else if (this.forgeItemStacks[SLOT_RESULT].isItemEqual(res)) {
 	            		forgeItemStacks[SLOT_RESULT].stackSize += res.stackSize;
 	            	}
+	            	if (this.forgeItemStacks[slotID].stackSize == 1) {
+	            		this.forgeItemStacks[slotID] = null;
+	            	}
+	            	else
+	            	{
 	            	this.forgeItemStacks[slotID].stackSize -= 1;
+	            	}
 	            }
         	}
         }

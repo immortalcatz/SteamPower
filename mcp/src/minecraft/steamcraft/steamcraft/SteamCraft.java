@@ -305,7 +305,7 @@ public class SteamCraft {
 		Set<OreStack> recipeCache = new HashSet();
 		recipeCache.add(new OreStack("ingotCopper", 1));
 		recipeCache.add(new OreStack("ingotZinc", 3));
-		MetallurgyRecipes.metallurgy().addMetallurgy(new ItemStack(ingotBrass), recipeCache);
+		MetallurgyRecipes.metallurgy().addMetallurgy(new ItemStack(ingotBrass, 2), recipeCache);
 	}
 
 	@PostInit

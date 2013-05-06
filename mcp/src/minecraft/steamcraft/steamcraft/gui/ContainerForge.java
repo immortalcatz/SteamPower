@@ -15,7 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ContainerForge extends Container
 {
-    private TileEntityForge furnace;
+    private final TileEntityForge furnace;
     private int lastCookTime = 0;
     private int lastBurnTime = 0;
     private int lastItemBurnTime = 0;
@@ -140,7 +140,7 @@ public class ContainerForge extends Container
                 }
                 else if (TileEntityForge.isItemFuel(var5))
                 {
-                    if (!this.mergeItemStack(var5, 2, 3, false))
+                    if (!this.mergeItemStack(var5, 3, 4, false))
 						return null;
                 }
             }
